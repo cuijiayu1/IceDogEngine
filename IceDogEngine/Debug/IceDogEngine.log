@@ -1,13 +1,4 @@
 ﻿  testMain.cpp
-  RenderingAdapter.cpp
-  RenderData.cpp
-  PipeView.cpp
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pipeview.cpp(18): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pipeview.cpp(30): warning C4305: “初始化”: 从“double”到“float”截断
-  DirectXRenderingPipe.cpp
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\directx\directxrenderingpipe.cpp(76): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\directx\directxrenderingpipe.cpp(77): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
-  DirectXRenderingManager.cpp
-  正在生成代码...
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

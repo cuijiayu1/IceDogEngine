@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Core\EngineCore.h"
 #include "Rendering\RenderingAdapter.h"
+#include "Geometry\GeometryGenerator.h"
 
 using namespace std;
 
@@ -14,46 +15,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	freopen("CONOUT$", "w+t", stdout);
 	freopen("CONIN$", "r+t", stdin);
 
-	IceDogRendering::Vertex vertexs[] =
-	{
-		{ IceDogRendering::float3(-1.0f,-1.0f,-1.0f),IceDogRendering::float4(IceDogRendering::Color::Red) },
-		{ IceDogRendering::float3(-1.0f,1.0f,-1.0f),IceDogRendering::float4(IceDogRendering::Color::Green) },
-		{ IceDogRendering::float3(1.0f,1.0f,-1.0f),IceDogRendering::float4(IceDogRendering::Color::Blue) },
-		{ IceDogRendering::float3(1.0f,-1.0f,-1.0f),IceDogRendering::float4(IceDogRendering::Color::Black) },
-		{ IceDogRendering::float3(-1.0f,-1.0f,1.0f),IceDogRendering::float4(IceDogRendering::Color::Cyan) },
-		{ IceDogRendering::float3(-1.0f,1.0f,1.0f),IceDogRendering::float4(IceDogRendering::Color::LightSteelBlue) },
-		{ IceDogRendering::float3(1.0f,1.0f,1.0f),IceDogRendering::float4(IceDogRendering::Color::Magenta) },
-		{ IceDogRendering::float3(1.0f,-1.0f,1.0f),IceDogRendering::float4(IceDogRendering::Color::Silver) },
-	};
-	unsigned int indices[36] =
-	{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
-
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+	
 	std::shared_ptr<IceDogRendering::RenderData> rd=std::make_shared<IceDogRendering::RenderData>();
-	rd->SetVertexData(vertexs, 8);
-	rd->SetIndexData(indices,12);
+	IceDogGeometry::GeometryGenerator::CreateSphere(2, 20,20, rd);
 
 	IceDogCore::EngineCore ec;
 	ec.Init();

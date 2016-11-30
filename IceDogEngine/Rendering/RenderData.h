@@ -16,6 +16,10 @@ namespace IceDogRendering
 		void SetVertexData(Vertex* buffer, int count);
 		/* set the index data */
 		void SetIndexData(unsigned int* indexBuffer, int triangleCount);
+		/* get the vertex data */
+		std::shared_ptr<Vertex> GetVertexData() { return c_vertexDatas; }
+		/* get the index data */
+		std::shared_ptr<unsigned int> GetIndexData() { return c_indexDatas; }
 
 #if defined __DIRECTX__
 		/* get the buffer desc */

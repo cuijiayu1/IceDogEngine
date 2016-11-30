@@ -21,6 +21,11 @@ namespace IceDogRendering
 		float z;
 
 		static float3 Zeros() { return float3(0, 0, 0); }
+		float3 Normilize() 
+		{
+			float length = sqrtf(x*x + y*y + z*z);
+			return float3(x / length, y / length, z / length);
+		}
 		float3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
 		float3() :x(0), y(0),z(0) {}
 		explicit float3(const float* data) :x(data[0]), y(data[1]), z(data[2]) {}
@@ -77,9 +82,20 @@ namespace IceDogRendering
 	{
 		float3 position;
 		float4 color;
-		float4 normal;
+		float3 normal;
+		float3 tangentU;
 		float2 tex0;
 		float2 tex1;
+
+		Vertex() {}
+
+		Vertex(
+			float px, float py, float pz,
+			float nx, float ny, float nz,
+			float tx, float ty, float tz,
+			float u, float v)
+			: position(px, py, pz), normal(nx, ny, nz),
+			tangentU(tx, ty, tz), tex0(u, v),color(0.2,0.2,0.2,1) {}
 	};
 
 	namespace Color

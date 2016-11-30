@@ -115,6 +115,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\EngineCore.cpp" />
+    <ClCompile Include="Geometry\GeometryGenerator.cpp" />
+    <ClCompile Include="Utils\Math\MathHelper.cpp" />
     <ClCompile Include="Rendering\PipeView.cpp" />
     <ClCompile Include="Rendering\RenderData.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXRenderingPipe.cpp" />
@@ -129,6 +131,8 @@
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h" />
     <ClInclude Include="Core\Timer.h" />
+    <ClInclude Include="Geometry\GeometryGenerator.h" />
+    <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
     <ClInclude Include="Rendering\RenderData.h" />
     <ClInclude Include="Rendering\DirectX\DirectXRenderingPipe.h" />
