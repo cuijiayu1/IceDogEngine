@@ -1,6 +1,8 @@
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\vc140.pdb
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\vc140.idb
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\enginecore.obj
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\geometrygenerator.obj
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\mathhelper.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\pipeview.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\renderdata.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\directxrenderingpipe.obj
@@ -11,10 +13,10 @@ g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\testmain.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\timer.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\windowsmessagehandle.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\windowswindowhandle.obj
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\geometrygenerator.obj
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\mathhelper.obj
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\dynamicrenderdata.obj
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\directx\fx\basic.fxo
 g:\d3d11\d3dtestfield\icedogengine\debug\icedogengine.pdb
+g:\d3d11\d3dtestfield\icedogengine\debug\icedogengine.ilk
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\icedogengine.tlog\cl.command.1.tlog
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\icedogengine.tlog\cl.read.1.tlog
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\debug\icedogengine.tlog\cl.write.1.tlog

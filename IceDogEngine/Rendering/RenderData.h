@@ -5,11 +5,19 @@
 
 namespace IceDogRendering
 {
+	enum class DataMapDirtyFlag
+	{
+		None,
+		IndexBuffer,
+		VertexBuffer,
+		Both
+	};
+
 	class RenderData
 	{
 	public:
 		RenderData();
-
+		~RenderData();
 		/* get world matrix */
 		float4x4 GetWorldMatrix() { return c_worldMatrix; }
 		/* set the vertex data */
@@ -37,6 +45,18 @@ namespace IceDogRendering
 		int GetVertexCount();
 		/* get triangle count */
 		int GetTriangleCount();
+		/* get whether the data was clean or not */
+		bool GetDataIsClean();
+		/* get whether the data map was clean */
+		DataMapDirtyFlag GetDataMapFlag();
+		/* mark the data state clean so will no be create buffer again */
+		void MarkDataStateClean();
+		/* mark the data to dirty, so when the rendering manager find it will re create it */
+		void MarkDataStateDirty();
+		/* mark the data map state clean so will no be update */
+		void MarkDataMapStateClean();
+		/* get wheter is Dynamic Buffer or not */
+		virtual bool GetIsDynamicBuffer();
 
 	private:
 #if defined __DIRECTX__
@@ -46,7 +66,11 @@ namespace IceDogRendering
 		void UpdateIndexBufferDesc();
 #endif
 
-	private:
+	protected:
+		// this mark whther the data should bu update from the resource that this render data holds. this is quite different from the data clean
+		DataMapDirtyFlag c_dataMapFlag = DataMapDirtyFlag::None;
+		// the mark whether the data should be re create, if it`s dirty ,the system would release the old data and create a new buffer from the data that this render data hold
+		bool c_isDataClean = false;
 		// the world matrix of this render data
 		float4x4 c_worldMatrix;
 		// hold the vertex data in memory

@@ -54,6 +54,9 @@
     <ClCompile Include="Utils\Math\MathHelper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\DynamicRenderData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -132,6 +135,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\MathHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\DynamicRenderData.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

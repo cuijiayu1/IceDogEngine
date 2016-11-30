@@ -23,10 +23,7 @@ namespace IceDogRendering
 		void InitPipe(IceDogPlatform::PlatformWindow pfWindow) override;
 
 		/* call the pipe to render */
-		void Render() override;
-
-		/* regist the render data */
-		void RegistRenderData(std::shared_ptr<RenderData> rd) override;
+		void Render(std::vector<std::shared_ptr<RenderData>>& renderDatas) override;
 
 	protected:
 		/* reset the render target size */

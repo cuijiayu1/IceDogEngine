@@ -38,5 +38,6 @@ void EngineCore::Run()
 		// tick platform and update the message
 		if (c_platformTickPort) { c_platformTickPort(); }
 		if (c_renderingTickPort) { c_renderingTickPort(); }
+		if (testTick) { testTick(); }
 	}
 }

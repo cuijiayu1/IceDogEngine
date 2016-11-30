@@ -23,10 +23,17 @@ namespace IceDogRendering
 		void TickRenderingManager() override;
 
 		/* regist the ui pipe render data */
-		void RegistUIPipeRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
+		void RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
 
 		/* regist the scene pipe render data */
-		void RegistScenePipeRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
+		void RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
+
+	private:
+		/* update the RenderData index buffer */
+		void UpdateRenderDataIndexBuffer(std::shared_ptr<IceDogRendering::RenderData> rd);
+
+		/* update the RenderData vertex buffer */
+		void UpdateRenderDataVertexBuffer(std::shared_ptr<IceDogRendering::RenderData> rd);
 
 	private:
 		D3D_DRIVER_TYPE c_driverType; //c--> config

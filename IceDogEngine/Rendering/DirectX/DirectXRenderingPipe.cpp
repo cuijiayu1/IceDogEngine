@@ -83,7 +83,7 @@ void DirectXRenderingPipe::Resize(int newWidth, int newHeight)
 	c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
 }
 
-void DirectXRenderingPipe::Render()
+void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& renderDatas)
 {
 	assert(c_PDRR.r_deviceContext);
 	assert(r_mainSwapChain);
@@ -103,8 +103,9 @@ void DirectXRenderingPipe::Render()
 
 	UINT stride = sizeof(IceDogRendering::Vertex);
 	UINT offset = 0;
-	for (auto rd : r_renderDatas)
+	for (auto rd : renderDatas)
 	{
+		if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
 		auto tempVertexBuffer = rd->GetVertexBuffer();
 
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride, &offset);
@@ -127,13 +128,6 @@ void DirectXRenderingPipe::Render()
 		s_errorlogOutStream << "Present Faild" << std::endl;
 	}
 	
-}
-
-void DirectXRenderingPipe::RegistRenderData(std::shared_ptr<RenderData> rd)
-{
-	r_renderDatas.push_back(rd);
-	auto result = rd->CreateVertexBufferWithIndexBuffer(c_PDRR.r_device);
-	if (!result) { s_errorlogOutStream << "Create vertex buffer faild!" << std::endl; }
 }
 
 void DirectXRenderingPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)

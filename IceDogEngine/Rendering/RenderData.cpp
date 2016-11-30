@@ -5,6 +5,8 @@ using namespace IceDogRendering;
 RenderData::RenderData()
 {
 	c_worldMatrix = float4x4::Identity();
+	r_indexBuffer = nullptr;
+	r_vertexBuffer = nullptr;
 }
 
 int RenderData::GetTriangleCount()
@@ -15,6 +17,44 @@ int RenderData::GetTriangleCount()
 int RenderData::GetVertexCount()
 {
 	return c_vertexCount;
+}
+
+bool RenderData::GetIsDynamicBuffer()
+{
+	return false;
+}
+
+void RenderData::MarkDataMapStateClean()
+{
+	c_dataMapFlag = DataMapDirtyFlag::None;
+}
+
+DataMapDirtyFlag RenderData::GetDataMapFlag()
+{
+	return c_dataMapFlag;
+}
+
+void RenderData::MarkDataStateDirty()
+{
+	c_isDataClean = false;
+}
+
+void RenderData::MarkDataStateClean()
+{
+	c_isDataClean = true;
+}
+
+bool RenderData::GetDataIsClean()
+{
+	return c_isDataClean;
+}
+
+RenderData::~RenderData()
+{
+#if defined __DIRECTX__
+	ReleaseCOM(r_indexBuffer);
+	ReleaseCOM(r_vertexBuffer);
+#endif
 }
 
 void RenderData::SetVertexData(Vertex* buffer, int num)
@@ -38,6 +78,11 @@ void RenderData::SetIndexData(unsigned int* indexBuffer, int triangleCount)
 #if defined __DIRECTX__
 bool RenderData::CreateVertexBufferWithIndexBuffer(ID3D11Device* d3dDevice)
 {
+	ReleaseCOM(r_vertexBuffer);
+	ReleaseCOM(r_indexBuffer);
+	r_vertexBuffer = nullptr;
+	r_indexBuffer = nullptr;
+
 	auto result = d3dDevice->CreateBuffer(&c_bufferDesc, &c_subresourceData, &r_vertexBuffer);
 	auto indexResult = d3dDevice->CreateBuffer(&c_indexBufferDesc, &c_indexSubResourceData, &r_indexBuffer);
 	return (!ISFAILED(result)) && (!ISFAILED(indexResult));
@@ -53,25 +98,43 @@ ID3D11Buffer* RenderData::GetVertexBuffer()
 }
 void RenderData::UpdateIndexBufferDesc()
 {
-	c_indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	if (GetIsDynamicBuffer())
+		c_indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	else
+		c_indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	c_indexBufferDesc.ByteWidth = sizeof(UINT)*c_triangleCount * 3;
 	c_indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	c_indexBufferDesc.CPUAccessFlags = 0;
+	if (GetIsDynamicBuffer())
+		c_indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	else
+		c_indexBufferDesc.CPUAccessFlags = 0;
 	c_indexBufferDesc.MiscFlags = 0;
 	c_indexBufferDesc.StructureByteStride = 0;
 
 	c_indexSubResourceData.pSysMem = c_indexDatas.get();
+
+	ReleaseCOM(r_indexBuffer);
+	r_indexBuffer = nullptr;
 }
 
 void RenderData::UpdateVertexBufferDesc()
 {
-	c_bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	if (GetIsDynamicBuffer())
+		c_bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	else
+		c_bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	c_bufferDesc.ByteWidth = sizeof(Vertex)*c_vertexCount;
 	c_bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	c_bufferDesc.CPUAccessFlags = 0;
+	if (GetIsDynamicBuffer())
+		c_bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	else
+		c_bufferDesc.CPUAccessFlags = 0;
 	c_bufferDesc.MiscFlags = 0;
 	c_bufferDesc.StructureByteStride = 0;
 
 	c_subresourceData.pSysMem = c_vertexDatas.get();
+
+	ReleaseCOM(r_vertexBuffer);
+	r_vertexBuffer = nullptr;
 }
 #endif

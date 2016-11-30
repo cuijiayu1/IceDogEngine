@@ -20,10 +20,10 @@ void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderData> rd, RenderPi
 	switch (rpt)
 	{
 	case IceDogRendering::RenderPipeType::Scene:
-		r_renderingManager->RegistScenePipeRenderData(rd);
+		r_renderingManager->RegistSceneRenderData(rd);
 		break;
 	case IceDogRendering::RenderPipeType::UI:
-		r_renderingManager->RegistUIPipeRenderData(rd);
+		r_renderingManager->RegistUIRenderData(rd);
 		break;
 	default:
 		break;

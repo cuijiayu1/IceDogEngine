@@ -21,6 +21,8 @@ namespace IceDogCore
 		void RegistRenderingTick(std::function<void()> redTick);
 		/* message process chain */
 		void ProcessMessageChain(IceDogPlatform::Message msg);
+
+		std::function<void()> testTick;
 		
 	private:
 		// the timer of this core
