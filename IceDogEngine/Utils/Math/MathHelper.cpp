@@ -23,3 +23,16 @@ float MathHelper::AngleFromXY(float x, float y)
 
 	return theta;
 }
+
+IceDogRendering::float4x4 MathHelper::InverseTranspose(IceDogRendering::float4x4 M)
+{
+#if defined __DIRECTX__
+	XMMATRIX A= XMLoadFloat4x4(&(XMFLOAT4X4(M.m)));
+	A.r[3] = XMVectorSet(0, 0, 0, 1);
+	XMVECTOR det = XMMatrixDeterminant(A);
+	XMMATRIX result= XMMatrixTranspose(XMMatrixInverse(&det, A));
+	XMFLOAT4X4 temp;
+	XMStoreFloat4x4(&temp, result);
+	return IceDogRendering::float4x4(temp);
+#endif
+}

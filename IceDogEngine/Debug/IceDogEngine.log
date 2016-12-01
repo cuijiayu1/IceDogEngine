@@ -1,4 +1,34 @@
 ﻿  testMain.cpp
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+  MathHelper.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathhelper.cpp(17): warning C4305: “+=”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathhelper.cpp(22): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+  RenderingAdapter.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+  RenderData.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+  PipeView.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pipeview.cpp(18): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pipeview.cpp(30): warning C4305: “初始化”: 从“double”到“float”截断
+  DynamicRenderData.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+  DirectXRenderingPipe.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\directx\directxrenderingpipe.cpp(76): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\directx\directxrenderingpipe.cpp(77): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
+  DirectXRenderingManager.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+  正在生成代码...
+  正在编译...
+  GeometryGenerator.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(98): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\geometry\geometrygenerator.cpp(117): warning C4018: “<”: 有符号/无符号不匹配
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\geometry\geometrygenerator.cpp(119): warning C4018: “<”: 有符号/无符号不匹配
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\geometry\geometrygenerator.cpp(212): warning C4018: “<”: 有符号/无符号不匹配
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\geometry\geometrygenerator.cpp(218): warning C4018: “<”: 有符号/无符号不匹配
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\geometry\geometrygenerator.cpp(271): warning C4018: “<”: 有符号/无符号不匹配
+  正在生成代码...
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

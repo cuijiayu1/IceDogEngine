@@ -98,6 +98,14 @@ namespace IceDogRendering
 			tangentU(tx, ty, tz), tex0(u, v),color(0.2,0.2,0.2,1) {}
 	};
 
+	struct Material
+	{
+		float4 ambient;
+		float4 diffuse;
+		float4 specular;
+		float4 reflect;
+	};
+
 	namespace Color
 	{
 		const float White[]{ 1.0f, 1.0f, 1.0f, 1.0f };
