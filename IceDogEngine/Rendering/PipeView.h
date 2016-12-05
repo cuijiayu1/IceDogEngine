@@ -11,6 +11,8 @@ namespace IceDogRendering
 		PipeView(float aspectRatio);
 		/* get the view matrix */
 		float4x4 GetViewMatrix() { return c_viewMatrix; };
+		/* get the eye position in world space */
+		float3 GetEyePosition() { return c_eyePosition; }
 		/* set eye position */
 		void SetEyePosition(float3);
 		/* set eye focus position */

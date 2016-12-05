@@ -101,6 +101,10 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 	auto tech = r_effectFX->GetTechniqueByName("ColorTech");
 	tech->GetDesc(&techDesc);
 
+	// set const buffer per frame
+	r_effectFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
+	r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+
 	UINT stride = sizeof(IceDogRendering::Vertex);
 	UINT offset = 0;
 	for (auto rd : renderDatas)
@@ -111,9 +115,14 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-		r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(rd->GetWorldMatrix().m))));
-		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetViewMatrix().m))));
-		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetProjectionMatrix().m))));
+		r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+		//r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(rd->GetWorldMatrix().m))));
+		//r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetViewMatrix().m))));
+		//r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetProjectionMatrix().m))));
+		r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
+		r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
 
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{

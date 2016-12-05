@@ -15,9 +15,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	AllocConsole();
 	freopen("CONOUT$", "w+t", stdout);
 	freopen("CONIN$", "r+t", stdin);
-	
-	std::shared_ptr<IceDogRendering::RenderData> rd=std::make_shared<IceDogRendering::DynamicRenderData>();
-	IceDogGeometry::GeometryGenerator::CreateSphere(2, 20,20, rd);
+
+	std::shared_ptr<IceDogRendering::RenderData> rd=std::make_shared<IceDogRendering::RenderData>();
+	IceDogGeometry::GeometryGenerator::CreateSphere(1, 30,30,rd);
 
 	IceDogCore::EngineCore ec;
 	ec.Init();

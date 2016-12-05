@@ -20,13 +20,13 @@ void PipeView::UpdateProjectionMatrix()
 #endif
 }
 
-PipeView::PipeView(float aspectRatio) :c_eyePosition(-2, 3, -10),
+PipeView::PipeView(float aspectRatio) :c_eyePosition(-1, 2, -6),
 										c_focusPosition(0, 0, 0),
 										c_upDirection(0, 1, 0),
 										c_aspectRatio(aspectRatio),
 										c_fovDegrees(90),
 										c_nearPlane(0.01),
-										c_farPlane(100)
+										c_farPlane(1000)
 {
 	// build up the view matrix
 	UpdateViewMatrix();

@@ -2,6 +2,7 @@
 #include "PlatformDependenceRenderResource.h"
 #include "RenderData.h"
 #include "PipeView.h"
+#include "LightingGroup.h"
 #include "../Platform/PlatformWindow.h"
 
 namespace IceDogRendering
@@ -9,7 +10,13 @@ namespace IceDogRendering
 	class RenderingPipe
 	{
 	public:
-		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS) {}
+		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS) 
+		{
+			DirectionalLight dl;
+			//SpotLight sl;
+			//PointLight pl;
+			r_defaultLG.AddDirectionalLight(dl);
+		}
 		/* set msaa config not enable immediately*/
 		virtual void SetMsaaConfig(bool msaaEnable) { c_enableMsaa = msaaEnable;};
 		/* init the pipe line */
@@ -23,6 +30,8 @@ namespace IceDogRendering
 		virtual void Resize(int newWidth, int newHeight) = 0;
 
 	protected:
+		// default light group
+		LightingGroup<1> r_defaultLG;
 		// the pipe view
 		std::shared_ptr<PipeView> r_mainPipeView;
 		std::vector < std::shared_ptr<PipeView> > r_pipeViewList;

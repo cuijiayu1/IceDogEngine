@@ -140,6 +140,9 @@
     <ClInclude Include="Rendering\DynamicRenderData.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Rendering\LightingGroup.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\basic.fx" />

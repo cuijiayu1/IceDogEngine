@@ -3,6 +3,64 @@
 
 namespace IceDogRendering
 {
+	template<typename T,int vecSize>
+	class Vector
+	{
+	public:
+		T _data[vecSize];
+	public:
+		T operator[](size_t place)
+		{
+			assert(place >= 0 && place < vecSize);
+			return _data[place];
+		}
+		Vector() {};
+		Vector(const T (&inidata)[vecSize])
+		{
+			for (size_t i = 0; i < vecSize; i++)
+			{
+				_data[i] = inidata[i];
+			}
+		}
+
+		Vector Normilize()
+		{
+			T sum = 0;
+			for (size_t i=0;i<vecSize;i++)
+			{
+				sum += _data[i] * _data[i];
+			}
+			T length = sqrtl(sum);
+			T tempArray[vecSize];
+			for (size_t i=0;i<vecSize;i++)
+			{
+				tempArray[i] = _data[i] / length;
+			}
+			return Vector(tempArray);
+		}
+
+		static Vector Zero()
+		{
+			T temp[vecSize] = { 0 };
+			return Vector(temp);
+		}
+		// get the vector size
+		constexpr size_t Length()
+		{
+			return vecSize;
+		}
+
+		Vector& operator=(const Vector& source) 
+		{
+			for (size_t i=0;i<vecSize;i++)
+			{
+				_data[i] = source._data[i];
+			}
+			return *this;
+		}
+	};
+
+
 	struct float2
 	{
 		float x;
@@ -96,6 +154,68 @@ namespace IceDogRendering
 			float u, float v)
 			: position(px, py, pz), normal(nx, ny, nz),
 			tangentU(tx, ty, tz), tex0(u, v),color(0.2,0.2,0.2,1) {}
+	};
+
+	struct DirectionalLight
+	{
+		DirectionalLight()
+		{
+			ambient = float4(0.2, 0.2, 0.2, 1);
+			diffuse = float4(0.5, 0.5, 0.5, 1);
+			specular = float4(0.5, 0.5, 0.5, 1);
+			direction = float3(0.57735f, -0.57735f, 0.57735f);
+		}
+
+		float4 ambient;
+		float4 diffuse;
+		float4 specular;
+		float3 direction;
+		float pad;
+	};
+
+	struct PointLight
+	{
+		PointLight()
+		{
+			ambient = float4(0.3f, 0.3f, 0.3f, 1);
+			diffuse = float4(0.7f, 0.7f, 0.7f, 1);
+			specular = float4(0.7f, 0.7f, 0.7f, 1);
+			att = float3(0, 0.1, 0);
+			range = 25;
+			position = float3(0, 0, 0);
+		}
+
+		float4 ambient;
+		float4 diffuse;
+		float4 specular;
+		float3 position;
+		float range;
+		float3 att;
+		float pad;
+	};
+
+	struct SpotLight
+	{
+		SpotLight()
+		{
+			ambient = float4(0, 0, 0, 1);
+			diffuse = float4(1, 1, 0, 1);
+			specular = float4(1, 1, 1, 1);
+			att = float3(1, 0, 0);
+			spot = 96.0f;
+			range = 10000;
+			position = float3(1, 1, 1);
+			direction = float3(-1, -1, -1);
+		}
+		float4 ambient;
+		float4 diffuse;
+		float4 specular;
+		float3 position;
+		float range;
+		float3 direction;
+		float spot;
+		float3 att;
+		float pad;
 	};
 
 	struct Material

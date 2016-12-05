@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h" />
     <ClInclude Include="Core\Timer.h" />
+    <ClInclude Include="Rendering\LightingGroup.h" />
     <ClInclude Include="Rendering\DynamicRenderData.h" />
     <ClInclude Include="Geometry\GeometryGenerator.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />

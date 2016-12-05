@@ -20,6 +20,10 @@ namespace IceDogRendering
 		~RenderData();
 		/* get world matrix */
 		float4x4 GetWorldMatrix() { return c_worldMatrix; }
+		/* get the world inverse transpose matrix for lighting calculation */
+		float4x4 GetWorldInverseTransposeMatrix() { return c_worldInverseTransposeMatrix; }
+		/* get the material def of this obj */
+		Material GetMaterial() { return c_material; }
 		/* set the vertex data */
 		void SetVertexData(Vertex* buffer, int count);
 		/* set the index data */
@@ -67,12 +71,16 @@ namespace IceDogRendering
 #endif
 
 	protected:
+		// the material info
+		Material c_material;
 		// this mark whther the data should bu update from the resource that this render data holds. this is quite different from the data clean
 		DataMapDirtyFlag c_dataMapFlag = DataMapDirtyFlag::None;
 		// the mark whether the data should be re create, if it`s dirty ,the system would release the old data and create a new buffer from the data that this render data hold
 		bool c_isDataClean = false;
 		// the world matrix of this render data
 		float4x4 c_worldMatrix;
+		// the world inverse transpose matrix
+		float4x4 c_worldInverseTransposeMatrix;
 		// hold the vertex data in memory
 		std::shared_ptr<Vertex> c_vertexDatas;
 		int c_vertexCount = 0;

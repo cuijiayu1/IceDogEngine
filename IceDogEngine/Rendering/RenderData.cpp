@@ -5,8 +5,13 @@ using namespace IceDogRendering;
 RenderData::RenderData()
 {
 	c_worldMatrix = float4x4::Identity();
+	c_worldInverseTransposeMatrix = float4x4::Identity();
 	r_indexBuffer = nullptr;
 	r_vertexBuffer = nullptr;
+	c_material.ambient = float4(0.3, 0.3, 0.3, 1);
+	c_material.diffuse = float4(0.2, 0.2, 0.2, 1);
+	c_material.reflect = float4(0.7, 0.7, 0.7, 1);
+	c_material.specular = float4(0.8, 0.8, 0.8, 1);
 }
 
 int RenderData::GetTriangleCount()
