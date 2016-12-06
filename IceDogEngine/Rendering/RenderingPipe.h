@@ -13,9 +13,13 @@ namespace IceDogRendering
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS) 
 		{
 			DirectionalLight dl;
-			//SpotLight sl;
-			//PointLight pl;
+			SpotLight sl;
+			sl.position = float3(10, 10, 10);
+			PointLight pl;
+			pl.position = float3(0, 4, -4);
 			r_defaultLG.AddDirectionalLight(dl);
+			//r_defaultLG.AddSpotLight(sl);
+			r_defaultLG.AddPointLight(pl);
 		}
 		/* set msaa config not enable immediately*/
 		virtual void SetMsaaConfig(bool msaaEnable) { c_enableMsaa = msaaEnable;};

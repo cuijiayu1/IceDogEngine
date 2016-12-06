@@ -28,6 +28,11 @@ void EngineCore::RegistRenderingTick(std::function<void()> redTick)
 	c_renderingTickPort = redTick;
 }
 
+void IceDogCore::EngineCore::RegistLogicTick(std::function<void(float)> logicTick)
+{
+	c_logicTickPort = logicTick;
+}
+
 void EngineCore::Run()
 {
 	// main loop
@@ -38,6 +43,7 @@ void EngineCore::Run()
 		// tick platform and update the message
 		if (c_platformTickPort) { c_platformTickPort(); }
 		if (c_renderingTickPort) { c_renderingTickPort(); }
+		if (c_logicTickPort) { c_logicTickPort(r_coreTimer.GetDeltaTime()); }
 		if (testTick) { testTick(); }
 	}
 }

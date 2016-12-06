@@ -48,13 +48,19 @@
     <ClCompile Include="Rendering\PipeView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Geometry\GeometryGenerator.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\Math\MathHelper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\DynamicRenderData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Logic\LogicAdapter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Logic\LogicData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,9 +137,6 @@
     <ClInclude Include="Rendering\PipeView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Geometry\GeometryGenerator.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Math\MathHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -141,6 +144,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\LightingGroup.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Logic\LogicAdapter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Geometry\GeometryGenerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Logic\LogicData.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

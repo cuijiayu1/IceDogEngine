@@ -180,7 +180,7 @@ namespace IceDogRendering
 			ambient = float4(0.3f, 0.3f, 0.3f, 1);
 			diffuse = float4(0.7f, 0.7f, 0.7f, 1);
 			specular = float4(0.7f, 0.7f, 0.7f, 1);
-			att = float3(0, 0.1, 0);
+			att = float3(0, 0.4, 0);
 			range = 25;
 			position = float3(0, 0, 0);
 		}
@@ -198,12 +198,12 @@ namespace IceDogRendering
 	{
 		SpotLight()
 		{
-			ambient = float4(0, 0, 0, 1);
-			diffuse = float4(1, 1, 0, 1);
-			specular = float4(1, 1, 1, 1);
-			att = float3(1, 0, 0);
+			ambient = float4(0.3, 0.3, 0.3, 1);
+			diffuse = float4(0.7, 0.7, 0.7, 1);
+			specular = float4(0.6, 0.6, 0.6, 1);
+			att = float3(0, 0.1, 0);
 			spot = 96.0f;
-			range = 10000;
+			range = 25;
 			position = float3(1, 1, 1);
 			direction = float3(-1, -1, -1);
 		}

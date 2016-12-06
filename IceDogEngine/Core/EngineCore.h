@@ -19,6 +19,8 @@ namespace IceDogCore
 		void RegistPlatformTick(std::function<void()> pfTick);
 		/* regist the rendering tick function */
 		void RegistRenderingTick(std::function<void()> redTick);
+		/* regist the logic tick function */
+		void RegistLogicTick(std::function<void(float)> logicTick);
 		/* message process chain */
 		void ProcessMessageChain(IceDogPlatform::Message msg);
 
@@ -33,6 +35,7 @@ namespace IceDogCore
 		std::function<void()> c_platformTickPort;
 		// the rendering tick port,call this to call the rendering tick
 		std::function<void()> c_renderingTickPort;
-
+		// the logic tick port, call this to call the logic tick to update all the logic
+		std::function<void(float)> c_logicTickPort;
 	};
 }

@@ -103,7 +103,25 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 
 	// set const buffer per frame
 	r_effectFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
-	r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+	float3 lightOn = float3(0, 0, 0);
+	// update each light
+	if (r_defaultLG.HasDirectionalLightsSpace()!=r_defaultLG.GetPerLightCount())
+	{
+		r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+		lightOn.x = 1;
+	}
+	if (r_defaultLG.HasSpotLightsSpace() != r_defaultLG.GetPerLightCount())
+	{
+		r_effectFX->GetVariableByName("spotLight")->SetRawValue(&(r_defaultLG.GetSpotLight()[0]), 0, sizeof(SpotLight));
+		lightOn.y = 1;
+	}
+	if (r_defaultLG.HasPointLightsSpace() != r_defaultLG.GetPerLightCount())
+	{
+		r_effectFX->GetVariableByName("pointLight")->SetRawValue(&(r_defaultLG.GetPointLight()[0]), 0, sizeof(PointLight));
+		lightOn.z = 1;
+	}
+	// update light on state
+	r_effectFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
 
 	UINT stride = sizeof(IceDogRendering::Vertex);
 	UINT offset = 0;

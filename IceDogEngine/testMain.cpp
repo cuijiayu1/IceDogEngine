@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "Core\EngineCore.h"
 #include "Rendering\RenderingAdapter.h"
-#include "Geometry\GeometryGenerator.h"
+#include "Logic\LogicAdapter.h"
+#include "Resources\Geometry\GeometryGenerator.h"
 #include "Rendering\DynamicRenderData.h"
 
 using namespace std;
@@ -17,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	freopen("CONIN$", "r+t", stdin);
 
 	std::shared_ptr<IceDogRendering::RenderData> rd=std::make_shared<IceDogRendering::RenderData>();
-	IceDogGeometry::GeometryGenerator::CreateSphere(1, 30,30,rd);
+	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(1, 30,30,rd);
 
 	IceDogCore::EngineCore ec;
 	ec.Init();
@@ -37,6 +38,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	ra.Init(pf.GetConstructedPlatformWindow());
 	ra.RegistRenderData(rd, IceDogRendering::RenderPipeType::Scene);
 	ec.RegistRenderingTick(std::bind(&IceDogRendering::RenderingAdapter::TickRendering, &ra));
+
+	IceDogLogic::LogicAdapter la(std::cout);
+	la.Init();
+	ec.RegistLogicTick(std::bind(&IceDogLogic::LogicAdapter::TickLogic, &la,std::placeholders::_1));
 
 	ec.Run();
 

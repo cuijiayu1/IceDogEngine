@@ -50,8 +50,9 @@ struct SpotLight
 cbuffer cbPerFrame
 {
 	DirectionalLight directionLight;
-	PointLight pointLight;
 	SpotLight spotLight;
+	PointLight pointLight;
+	float3 lightOn;
 	float3 eyePos;
 };
 
@@ -174,10 +175,30 @@ float4 PS(VertexOut pin) : SV_Target
 	float4 diffuse = float4(0, 0, 0, 0);
 	float4 spec = float4(0, 0, 0, 0);
 	float4 A, D, S;
-	ComputeDirectionalLight(m_mat, directionLight, pin.v_normalW, toEye, A, D, S);
-	ambient += A;
-	diffuse += D;
-	spec += S;
+	if (lightOn.x > 0.5)
+	{
+		ComputeDirectionalLight(m_mat, directionLight, pin.v_normalW, toEye, A, D, S);
+		ambient += A;
+		diffuse += D;
+		spec += S;
+	}
+
+	if (lightOn.y > 0.5)
+	{
+		ComputeSpotLight(m_mat, spotLight, pin.v_positionW, pin.v_normalW, toEye, A, D, S);
+		ambient += A;
+		diffuse += D;
+		spec += S;
+	}
+
+	if (lightOn.z > 0.5)
+	{
+		ComputePointLight(m_mat, pointLight, pin.v_positionW, pin.v_normalW, toEye, A, D, S);
+		ambient += A;
+		diffuse += D;
+		spec += S;
+	}
+
 	return ambient+diffuse+spec;
 }
 
