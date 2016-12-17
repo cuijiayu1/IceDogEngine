@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "Engine\Engine.h"
-#include "Resources\Geometry\GeometryGenerator.h"
-#include "Rendering\DynamicRenderData.h"
+#include "Source\MyActor.h"
 
 using namespace std;
 
@@ -36,10 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	eg.Init();
 	cout << "Hello Ice Dog Engine" << endl;
 
-	std::shared_ptr<IceDogRendering::RenderData> rd=std::make_shared<IceDogRendering::RenderData>();
-	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(1, 30,30,rd);
-
-	eg.RegistRenderData(rd, IceDogRendering::RenderPipeType::Scene);
+	MyActor actor;
 
 	eg.Run();
 

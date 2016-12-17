@@ -3,15 +3,20 @@
 #include "..\Core\EngineCore.h"
 #include "..\Rendering\RenderingAdapter.h"
 #include "..\Logic\LogicAdapter.h"
+#include "Gameplay\Level.h"
 
 namespace IceDogEngine
 {
 	// this class player the box role, which pack everthing up
 	class Engine
 	{
+	private:
+		static Engine* r_egPtr;
 	public:
+		// return the engine instance
+		static Engine* GetEngine();
 		Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow);
-
+	public:
 		/* init the engine */
 		void Init();
 
@@ -21,10 +26,17 @@ namespace IceDogEngine
 		/* regist the render data */
 		void RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt);
 
-		/* regist the logic data */
-		void RegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld);
+		/* regist/unregist the logic data */
+		void RegistLogicData(IceDogLogic::LogicData* ld);
+		void UnRegistLogicData(IceDogLogic::LogicData* ld);
+
+		/* regist the actor */
+		void RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
 
 	private:
+		// the current level that this hold
+		IceDogGameplay::Level r_defaultLevel;
+
 		// the heart of the engine control the tick
 		IceDogCore::EngineCore r_engineCore;
 

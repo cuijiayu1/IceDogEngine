@@ -7,7 +7,7 @@ namespace IceDogLogic
 	class LogicData
 	{
 	public:
-		void Tick(float deltaTime);
+		virtual void Tick(float deltaTime) {};
 	};
 }
 

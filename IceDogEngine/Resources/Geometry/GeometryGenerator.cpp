@@ -121,6 +121,7 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 		inds[i] = Indices[i];
 	rd->SetVertexData(vd, Vertices.size());
 	rd->SetIndexData(inds, Indices.size() / 3);
+	rd->MarkDataStateDirty();
 }
 
 void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::RenderData> rd)

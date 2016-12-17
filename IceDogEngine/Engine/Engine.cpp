@@ -2,6 +2,7 @@
 
 using namespace IceDogEngine;
 
+Engine* Engine::r_egPtr = nullptr;
 
 Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	:s_errorlogOutStream(errorLog),
@@ -9,6 +10,7 @@ Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	r_renderAdapter(errorLog),
 	r_logicAdapter(errorLog)
 {
+	r_egPtr = this;
 	// the platform window will be further construct, we will not hold it.
 }
 
@@ -31,12 +33,34 @@ void Engine::Init()
 
 void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd,IceDogRendering::RenderPipeType rpt)
 {
+	// add data to level
+	r_defaultLevel.RegistRenderData(rd);
 	r_renderAdapter.RegistRenderData(rd, rpt);
 }
 
-void Engine::RegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld)
+void Engine::RegistLogicData(IceDogLogic::LogicData* ld)
 {
+	// add data to level
+	r_defaultLevel.RegistLogicData(ld);
 	r_logicAdapter.RegistLogicData(ld);
+}
+
+void Engine::UnRegistLogicData(IceDogLogic::LogicData* ld)
+{
+	// remove 
+	r_defaultLevel.UnRegistLogicData(ld);
+	r_logicAdapter.UnRegistLogicData(ld);
+}
+
+
+void Engine::RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
+{
+	r_defaultLevel.RegistActor(ac);
+}
+
+IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()
+{
+	return r_egPtr;
 }
 
 void IceDogEngine::Engine::Run()

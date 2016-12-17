@@ -114,12 +114,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Gameplay\Components\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\DynamicMeshComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Actor.cpp" />
     <ClCompile Include="Core\EngineCore.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Gameplay\Level.cpp" />
     <ClCompile Include="Logic\LogicData.cpp" />
     <ClCompile Include="Logic\LogicAdapter.cpp" />
+    <ClCompile Include="Source\MyActor.cpp" />
     <ClCompile Include="Rendering\DynamicRenderData.cpp" />
     <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\StaticMeshComponent.cpp" />
     <ClCompile Include="Utils\Math\MathHelper.cpp" />
     <ClCompile Include="Rendering\PipeView.cpp" />
     <ClCompile Include="Rendering\RenderData.cpp" />
@@ -133,14 +139,21 @@
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Gameplay\Components\ActorComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\Component.h" />
+    <ClInclude Include="Engine\Gameplay\Components\DynamicMeshComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Actor.h" />
     <ClInclude Include="Core\EngineCore.h" />
     <ClInclude Include="Core\Timer.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\Gameplay\Level.h" />
     <ClInclude Include="Logic\LogicData.h" />
     <ClInclude Include="Logic\LogicAdapter.h" />
+    <ClInclude Include="Source\MyActor.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />
     <ClInclude Include="Rendering\DynamicRenderData.h" />
     <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
+    <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
     <ClInclude Include="Rendering\RenderData.h" />

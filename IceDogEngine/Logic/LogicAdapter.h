@@ -16,14 +16,15 @@ namespace IceDogLogic
 		void Init();
 		/* tick the logic adapter, than tick all registed logic data */
 		void TickLogic(float deltaTime);
-		/* regist the logic data */
-		void RegistLogicData(std::shared_ptr<LogicData> ld);
+		/* regist/unRegist the logic data */
+		void RegistLogicData(LogicData* ld);
+		void UnRegistLogicData(LogicData* ld);
 
 	private:
 		// the log output port
 		std::ostream& s_errorlogOutStream;
 		// the logic data that this adapter holds
-		std::vector<std::shared_ptr<LogicData>> r_logicDatas;
+		std::vector<LogicData*> r_logicDatas;
 	};
 }
 

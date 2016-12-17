@@ -17,8 +17,13 @@ void IceDogLogic::LogicAdapter::TickLogic(float deltaTime)
 	}
 }
 
-void IceDogLogic::LogicAdapter::RegistLogicData(std::shared_ptr<LogicData> ld)
+void IceDogLogic::LogicAdapter::RegistLogicData(LogicData* ld)
 {
 	// now just simply put in
 	r_logicDatas.push_back(ld);
+}
+
+void IceDogLogic::LogicAdapter::UnRegistLogicData(LogicData* ld)
+{
+	r_logicDatas.erase(std::find(r_logicDatas.begin(), r_logicDatas.end(), ld));
 }
