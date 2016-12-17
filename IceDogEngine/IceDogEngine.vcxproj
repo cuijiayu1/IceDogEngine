@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\EngineCore.cpp" />
+    <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Logic\LogicData.cpp" />
     <ClCompile Include="Logic\LogicAdapter.cpp" />
     <ClCompile Include="Rendering\DynamicRenderData.cpp" />
@@ -134,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h" />
     <ClInclude Include="Core\Timer.h" />
+    <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Logic\LogicData.h" />
     <ClInclude Include="Logic\LogicAdapter.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />

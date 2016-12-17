@@ -1,3 +1,16 @@
-﻿  LogicAdapter.cpp
+﻿  testMain.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(51): warning C4814: “IceDogRendering::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(61): note: 参见对正在编译的类 模板 实例化“IceDogRendering::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(156): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(163): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(183): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(201): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(202): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(203): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(204): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(38): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

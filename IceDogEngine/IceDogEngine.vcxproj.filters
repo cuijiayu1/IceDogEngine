@@ -63,6 +63,9 @@
     <ClCompile Include="Logic\LogicData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -153,6 +156,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Logic\LogicData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
