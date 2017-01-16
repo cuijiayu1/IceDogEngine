@@ -93,6 +93,18 @@
     <ClCompile Include="Engine\Gameplay\Components\CameraComponent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Gameplay\Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Gameplay\Components\EventComponent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\MessageProc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cha.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -218,9 +230,6 @@
     <ClInclude Include="Engine\Gameplay\Components\CameraComponent.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Coordinate.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Core\SphereSpace.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -228,6 +237,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\MathDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\BasicSpace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Gameplay\Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Gameplay\Components\EventComponent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\MessagePriority.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\MessageProc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Cha.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

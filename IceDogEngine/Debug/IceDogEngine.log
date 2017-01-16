@@ -1,7 +1,197 @@
-﻿  CameraComponent.cpp
+﻿  testMain.cpp
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
 g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(96): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(106): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  MyActor.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\source\myactor.cpp(33): warning C4305: “参数”: 从“double”到“float”截断
+  Cha.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\source\cha.cpp(33): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+  Planet.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+  Level.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  StaticMeshComponent.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  Component.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+  CameraComponent.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  ActorComponent.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  Camera.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+  Actor.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  Engine.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+  正在生成代码...
+  正在编译...
+  EventComponent.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(97): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(107): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(92): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(99): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(119): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(137): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(138): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(139): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(140): warning C4305: “参数”: 从“double”到“float”截断
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\renderingpipe.h(40): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\engine\gameplay\components\eventcomponent.cpp(66): warning C4244: “参数”: 从“const float”转换到“int”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\engine\gameplay\components\eventcomponent.cpp(69): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+  正在生成代码...
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

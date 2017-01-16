@@ -11,6 +11,11 @@ void PipeView::UpdateViewMatrix()
 #endif
 }
 
+void IceDogRendering::PipeView::UpdateViewMatrix(float4x4 mat)
+{
+	c_viewMatrix = mat;
+}
+
 void PipeView::UpdateProjectionMatrix()
 {
 #if defined __DIRECTX__
@@ -20,7 +25,7 @@ void PipeView::UpdateProjectionMatrix()
 #endif
 }
 
-PipeView::PipeView(float aspectRatio) :c_eyePosition(-1, 2, -6),
+PipeView::PipeView(float aspectRatio) :c_eyePosition(0, 0, -6),
 										c_focusPosition(0, 0, 0),
 										c_upDirection(0, 1, 0),
 										c_aspectRatio(aspectRatio),
@@ -37,19 +42,16 @@ PipeView::PipeView(float aspectRatio) :c_eyePosition(-1, 2, -6),
 void PipeView::SetEyePosition(float3 pos)
 {
 	c_eyePosition = pos;
-	UpdateViewMatrix();
 }
 
 void PipeView::SetFocusPosition(float3 focusPos)
 {
 	c_focusPosition = focusPos;
-	UpdateViewMatrix();
 }
 
 void PipeView::SetUpDirection(float3 upDirection)
 {
 	c_upDirection = upDirection;
-	UpdateViewMatrix();
 }
 
 void PipeView::SetAspectRatio(float ratio)

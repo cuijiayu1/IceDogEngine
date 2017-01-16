@@ -35,7 +35,19 @@ namespace IceDogEngine
 		void RegistActor(IceDogGameplay::Actor* ac);
 		void UnRegistActor(IceDogGameplay::Actor* ac);
 
+		/* regist the main pipe view */
+		void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv);
+
+		/* get the aspect ratio of this platform */
+		float GetAspectRatio();
+
+		/* regist the message proc */
+		IceDogCore::EngineCore& GetEngineCore();
+
 	private:
+		// the total aspect ratio of this platform
+		float r_aspectRatio;
+
 		// the current level that this hold
 		IceDogGameplay::Level r_defaultLevel;
 

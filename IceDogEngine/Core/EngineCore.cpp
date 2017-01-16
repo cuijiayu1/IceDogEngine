@@ -14,8 +14,29 @@ void EngineCore::Init()
 
 void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 {
+	// for priority and authority separation
+	using IceDogPlatform::MessageAuthority;
+	if (msg.c_messageAuthority==MessageAuthority::SYSTEM)
+	{
+		for (auto& i:r_messageProcs)
+		{
+			// if no priority and no one process just exit
+			if (i->GetPriority() < MessagePriority::SYSTEM_3) { return; }
+			// if someone processed success just exit
+			if (i->Process(msg.c_messageType, msg.c_param0, msg.c_param1)) { return; }
+		}
+	}
+	else
+	{
+		for (auto& i : r_messageProcs)
+		{
+			// if someone processed success just exit
+			if (i->Process(msg.c_messageType, msg.c_param0, msg.c_param1)) { return; }
+		}
+	}
+	
 	// handle the message
-	std::cout << (int)msg.c_messageType << " " << msg.c_param0 << " " << msg.c_param1 << std::endl;
+	//std::cout << (int)msg.c_messageType << " " << msg.c_param0 << " " << msg.c_param1 << std::endl;
 }
 
 void EngineCore::RegistPlatformTick(std::function<void()> pfTick)
@@ -31,6 +52,21 @@ void EngineCore::RegistRenderingTick(std::function<void()> redTick)
 void IceDogCore::EngineCore::RegistLogicTick(std::function<void(float)> logicTick)
 {
 	c_logicTickPort = logicTick;
+}
+
+void IceDogCore::EngineCore::RegistMessageProc(MessageProc* msprc)
+{
+	r_messageProcs.push_back(msprc);
+	// set and sort
+	std::sort(r_messageProcs.begin(), r_messageProcs.end(), [](MessageProc* m0, MessageProc* m1)->bool
+	{
+		return m0->GetPriority() > m1->GetPriority();
+	});
+}
+
+void IceDogCore::EngineCore::UnRegistMessageProc(MessageProc* msprc)
+{
+	r_messageProcs.erase(std::find(r_messageProcs.begin(), r_messageProcs.end(), msprc));
 }
 
 void EngineCore::Run()

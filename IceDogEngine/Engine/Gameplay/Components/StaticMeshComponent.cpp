@@ -35,3 +35,9 @@ void IceDogGameplay::StaticMeshComponent::SetDisable()
 	Component::SetDisable();
 	IceDogEngine::Engine::GetEngine()->UnRegistRenderData(r_renderData,IceDogRendering::RenderPipeType::Scene);
 }
+
+void IceDogGameplay::StaticMeshComponent::Update()
+{
+	IceDogRendering::float4x4& worldMat = IceDogRendering::float4x4::FromSRT(c_owner->GetActorScale(), c_owner->GetActorRotation(), c_owner->GetActorLocation());
+	r_renderData->SetWorldMatrix(worldMat);
+}

@@ -36,6 +36,8 @@ namespace IceDogRendering
 		virtual void UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) = 0;
 		/* unregist the UI render data */
 		virtual void UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) = 0;
+		/* regist the main pipe view */
+		virtual void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv) = 0;
 		/* tick */
 		virtual void TickRenderingManager()=0;
 	

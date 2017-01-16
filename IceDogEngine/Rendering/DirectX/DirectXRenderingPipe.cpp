@@ -88,6 +88,9 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 	assert(c_PDRR.r_deviceContext);
 	assert(r_mainSwapChain);
 
+	// check if have a pipeView
+	if (r_mainPipeView == nullptr) { return; }
+
 	// clear the back buffer
 	c_PDRR.r_deviceContext->ClearRenderTargetView(r_backBufferRenderTargetView,IceDogRendering::Color::Blue);
 	// clear depth stencil view
@@ -136,9 +139,6 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 		r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
 		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
 		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-		//r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(rd->GetWorldMatrix().m))));
-		//r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetViewMatrix().m))));
-		//r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(reinterpret_cast<float*>(&XMLoadFloat4x4(&XMFLOAT4X4(r_mainPipeView->GetProjectionMatrix().m))));
 		r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
 		r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
 
@@ -161,7 +161,7 @@ void DirectXRenderingPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
 {
 	c_platformWindow = pfWindow;
 
-	r_mainPipeView = std::make_shared<PipeView>((float)pfWindow.width / (float)pfWindow.height);
+	//r_mainPipeView = std::make_shared<PipeView>((float)pfWindow.width / (float)pfWindow.height);
 
 	// check if support 4x msaa
 	if (ISFAILED(c_PDRR.r_device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &c_msaaQuility)))

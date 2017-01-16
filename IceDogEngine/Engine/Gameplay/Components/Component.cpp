@@ -23,4 +23,9 @@ namespace IceDogGameplay
 		c_componentEnable = false;
 	}
 
+	void Component::Update()
+	{
+
+	}
+
 }

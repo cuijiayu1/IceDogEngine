@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../../Utils/Common/UtilBasic.h"
+
 namespace IceDogGameplay
 {
 	class Component
@@ -10,6 +12,9 @@ namespace IceDogGameplay
 		/* enable or disable this component */
 		virtual void SetEnable();
 		virtual void SetDisable();
+
+		/* update the data */
+		virtual void Update();
 	protected:
 		// whether this component work or not
 		bool c_componentEnable;

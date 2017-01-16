@@ -43,6 +43,7 @@ namespace IceDogUtils
 		float w;
 
 		float4(float _x, float _y, float _z, float _w) :x(_x), y(_y), z(_z), w(_w) {}
+		float4(const float3& f3, float _w) :x(f3.x), y(f3.y), z(f3.z), w(_w) {}
 		float4() :x(0), y(0), z(0), w(0) {}
 		explicit float4(const float* data) :x(data[0]), y(data[1]), z(data[2]), w(data[3]) {}
 		float4& operator= (const float4& Float4) { x = Float4.x; y = Float4.y; z = Float4.z; w = Float4.w; return *this; }

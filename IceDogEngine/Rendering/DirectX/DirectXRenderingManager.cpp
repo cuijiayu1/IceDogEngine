@@ -155,3 +155,8 @@ void IceDogRendering::DirectXRenderingManager::UnRegistSceneRenderData(std::shar
 {
 	r_sceneRenderData.erase(std::find(r_sceneRenderData.begin(), r_sceneRenderData.end(), rd));
 }
+
+void IceDogRendering::DirectXRenderingManager::RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv)
+{
+	r_scenePipe->RegistMainPipeView(pv);
+}

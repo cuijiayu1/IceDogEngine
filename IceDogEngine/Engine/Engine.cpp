@@ -8,7 +8,8 @@ Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	:s_errorlogOutStream(errorLog),
 	r_enginePlatform(plfWindow,errorLog),
 	r_renderAdapter(errorLog),
-	r_logicAdapter(errorLog)
+	r_logicAdapter(errorLog),
+	r_aspectRatio(static_cast<float>(plfWindow.width)/static_cast<float>(plfWindow.height))
 {
 	r_egPtr = this;
 	// the platform window will be further construct, we will not hold it.
@@ -69,6 +70,21 @@ void Engine::RegistActor(IceDogGameplay::Actor* ac)
 void IceDogEngine::Engine::UnRegistActor(IceDogGameplay::Actor* ac)
 {
 	r_defaultLevel.UnRegistActor(ac);
+}
+
+void IceDogEngine::Engine::RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv)
+{
+	r_renderAdapter.RegistMainPipeView(pv);
+}
+
+float IceDogEngine::Engine::GetAspectRatio()
+{
+	return r_aspectRatio;
+}
+
+IceDogCore::EngineCore& IceDogEngine::Engine::GetEngineCore()
+{
+	return r_engineCore;
 }
 
 IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()

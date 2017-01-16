@@ -114,6 +114,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Cha.cpp" />
+    <ClCompile Include="Engine\Gameplay\Camera.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\ActorComponent.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\Component.cpp" />
@@ -122,9 +124,11 @@
     <ClCompile Include="Core\EngineCore.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Gameplay\Level.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\EventComponent.cpp" />
     <ClCompile Include="Logic\LogicData.cpp" />
     <ClCompile Include="Logic\LogicAdapter.cpp" />
     <ClCompile Include="Engine\Gameplay\Planet.cpp" />
+    <ClCompile Include="Core\MessageProc.cpp" />
     <ClCompile Include="Source\MyActor.cpp" />
     <ClCompile Include="Rendering\DynamicRenderData.cpp" />
     <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
@@ -142,7 +146,10 @@
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Coordinate.h" />
+    <ClInclude Include="Source\Cha.h" />
+    <ClInclude Include="Core\MessagePriority.h" />
+    <ClInclude Include="Engine\Gameplay\Camera.h" />
+    <ClInclude Include="Core\BasicSpace.h" />
     <ClInclude Include="Core\SphereSpace.h" />
     <ClInclude Include="Core\VectorSpace.h" />
     <ClInclude Include="Engine\Gameplay\Components\ActorComponent.h" />
@@ -154,9 +161,11 @@
     <ClInclude Include="Core\Timer.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Gameplay\Level.h" />
+    <ClInclude Include="Engine\Gameplay\Components\EventComponent.h" />
     <ClInclude Include="Logic\LogicData.h" />
     <ClInclude Include="Logic\LogicAdapter.h" />
     <ClInclude Include="Engine\Gameplay\Planet.h" />
+    <ClInclude Include="Core\MessageProc.h" />
     <ClInclude Include="Rendering\RenderPipeType.h" />
     <ClInclude Include="Source\MyActor.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />

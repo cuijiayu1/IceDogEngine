@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Coordinate.h"
+#include "BasicSpace.h"
 
 namespace IceDogCore
 {
-	class SphereSpace:public Coordinate
+	class SphereSpace:public BasicSpace
 	{
 	};
 }

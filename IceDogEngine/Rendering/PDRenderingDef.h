@@ -40,7 +40,37 @@ namespace IceDogRendering
 		{
 			return float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 		}
+
+		static float4x4 GetRotationMatrix(const float3& rotate)
+		{
+#if defined __DIRECTX__
+			DirectX::XMFLOAT4X4 temp4x4;
+			DirectX::XMStoreFloat4x4(&temp4x4,DirectX::XMMatrixRotationRollPitchYaw(rotate.x, rotate.y, rotate.z));
+			return float4x4(temp4x4);
+#endif
+			return Identity();
+		}
+
+		static float4x4 FromSRT(const float3& scale, const float3& rotate, const float3& transform)
+		{
+#if defined __DIRECTX__
+			DirectX::XMFLOAT4X4 retMat;
+			auto mScale = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+			auto mRotate = DirectX::XMMatrixRotationRollPitchYaw(rotate.x, rotate.y, rotate.z);
+			auto mTransf = DirectX::XMMatrixTranslation(transform.x, transform.y, transform.z);
+			DirectX::XMStoreFloat4x4(&retMat, mScale*mRotate*mTransf);
+			return float4x4(retMat);
+#endif
+			return Identity();
+		}
 	};
+	inline float4 operator*(const float4& v1,const float4x4& mat)
+	{
+		return float4(v1.x*mat.m[0] + v1.y*mat.m[4] + v1.z*mat.m[8] + v1.w*mat.m[12],
+			v1.x*mat.m[1] + v1.y*mat.m[5] + v1.z*mat.m[9] + v1.w*mat.m[13],
+			v1.x*mat.m[2] + v1.y*mat.m[6] + v1.z*mat.m[10] + v1.w*mat.m[14],
+			v1.x*mat.m[3] + v1.y*mat.m[7] + v1.z*mat.m[11] + v1.w*mat.m[15]);
+	}
 
 	struct Vertex
 	{

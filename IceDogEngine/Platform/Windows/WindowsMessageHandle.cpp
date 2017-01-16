@@ -107,6 +107,20 @@ MessageResult WindowsMessageHandle::ProcessMessage(MessageParam params)
 		msg.c_param1 = HIWORD(params.c_lparam);
 		if (c_messageProcessChain) { c_messageProcessChain(msg); }
 		break;
+	case WM_KEYDOWN:
+		msg.c_messageAuthority = MessageAuthority::USER;
+		msg.c_messageType = MessageType::keyDown;
+		msg.c_param0 = LOWORD(params.c_lparam);
+		msg.c_param1 = HIWORD(params.c_lparam);
+		if (c_messageProcessChain) { c_messageProcessChain(msg); }
+		break;
+	case WM_KEYUP:
+		msg.c_messageAuthority = MessageAuthority::USER;
+		msg.c_messageType = MessageType::keyUp;
+		msg.c_param0 = LOWORD(params.c_lparam);
+		msg.c_param1 = HIWORD(params.c_lparam);
+		if (c_messageProcessChain) { c_messageProcessChain(msg); }
+		break;
 	default:
 		res.c_result = DefWindowProc(params.c_windowInstance, params.c_message, params.c_wparam, params.c_lparam);
 		break;

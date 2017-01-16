@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "Engine\Engine.h"
 #include "Source\MyActor.h"
+#include "Source\Cha.h"
 
 using namespace std;
 
@@ -34,6 +35,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	IceDogEngine::Engine eg(std::cout, pfwindow);
 	eg.Init();
 	cout << "Hello Ice Dog Engine" << endl;
+
+	Cha cha;
+	cha.SetActorLocation(IceDogUtils::float3(0, 0, -6));
 
 	MyActor actor;
 

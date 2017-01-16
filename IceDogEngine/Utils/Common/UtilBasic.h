@@ -17,6 +17,7 @@ using namespace DirectX;
 #include <string>
 #include <memory>
 #include <functional>
+#include <algorithm>
 
 
 // directx Utils

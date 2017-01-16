@@ -29,6 +29,8 @@ namespace IceDogRendering
 		virtual void Render(std::vector<std::shared_ptr<RenderData>>& renderDatas) = 0;
 		/* init the platform dependence data */
 		virtual void InitPlatformDepedence(PlatformDependenceRenderResource pdrr) { c_PDRR = pdrr; };
+		/* regist the main pipe view */
+		virtual void RegistMainPipeView(std::shared_ptr<PipeView> pv) { r_mainPipeView = pv; }
 	protected:
 		/* reset the render target size */
 		virtual void Resize(int newWidth, int newHeight) = 0;

@@ -29,10 +29,11 @@ namespace IceDogRendering
 		void SetNearPlane(float nearPlane);
 		/* set the far plane */
 		void SetFarPlane(float farPlane);
-
-	private:
 		/* use for update the view matrix, called after value change */
 		void UpdateViewMatrix();
+		void UpdateViewMatrix(float4x4 mat);
+
+	private:
 		/* use for update the projection matrix, called after value change */
 		void UpdateProjectionMatrix();
 

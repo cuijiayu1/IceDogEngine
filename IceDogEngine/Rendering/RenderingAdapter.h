@@ -21,6 +21,9 @@ namespace IceDogRendering
 		void RegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
 		void UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
 
+		/* regist the pipeview */
+		void RegistMainPipeView(std::shared_ptr<PipeView> pv);
+
 	private:
 		// the rendering manager
 		std::shared_ptr<RenderingManager> r_renderingManager;

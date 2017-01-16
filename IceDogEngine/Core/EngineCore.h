@@ -1,6 +1,7 @@
 #pragma once
 #include "../Utils/Common/UtilBasic.h"
 #include "../Platform/Message.h"
+#include "MessageProc.h"
 #include "Timer.h"
 
 // the engine core is the heart of this engine but not the engine itself, so the core should not consisit of other parts
@@ -23,6 +24,10 @@ namespace IceDogCore
 		void RegistLogicTick(std::function<void(float)> logicTick);
 		/* message process chain */
 		void ProcessMessageChain(IceDogPlatform::Message msg);
+		/* regist the message processor */
+		void RegistMessageProc(MessageProc* msprc);
+		/* unregist the message processor */
+		void UnRegistMessageProc(MessageProc* msprc);
 
 		std::function<void()> testTick;
 		
@@ -31,6 +36,8 @@ namespace IceDogCore
 		Timer r_coreTimer;
 
 	private:
+		// the message process units
+		std::vector<MessageProc*> r_messageProcs;
 		// the platform tick port, call this to call platform tick
 		std::function<void()> c_platformTickPort;
 		// the rendering tick port,call this to call the rendering tick

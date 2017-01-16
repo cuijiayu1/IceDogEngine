@@ -22,7 +22,9 @@ namespace IceDogPlatform
 		midButtonDown,
 		midButtonUp,
 		mouseMove,
-		mouseWheel
+		mouseWheel,
+		keyDown,
+		keyUp
 	};
 
 	struct Message

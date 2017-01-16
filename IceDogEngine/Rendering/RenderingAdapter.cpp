@@ -45,6 +45,11 @@ void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<Rende
 	}
 }
 
+void IceDogRendering::RenderingAdapter::RegistMainPipeView(std::shared_ptr<PipeView> pv)
+{
+	r_renderingManager->RegistMainPipeView(pv);
+}
+
 RenderingAdapter::RenderingAdapter(std::ostream& errOS):s_errorlogOutStream(errOS)
 {
 

@@ -24,6 +24,8 @@ namespace IceDogRendering
 		float4x4 GetWorldInverseTransposeMatrix() { return c_worldInverseTransposeMatrix; }
 		/* get the material def of this obj */
 		Material GetMaterial() { return c_material; }
+		/* set the world matrix */
+		void SetWorldMatrix(const float4x4& worldMatrix) { c_worldMatrix = worldMatrix; }
 		/* set the vertex data */
 		void SetVertexData(Vertex* buffer, int count);
 		/* set the index data */

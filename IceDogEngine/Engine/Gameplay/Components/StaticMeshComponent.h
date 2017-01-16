@@ -18,6 +18,8 @@ namespace IceDogGameplay
 		/* set disable */
 		virtual void SetDisable() override;
 
+		/* update the location from owner */
+		virtual void Update() override;
 
 	private:
 		std::shared_ptr<IceDogRendering::RenderData> r_renderData;
