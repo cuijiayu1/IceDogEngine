@@ -2,7 +2,7 @@
 
 using namespace IceDogGameplay;
 
-DynamicMeshComponent::DynamicMeshComponent()
+DynamicMeshComponent::DynamicMeshComponent(class Actor* owner):Component::Component(owner)
 {
 }
 

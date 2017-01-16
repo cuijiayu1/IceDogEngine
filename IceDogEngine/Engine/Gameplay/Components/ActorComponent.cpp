@@ -3,9 +3,8 @@
 
 using namespace IceDogGameplay;
 
-ActorComponent::ActorComponent()
+ActorComponent::ActorComponent(class Actor* owner):Component::Component(owner)
 {
-	SetEnable();
 }
 
 
@@ -23,13 +22,13 @@ void IceDogGameplay::ActorComponent::Tick(float deltaTime)
 
 void IceDogGameplay::ActorComponent::SetEnable()
 {
-	c_componentEnable = true;
+	Component::SetEnable();
 	IceDogEngine::Engine::GetEngine()->RegistLogicData(this);
 }
 
 void IceDogGameplay::ActorComponent::SetDisable()
 {
-	c_componentEnable = false;
+	Component::SetDisable();
 	IceDogEngine::Engine::GetEngine()->UnRegistLogicData(this);
 }
 

@@ -38,6 +38,14 @@ void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd,Ic
 	r_renderAdapter.RegistRenderData(rd, rpt);
 }
 
+void IceDogEngine::Engine::UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt)
+{
+	// remove from level
+	r_defaultLevel.UnRegistRenderData(rd);
+	r_renderAdapter.UnRegistRenderData(rd, rpt);
+}
+
+
 void Engine::RegistLogicData(IceDogLogic::LogicData* ld)
 {
 	// add data to level
@@ -53,9 +61,14 @@ void Engine::UnRegistLogicData(IceDogLogic::LogicData* ld)
 }
 
 
-void Engine::RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
+void Engine::RegistActor(IceDogGameplay::Actor* ac)
 {
 	r_defaultLevel.RegistActor(ac);
+}
+
+void IceDogEngine::Engine::UnRegistActor(IceDogGameplay::Actor* ac)
+{
+	r_defaultLevel.UnRegistActor(ac);
 }
 
 IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()

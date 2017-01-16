@@ -3,12 +3,11 @@
 
 using namespace IceDogGameplay;
 
-StaticMeshComponent::StaticMeshComponent()
+StaticMeshComponent::~StaticMeshComponent()
 {
 }
 
-
-StaticMeshComponent::~StaticMeshComponent()
+IceDogGameplay::StaticMeshComponent::StaticMeshComponent(class Actor* owner):Component::Component(owner)
 {
 }
 
@@ -22,6 +21,17 @@ void IceDogGameplay::StaticMeshComponent::SetStaticMesh(std::shared_ptr<IceDogRe
 	else
 	{
 		r_renderData = rd;
-		IceDogEngine::Engine::GetEngine()->RegistRenderData(rd,IceDogRendering::RenderPipeType::Scene);
 	}
+}
+
+void IceDogGameplay::StaticMeshComponent::SetEnable()
+{
+	Component::SetEnable();
+	IceDogEngine::Engine::GetEngine()->RegistRenderData(r_renderData, IceDogRendering::RenderPipeType::Scene);
+}
+
+void IceDogGameplay::StaticMeshComponent::SetDisable()
+{
+	Component::SetDisable();
+	IceDogEngine::Engine::GetEngine()->UnRegistRenderData(r_renderData,IceDogRendering::RenderPipeType::Scene);
 }

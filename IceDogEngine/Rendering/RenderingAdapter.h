@@ -1,15 +1,10 @@
 #pragma once
 #include "RenderingManager.h"
 #include "RenderingPipe.h"
+#include "RenderPipeType.h"
 
 namespace IceDogRendering
 {
-	enum class RenderPipeType
-	{
-		Scene,
-		UI
-	};
-
 	class RenderingAdapter
 	{
 	public:
@@ -22,8 +17,9 @@ namespace IceDogRendering
 		/* rendering tick */
 		void TickRendering();
 
-		/* regist Render data, to the rendering pipe line */
+		/* regist/unregist Render data, to the rendering pipe line */
 		void RegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
+		void UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
 
 	private:
 		// the rendering manager

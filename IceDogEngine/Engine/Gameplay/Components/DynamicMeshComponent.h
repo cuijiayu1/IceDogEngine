@@ -7,7 +7,7 @@ namespace IceDogGameplay
 	class DynamicMeshComponent:public Component
 	{
 	public:
-		DynamicMeshComponent();
+		DynamicMeshComponent(class Actor* owner);
 		~DynamicMeshComponent();
 	private:
 		std::shared_ptr<IceDogRendering::DynamicRenderData> r_renderData;

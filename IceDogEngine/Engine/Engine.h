@@ -23,15 +23,17 @@ namespace IceDogEngine
 		/* run the engine */
 		void Run();
 
-		/* regist the render data */
+		/* regist/unregist the render data */
 		void RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt);
+		void UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt);
 
 		/* regist/unregist the logic data */
 		void RegistLogicData(IceDogLogic::LogicData* ld);
 		void UnRegistLogicData(IceDogLogic::LogicData* ld);
 
-		/* regist the actor */
-		void RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
+		/* regist/unregist the actor */
+		void RegistActor(IceDogGameplay::Actor* ac);
+		void UnRegistActor(IceDogGameplay::Actor* ac);
 
 	private:
 		// the current level that this hold

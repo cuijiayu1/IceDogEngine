@@ -9,7 +9,7 @@ namespace IceDogGameplay
 	class ActorComponent:public Component,public IceDogLogic::LogicData
 	{
 	public:
-		ActorComponent();
+		ActorComponent(class Actor* owner);
 		~ActorComponent();
 
 	public:

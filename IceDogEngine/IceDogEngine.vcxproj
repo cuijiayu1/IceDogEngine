@@ -115,6 +115,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Gameplay\Components\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\Component.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\DynamicMeshComponent.cpp" />
     <ClCompile Include="Engine\Gameplay\Actor.cpp" />
     <ClCompile Include="Core\EngineCore.cpp" />
@@ -122,6 +124,7 @@
     <ClCompile Include="Engine\Gameplay\Level.cpp" />
     <ClCompile Include="Logic\LogicData.cpp" />
     <ClCompile Include="Logic\LogicAdapter.cpp" />
+    <ClCompile Include="Engine\Gameplay\Planet.cpp" />
     <ClCompile Include="Source\MyActor.cpp" />
     <ClCompile Include="Rendering\DynamicRenderData.cpp" />
     <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
@@ -139,7 +142,11 @@
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Coordinate.h" />
+    <ClInclude Include="Core\SphereSpace.h" />
+    <ClInclude Include="Core\VectorSpace.h" />
     <ClInclude Include="Engine\Gameplay\Components\ActorComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Gameplay\Components\Component.h" />
     <ClInclude Include="Engine\Gameplay\Components\DynamicMeshComponent.h" />
     <ClInclude Include="Engine\Gameplay\Actor.h" />
@@ -149,11 +156,14 @@
     <ClInclude Include="Engine\Gameplay\Level.h" />
     <ClInclude Include="Logic\LogicData.h" />
     <ClInclude Include="Logic\LogicAdapter.h" />
+    <ClInclude Include="Engine\Gameplay\Planet.h" />
+    <ClInclude Include="Rendering\RenderPipeType.h" />
     <ClInclude Include="Source\MyActor.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />
     <ClInclude Include="Rendering\DynamicRenderData.h" />
     <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
     <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
+    <ClInclude Include="Utils\Math\MathDef.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
     <ClInclude Include="Rendering\RenderData.h" />

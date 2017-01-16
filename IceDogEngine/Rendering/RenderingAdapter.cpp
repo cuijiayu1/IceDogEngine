@@ -30,6 +30,21 @@ void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderData> rd, RenderPi
 	}
 }
 
+void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt)
+{
+	switch (rpt)
+	{
+	case IceDogRendering::RenderPipeType::Scene:
+		r_renderingManager->UnRegistSceneRenderData(rd);
+		break;
+	case IceDogRendering::RenderPipeType::UI:
+		r_renderingManager->UnRegistUIRenderData(rd);
+		break;
+	default:
+		break;
+	}
+}
+
 RenderingAdapter::RenderingAdapter(std::ostream& errOS):s_errorlogOutStream(errOS)
 {
 

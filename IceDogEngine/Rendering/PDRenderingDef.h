@@ -1,107 +1,13 @@
 #pragma once
 #include "../Utils/Common/UtilBasic.h"
+#include "../Utils/Math/MathDef.h"
 
 namespace IceDogRendering
 {
-	template<typename T,int vecSize>
-	class Vector
-	{
-	public:
-		T _data[vecSize];
-	public:
-		T operator[](size_t place)
-		{
-			assert(place >= 0 && place < vecSize);
-			return _data[place];
-		}
-		Vector() {};
-		Vector(const T (&inidata)[vecSize])
-		{
-			for (size_t i = 0; i < vecSize; i++)
-			{
-				_data[i] = inidata[i];
-			}
-		}
-
-		Vector Normilize()
-		{
-			T sum = 0;
-			for (size_t i=0;i<vecSize;i++)
-			{
-				sum += _data[i] * _data[i];
-			}
-			T length = sqrtl(sum);
-			T tempArray[vecSize];
-			for (size_t i=0;i<vecSize;i++)
-			{
-				tempArray[i] = _data[i] / length;
-			}
-			return Vector(tempArray);
-		}
-
-		static Vector Zero()
-		{
-			T temp[vecSize] = { 0 };
-			return Vector(temp);
-		}
-		// get the vector size
-		constexpr size_t Length()
-		{
-			return vecSize;
-		}
-
-		Vector& operator=(const Vector& source) 
-		{
-			for (size_t i=0;i<vecSize;i++)
-			{
-				_data[i] = source._data[i];
-			}
-			return *this;
-		}
-	};
-
-
-	struct float2
-	{
-		float x;
-		float y;
-
-		float2(float _x, float _y):x(_x),y(_y) {}
-		float2() :x(0), y(0) {}
-		explicit float2(const float* data) :x(data[0]), y(data[1]) {}
-		float2& operator= (const float2& Float2) { x = Float2.x; y = Float2.y; return *this; }
-	};
-
-	struct float3
-	{
-		float x;
-		float y;
-		float z;
-
-		static float3 Zeros() { return float3(0, 0, 0); }
-		float3 Normilize() 
-		{
-			float length = sqrtf(x*x + y*y + z*z);
-			return float3(x / length, y / length, z / length);
-		}
-		float3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
-		float3() :x(0), y(0),z(0) {}
-		explicit float3(const float* data) :x(data[0]), y(data[1]), z(data[2]) {}
-		float3& operator= (const float3& Float3) { x = Float3.x; y = Float3.y; z = Float3.z; return *this; }
-	};
-
-	struct float4
-	{
-		float x;
-		float y;
-		float z;
-		float w;
-
-		float4(float _x, float _y, float _z, float _w) :x(_x), y(_y), z(_z), w(_w) {}
-		float4() :x(0), y(0), z(0),w(0) {}
-		explicit float4(const float* data) :x(data[0]), y(data[1]), z(data[2]),w(data[3]) {}
-		float4& operator= (const float4& Float4) { x = Float4.x; y = Float4.y; z = Float4.z; w = Float4.w; return *this; }
-	};
+	using IceDogUtils::float2;
+	using IceDogUtils::float3;
+	using IceDogUtils::float4;
+	using IceDogUtils::Vector;
 
 	struct float4x4
 	{

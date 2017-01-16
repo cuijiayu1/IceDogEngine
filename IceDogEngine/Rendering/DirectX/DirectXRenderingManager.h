@@ -25,8 +25,14 @@ namespace IceDogRendering
 		/* regist the ui pipe render data */
 		void RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
 
+		/* unregist the ui pipe render data */
+		void UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
+
 		/* regist the scene pipe render data */
 		void RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
+
+		/* unregist the scene pipe render data */
+		void UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) override;
 
 	private:
 		/* update the RenderData index buffer */

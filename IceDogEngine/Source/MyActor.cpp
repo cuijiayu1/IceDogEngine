@@ -7,11 +7,13 @@ using namespace IceDogGameplay;
 MyActor::MyActor()
 {
 	// test code
-	StaticMeshComponent* st = new StaticMeshComponent();
+	StaticMeshComponent* st = new StaticMeshComponent(this);
 	std::shared_ptr<IceDogRendering::RenderData> rd = std::make_shared<IceDogRendering::RenderData>();
 	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(1, 20, 20, rd);
 
 	st->SetStaticMesh(rd);
+	SetEnable();
+	//SetDisable();
 }
 
 
@@ -21,5 +23,5 @@ MyActor::~MyActor()
 
 void MyActor::Tick(float deltaTime)
 {
-	
+	std::cout << "asdfasdf" << std::endl;
 }

@@ -7,11 +7,17 @@ namespace IceDogGameplay
 	class StaticMeshComponent:public Component
 	{
 	public:
-		StaticMeshComponent();
+		StaticMeshComponent(class Actor* owner);
 		~StaticMeshComponent();
 
 		/* set the render data */
 		void SetStaticMesh(std::shared_ptr<IceDogRendering::RenderData> rd);
+
+		/* set enable */
+		virtual void SetEnable() override;
+		/* set disable */
+		virtual void SetDisable() override;
+
 
 	private:
 		std::shared_ptr<IceDogRendering::RenderData> r_renderData;

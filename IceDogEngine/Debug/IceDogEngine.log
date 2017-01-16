@@ -1,12 +1,7 @@
-﻿  MyActor.cpp
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(51): warning C4814: “IceDogRendering::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(61): note: 参见对正在编译的类 模板 实例化“IceDogRendering::Vector<T,vecSize>”的引用
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(156): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(163): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(183): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(201): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(202): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(203): warning C4305: “参数”: 从“double”到“float”截断
-g:\d3d11\d3dtestfield\icedogengine\icedogengine\rendering\pdrenderingdef.h(204): warning C4305: “参数”: 从“double”到“float”截断
+﻿  CameraComponent.cpp
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(96): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  g:\d3d11\d3dtestfield\icedogengine\icedogengine\utils\math\mathdef.h(106): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

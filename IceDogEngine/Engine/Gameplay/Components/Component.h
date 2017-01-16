@@ -5,13 +5,17 @@ namespace IceDogGameplay
 	class Component
 	{
 	public:
-		Component() { c_componentEnable = true; }
+		Component(class Actor* owner);
 	public:
 		/* enable or disable this component */
-		virtual void SetEnable() { c_componentEnable = true; }
-		virtual void SetDisable() { c_componentEnable = false; }
+		virtual void SetEnable();
+		virtual void SetDisable();
 	protected:
 		// whether this component work or not
 		bool c_componentEnable;
+
+		// the owner indicated who own this component
+		Actor* c_owner;
+		
 	};
 }
