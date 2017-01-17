@@ -14,6 +14,16 @@ void EngineCore::Init()
 
 void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 {
+	// if dirty sort the queue
+	if (c_messageChainDirty)
+	{
+		std::sort(r_messageProcs.begin(), r_messageProcs.end(), [](MessageProc* m0, MessageProc* m1)->bool
+		{
+			return m0->GetPriority() > m1->GetPriority();
+		});
+		MarkMessageChainClean();
+	}
+
 	// for priority and authority separation
 	using IceDogPlatform::MessageAuthority;
 	if (msg.c_messageAuthority==MessageAuthority::SYSTEM)
@@ -57,16 +67,22 @@ void IceDogCore::EngineCore::RegistLogicTick(std::function<void(float)> logicTic
 void IceDogCore::EngineCore::RegistMessageProc(MessageProc* msprc)
 {
 	r_messageProcs.push_back(msprc);
-	// set and sort
-	std::sort(r_messageProcs.begin(), r_messageProcs.end(), [](MessageProc* m0, MessageProc* m1)->bool
-	{
-		return m0->GetPriority() > m1->GetPriority();
-	});
+	MarkMessageChainDirty();
 }
 
 void IceDogCore::EngineCore::UnRegistMessageProc(MessageProc* msprc)
 {
 	r_messageProcs.erase(std::find(r_messageProcs.begin(), r_messageProcs.end(), msprc));
+}
+
+void IceDogCore::EngineCore::MarkMessageChainDirty()
+{
+	c_messageChainDirty = true;
+}
+
+void IceDogCore::EngineCore::MarkMessageChainClean()
+{
+	c_messageChainDirty = false;
 }
 
 void EngineCore::Run()

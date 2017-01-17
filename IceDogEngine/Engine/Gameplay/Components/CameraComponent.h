@@ -11,7 +11,11 @@ namespace IceDogGameplay
 		CameraComponent(class Actor* owner);
 		~CameraComponent();
 
+		/* update the view matrix */
 		void Update();
+
+		/* process the message that received */
+		int ProcessMessage(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
 
 	protected:
 		// the basic coordinate

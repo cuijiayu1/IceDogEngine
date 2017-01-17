@@ -1,8 +1,10 @@
 #pragma once
+
 #include "PlatformDependenceRenderResource.h"
 #include "RenderData.h"
 #include "PipeView.h"
 #include "LightingGroup.h"
+#include "../Core/MessageProc.h"
 #include "../Platform/PlatformWindow.h"
 
 namespace IceDogRendering
@@ -10,7 +12,7 @@ namespace IceDogRendering
 	class RenderingPipe
 	{
 	public:
-		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS) 
+		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
 			DirectionalLight dl;
 			SpotLight sl;
@@ -20,6 +22,9 @@ namespace IceDogRendering
 			r_defaultLG.AddDirectionalLight(dl);
 			//r_defaultLG.AddSpotLight(sl);
 			r_defaultLG.AddPointLight(pl);
+			//bind the event processor
+			r_messageProc.BindProcessor(std::bind(&RenderingPipe::EventProcessor, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3));
+			r_messageProc.Init();
 		}
 		/* set msaa config not enable immediately*/
 		virtual void SetMsaaConfig(bool msaaEnable) { c_enableMsaa = msaaEnable;};
@@ -34,6 +39,16 @@ namespace IceDogRendering
 	protected:
 		/* reset the render target size */
 		virtual void Resize(int newWidth, int newHeight) = 0;
+
+	private:
+		int EventProcessor(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)
+		{
+			if (msgType==IceDogPlatform::MessageType::systemResize)
+			{
+				Resize(pm0, pm1);
+			}
+			return 0;
+		}
 
 	protected:
 		// default light group
@@ -57,5 +72,8 @@ namespace IceDogRendering
 		unsigned int c_backBufferHeight;
 		// the error out put log port
 		std::ostream& s_errorlogOutStream;
+	private:
+		// default event procesor
+		IceDogCore::MessageProc r_messageProc;
 	};
 }

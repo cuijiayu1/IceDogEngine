@@ -41,8 +41,11 @@ namespace IceDogEngine
 		/* get the aspect ratio of this platform */
 		float GetAspectRatio();
 
-		/* regist the message proc */
+		/* return the engine core ref */
 		IceDogCore::EngineCore& GetEngineCore();
+
+		/* messaage processor function */
+		int EventProcessor(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
 
 	private:
 		// the total aspect ratio of this platform
@@ -62,6 +65,9 @@ namespace IceDogEngine
 
 		// the logic adapter run on it`s own thread, handle the logic task
 		IceDogLogic::LogicAdapter r_logicAdapter;
+
+		// the message processor
+		IceDogCore::MessageProc r_msgProc;
 
 		// the log output port
 		std::ostream& s_errorlogOutStream;

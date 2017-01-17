@@ -1,4 +1,5 @@
 #include "MessageProc.h"
+#include "../Engine/Engine.h"
 
 namespace IceDogCore
 {
@@ -8,13 +9,24 @@ namespace IceDogCore
 	}
 
 
+	MessageProc::MessageProc(const MessagePriority& priority):c_msgPriority(priority)
+	{
+
+	}
+
 	MessageProc::~MessageProc()
 	{
+	}
+
+	void MessageProc::Init()
+	{
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(this);
 	}
 
 	void MessageProc::SetPriority(const MessagePriority& priority)
 	{
 		c_msgPriority = priority;
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().MarkMessageChainDirty();
 	}
 	MessagePriority MessageProc::GetPriority()
 	{

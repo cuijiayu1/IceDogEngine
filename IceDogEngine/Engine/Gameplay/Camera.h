@@ -10,6 +10,7 @@ namespace IceDogGameplay
 	public:
 		Camera();
 		~Camera();
+
 	private:
 		CameraComponent* r_cameraComponent;
 	};

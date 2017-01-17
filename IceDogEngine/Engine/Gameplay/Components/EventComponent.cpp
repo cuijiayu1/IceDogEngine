@@ -14,7 +14,7 @@ namespace IceDogGameplay
 
 	void EventComponent::SetEnable()
 	{
-		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(this);
+		Init();
 	}
 
 	void EventComponent::SetDisable()
@@ -67,6 +67,9 @@ namespace IceDogGameplay
 			break;
 		case MessageType::keyUp:
 			if (onKeyUp&&onKeyUp(pm1-49152)) { return 1; }
+			break;
+		case MessageType::aspectRatioChange:
+			if (onAspectRatioChange&&onAspectRatioChange(pm0)) { return 1; }
 			break;
 		default:
 			break;

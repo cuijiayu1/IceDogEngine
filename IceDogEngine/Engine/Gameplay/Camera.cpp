@@ -9,7 +9,6 @@ namespace IceDogGameplay
 		SetEnable();
 	}
 
-
 	Camera::~Camera()
 	{
 		delete r_cameraComponent;

@@ -22,20 +22,28 @@ namespace IceDogCore
 		void RegistRenderingTick(std::function<void()> redTick);
 		/* regist the logic tick function */
 		void RegistLogicTick(std::function<void(float)> logicTick);
-		/* message process chain */
+		/* process the message in a message chain chain */
 		void ProcessMessageChain(IceDogPlatform::Message msg);
 		/* regist the message processor */
 		void RegistMessageProc(MessageProc* msprc);
 		/* unregist the message processor */
 		void UnRegistMessageProc(MessageProc* msprc);
+		/* mark message line dirty */
+		void MarkMessageChainDirty();
 
 		std::function<void()> testTick;
+
+	private:
+		/* mark message line dirty */
+		void MarkMessageChainClean();
 		
 	private:
 		// the timer of this core
 		Timer r_coreTimer;
 
 	private:
+		// is message line dirty
+		bool c_messageChainDirty=true;
 		// the message process units
 		std::vector<MessageProc*> r_messageProcs;
 		// the platform tick port, call this to call platform tick

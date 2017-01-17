@@ -29,6 +29,7 @@ namespace IceDogGameplay
 		void BindOnRightUp(std::function<int(float, float)> func) { onRightUp = func; }
 		void BindOnKeyDown(std::function<int(int)> func) { onKeyDown = func; }
 		void BindOnKeyUp(std::function<int(int)> func) { onKeyUp = func; }
+		void BindOnAspectRatioChange(std::function<int(float)> func) { onAspectRatioChange = func; }
 
 	private:
 		std::function<int(float, float)> onLeftDoubleClick;
@@ -44,6 +45,7 @@ namespace IceDogGameplay
 		std::function<int(float, float)> onRightUp;
 		std::function<int(int)>			 onKeyDown;
 		std::function<int(int)>			 onKeyUp;
+		std::function<int(float)>		 onAspectRatioChange;
 	};
 }
 

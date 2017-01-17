@@ -9,7 +9,8 @@ Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	r_enginePlatform(plfWindow,errorLog),
 	r_renderAdapter(errorLog),
 	r_logicAdapter(errorLog),
-	r_aspectRatio(static_cast<float>(plfWindow.width)/static_cast<float>(plfWindow.height))
+	r_aspectRatio(static_cast<float>(plfWindow.width)/static_cast<float>(plfWindow.height)),
+	r_msgProc(IceDogCore::MessagePriority::EM_5)
 {
 	r_egPtr = this;
 	// the platform window will be further construct, we will not hold it.
@@ -30,6 +31,9 @@ void Engine::Init()
 	// init the logic adapter
 	r_logicAdapter.Init();
 	r_engineCore.RegistLogicTick(std::bind(&IceDogLogic::LogicAdapter::TickLogic, &r_logicAdapter, std::placeholders::_1));
+	// init the message processor
+	r_msgProc.BindProcessor(std::bind(&Engine::EventProcessor, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	r_msgProc.Init();
 }
 
 void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd,IceDogRendering::RenderPipeType rpt)
@@ -85,6 +89,20 @@ float IceDogEngine::Engine::GetAspectRatio()
 IceDogCore::EngineCore& IceDogEngine::Engine::GetEngineCore()
 {
 	return r_engineCore;
+}
+
+int IceDogEngine::Engine::EventProcessor(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)
+{
+	if (msgType == IceDogPlatform::MessageType::systemResize)
+	{
+		r_aspectRatio = pm0 / pm1;
+		IceDogPlatform::Message msg;
+		msg.c_messageAuthority = IceDogPlatform::MessageAuthority::SYSTEM;
+		msg.c_messageType = IceDogPlatform::MessageType::aspectRatioChange;
+		msg.c_param0 = r_aspectRatio;
+		r_engineCore.ProcessMessageChain(msg);
+	}
+	return 0;
 }
 
 IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()

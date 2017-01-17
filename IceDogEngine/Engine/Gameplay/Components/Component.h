@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../Utils/Common/UtilBasic.h"
+#include "../../../Core/MessageProc.h"
 
 namespace IceDogGameplay
 {
@@ -21,6 +22,9 @@ namespace IceDogGameplay
 
 		// the owner indicated who own this component
 		Actor* c_owner;
+
+		// the event processor which use this to receive and process event
+		IceDogCore::MessageProc r_msgProc;
 		
 	};
 }
