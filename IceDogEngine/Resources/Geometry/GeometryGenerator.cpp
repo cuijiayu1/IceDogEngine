@@ -1,4 +1,5 @@
 #include "GeometryGenerator.h"
+#include "Geometry.h"
 #include "../../Utils/Math/MathHelper.h"
 
 using namespace IceDogResources;
@@ -224,6 +225,29 @@ void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::RenderData> r
 	rd->SetIndexData(newIndexs, IndicesCopy.size() / 3);
 	rd->SetVertexData(newVertexs, VertexsCopy.size());
 }
+
+void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, float size, bool rhcoords, std::shared_ptr<IceDogRendering::RenderData> rd)
+{
+	DirectX::VertexCollection vc;
+	DirectX::IndexCollection ic;
+	DirectX::ComputeTeapot(vc, ic, size, tess, rhcoords);
+	using IceDogRendering::Vertex;
+	Vertex* vxs = new Vertex[vc.size()];
+	unsigned int* ixs = new unsigned int[ic.size()];
+	for (int i = 0; i < vc.size(); ++i)
+	{
+		vxs[i].color = IceDogUtils::float4(IceDogRendering::Color::Silver);
+		vxs[i].normal = IceDogUtils::float3(vc[i].normal.x, vc[i].normal.y, vc[i].normal.z);
+		vxs[i].position = IceDogUtils::float3(vc[i].position.x, vc[i].position.y, vc[i].position.z);
+	}
+	for (int i=0;i<ic.size();i++)
+	{
+		ixs[i] = ic[i];
+	}
+	rd->SetIndexData(ixs, ic.size() / 3);
+	rd->SetVertexData(vxs, vc.size());
+}
+
 
 void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisions, std::shared_ptr<IceDogRendering::RenderData> rd)
 {

@@ -114,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\DirectX\DirectXDeferredPipe.cpp" />
     <ClCompile Include="Source\Cha.cpp" />
     <ClCompile Include="Engine\Gameplay\Camera.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\ActorComponent.cpp" />
@@ -146,6 +147,9 @@
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\DirectX\DirectXDeferredPipe.h" />
+    <ClInclude Include="Resources\Geometry\Geometry.h" />
+    <ClInclude Include="Resources\Geometry\VertexTypes.h" />
     <ClInclude Include="Source\Cha.h" />
     <ClInclude Include="Core\MessagePriority.h" />
     <ClInclude Include="Engine\Gameplay\Camera.h" />
@@ -172,6 +176,7 @@
     <ClInclude Include="Rendering\DynamicRenderData.h" />
     <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
     <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
+    <ClInclude Include="Utils\Common\DirectXTex.h" />
     <ClInclude Include="Utils\Math\MathDef.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
@@ -204,6 +209,24 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Rendering\DirectX\FX\deferred.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="DirectXTex.lib" />
+    <Library Include="DirectXTK.lib" />
+    <Library Include="Effects11.lib" />
+    <Library Include="Effects11d.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Geometry\TeapotData.inc" />
+    <None Include="Utils\Common\DirectXTex.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

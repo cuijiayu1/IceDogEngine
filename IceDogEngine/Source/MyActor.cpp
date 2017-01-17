@@ -9,9 +9,11 @@ MyActor::MyActor():sourceLocation(1,1,1)
 	// test code
 	StaticMeshComponent* st = new StaticMeshComponent(this);
 	std::shared_ptr<IceDogRendering::RenderData> rd = std::make_shared<IceDogRendering::RenderData>();
-	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(1, 20, 20, rd);
+	IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 2, false, rd);
 
 	r_defaultEventComponent.BindOnLeftDown(std::bind(&MyActor::OnLeftClick,this,std::placeholders::_1,std::placeholders::_2));
+
+	SetActorRotation(IceDogUtils::float3(0, 90, 0));
 
 	st->SetStaticMesh(rd);
 	SetEnable();
@@ -30,6 +32,4 @@ int MyActor::OnLeftClick(float x, float y)
 
 void MyActor::Tick(float deltaTime)
 {
-	sourceLocation = sourceLocation + IceDogCore::float3(0, 0.0001, 0);
-	SetActorScale(sourceLocation);
 }

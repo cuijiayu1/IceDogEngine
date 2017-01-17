@@ -12,6 +12,11 @@ namespace IceDogResources
 		{
 		public:
 			///<summary>
+			/// Creates teapot.
+			///</summary>
+			static void CreateTeapot(int tess,float size, bool rhcoords, std::shared_ptr<IceDogRendering::RenderData> rd);
+
+			///<summary>
 			/// Creates a box centered at the origin with the given dimensions.
 			///</summary>
 			static void CreateBox(float width, float height, float depth, std::shared_ptr<IceDogRendering::RenderData> rd);

@@ -3,6 +3,7 @@
 #if defined __DIRECTX__
 #include "DirectX\DirectXRenderingManager.h"
 #include "DirectX\DirectXRenderingPipe.h"
+#include "DirectX\DirectXDeferredPipe.h"
 #endif
 
 using namespace IceDogRendering;
@@ -67,7 +68,7 @@ void RenderingAdapter::Init(IceDogPlatform::PlatformWindow pfWindow)
 
 	std::shared_ptr<RenderingPipe> scrp;
 #if defined __DIRECTX__
-	scrp = std::make_shared<DirectXRenderingPipe>(s_errorlogOutStream);
+	scrp = std::make_shared<DirectXDeferredPipe>(s_errorlogOutStream);
 #endif
 	assert(scrp != nullptr);
 	scrp->InitPlatformDepedence(pdrr);

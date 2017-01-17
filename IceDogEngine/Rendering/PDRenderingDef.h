@@ -72,6 +72,12 @@ namespace IceDogRendering
 			v1.x*mat.m[3] + v1.y*mat.m[7] + v1.z*mat.m[11] + v1.w*mat.m[15]);
 	}
 
+	struct DeferredLightVertex
+	{
+		float3 position;
+		float2 uv;
+	};
+
 	struct Vertex
 	{
 		float3 position;

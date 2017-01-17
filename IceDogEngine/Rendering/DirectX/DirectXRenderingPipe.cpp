@@ -161,8 +161,6 @@ void DirectXRenderingPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
 {
 	c_platformWindow = pfWindow;
 
-	//r_mainPipeView = std::make_shared<PipeView>((float)pfWindow.width / (float)pfWindow.height);
-
 	// check if support 4x msaa
 	if (ISFAILED(c_PDRR.r_device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &c_msaaQuility)))
 	{

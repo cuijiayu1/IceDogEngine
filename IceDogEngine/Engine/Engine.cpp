@@ -2,7 +2,7 @@
 
 using namespace IceDogEngine;
 
-Engine* Engine::r_egPtr = nullptr;
+Engine* Engine::r_egPtr = nullptr; 
 
 Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	:s_errorlogOutStream(errorLog),

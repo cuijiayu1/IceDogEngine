@@ -105,6 +105,9 @@
     <ClCompile Include="Source\Cha.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\DirectX\DirectXDeferredPipe.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -257,8 +260,35 @@
     <ClInclude Include="Source\Cha.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Rendering\DirectX\DirectXDeferredPipe.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Common\DirectXTex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Geometry\Geometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Geometry\VertexTypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\basic.fx" />
+    <CustomBuild Include="Rendering\DirectX\FX\deferred.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="DirectXTex.lib" />
+    <Library Include="DirectXTK.lib" />
+    <Library Include="Effects11.lib" />
+    <Library Include="Effects11d.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Utils\Common\DirectXTex.inl">
+      <Filter>头文件</Filter>
+    </None>
+    <None Include="Resources\Geometry\TeapotData.inc">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 #include <Windows.h>
 #include "d3dx11effect.h"
+#include "DirectXTex.h"
 using namespace DirectX;
 #endif
 
