@@ -124,22 +124,14 @@ SamplerState samAnisotropic
 	MaxAnisotropy = 4;
 };
 
-Texture2D gBuffer_normal;
-Texture2D gBuffer_diffuse;
-Texture2D gBuffer_specular;
-Texture2D gBuffer_depth;
-
 struct LightVSIn
 {
-	float3 v_position : POSITION;
-	float2 v_uv : TEXCOORD;
+	float3 position : POSITION;
 };
 
 struct LightVSOut
 {
-	float4 v_positionH : SV_POSITION;
-	float3 v_positionW : POSITIONW;
-	float2 v_uv : TEXCOORD;
+	float4 position : POSITION;
 };
 
 struct LightPSOut
@@ -147,33 +139,65 @@ struct LightPSOut
 	float4 finalColor : COLOR;
 };
 
+struct LightGSOut
+{
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
 LightVSOut LightVS(LightVSIn vin)
 {
 	LightVSOut a;
-	a.v_positionH = mul(mul(mul(float4(vin.v_position, 1), m_world), m_view), m_proj);
-	a.v_positionW = mul(float4(vin.v_position, 1), m_world);
-	a.v_uv = vin.v_uv;
+	a.position = float4(0.5, 0.5, 0, 1);
 	return a;
 }
 
-LightPSOut LightPS(LightVSOut vout) : SV_Target
+[maxvertexcount(4)]
+void LightGS(point LightVSOut gIn[1],
+inout TriangleStream<LightGSOut> triStream)
+{
+	LightGSOut O0;
+	LightGSOut O1;
+	LightGSOut O2;
+	LightGSOut O3;
+	O0.uv = float2(0, 1);   //------->u
+	O1.uv = float2(0, 0);	//|
+	O2.uv = float2(1, 1);	//|
+	O3.uv = float2(1, 0);	//v
+	O0.position = float4(-1, -1, 0, 1);		//y
+	O1.position = float4(-1, 1, 0, 1);		//|
+	O2.position = float4(1, -1, 0, 1);		//|
+	O3.position = float4(1, 1, 0, 1);		//----->x
+	triStream.Append(O0);
+	triStream.Append(O1);
+	triStream.Append(O2);
+	triStream.Append(O3);
+}
+
+Texture2D gBuffer_normal;
+Texture2D gBuffer_diffuse;
+Texture2D gBuffer_specular;
+Texture2D gBuffer_depth;
+
+LightPSOut LightPS(LightGSOut vout) : SV_Target
 {
 	LightPSOut result;
-	result.finalColor = gBuffer_diffuse.Sample(samAnisotropic, vout.v_uv);
+	result.finalColor = gBuffer_depth.Sample(samAnisotropic, vout.uv);
 	return result;
 }
 
-technique11 ColorTech
+technique11 Deferred
 {
-	pass gBuffer
+	pass GBufferStage
 	{
 		SetVertexShader(CompileShader(vs_5_0, GBufferVS()));
+		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, GBufferPS()));
 	}
-
-	pass lightPass
+	pass LightingStage
 	{
 		SetVertexShader(CompileShader(vs_5_0, LightVS()));
+		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
 		SetPixelShader(CompileShader(ps_5_0, LightPS()));
 	}
 }

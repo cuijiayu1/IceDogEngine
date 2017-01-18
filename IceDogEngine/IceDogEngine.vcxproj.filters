@@ -274,8 +274,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Rendering\DirectX\FX\basic.fx" />
     <CustomBuild Include="Rendering\DirectX\FX\deferred.fx" />
+    <CustomBuild Include="Rendering\DirectX\FX\basic.fx" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="DirectXTex.lib" />

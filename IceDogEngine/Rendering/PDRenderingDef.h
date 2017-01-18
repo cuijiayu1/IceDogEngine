@@ -75,7 +75,6 @@ namespace IceDogRendering
 	struct DeferredLightVertex
 	{
 		float3 position;
-		float2 uv;
 	};
 
 	struct Vertex

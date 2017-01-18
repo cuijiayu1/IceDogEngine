@@ -46,13 +46,24 @@ namespace IceDogRendering
 
 		/* merge the buffer and output */
 		void MergeOutput();
+
+		/* update the input layout */
+		void UpdateInputLayout();
 		
 
 	private:
 		IDXGISwapChain* r_mainSwapChain;
 		ID3D11InputLayout* r_inputLayout;
+		ID3D11InputLayout* r_deferredLightLayout;
 		D3D11_VIEWPORT r_viewPort;
 		ID3DX11Effect* r_effectFX;
+
+		ID3D11Buffer* r_singleVertexBuffer;
+		ID3D11Buffer* r_singleIndexBuffer;
+		IceDogRendering::DeferredLightVertex* r_dflVertex;
+		UINT* r_dflIndex;
+		D3D11_SUBRESOURCE_DATA r_dflVertexRS;
+		D3D11_SUBRESOURCE_DATA r_dflIndexRS;
 
 		//views
 		ID3D11RenderTargetView* r_backBufferRenderTargetView;
