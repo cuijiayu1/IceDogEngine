@@ -67,23 +67,21 @@ cbuffer cbPerObject
 
 struct VSIn
 {
-	float3 v_position : POSITION;
-	float4 v_color : COLOR;
-	float3 v_normal : NORMAL;
-	float3 v_tangentU : TANGENTU;
-	float2 v_tex0 : TEXCOORD0;
-	float2 v_tex1 : TEXCOORD1;
+	float3 position : POSITION;
+	float4 color : COLOR;
+	float3 normal : NORMAL;
+	float3 tangentU : TANGENTU;
+	float2 tex : TEXCOORD0;
+	float2 tex1 : TEXCOORD1;
 };
 
 struct VSOut
 {
-	float4 v_positionH : SV_POSITION;
-	float3 v_positionW : POSITIONW;
-	float4 v_color : COLOR;
-	float3 v_normalW : NORMAL;
-	float3 v_tangentU : TANGENTU;
-	float2 v_tex0 : TEXCOORD0;
-	float2 v_tex1 : TEXCOORD1;
+	float4 positionH : SV_POSITION;
+	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
+	float3 normalW : TEXCOORD1;
+	float2 depth : TEXCOORD2;
 };
 
 struct PSOut
@@ -97,24 +95,41 @@ struct PSOut
 VSOut GBufferVS(VSIn vin)
 {
 	VSOut vout;
-	vout.v_positionH = mul(mul(mul(float4(vin.v_position, 1.0), m_world), m_view), m_proj);
-	vout.v_positionW = mul(float4(vin.v_position, 1.0f), m_world).xyz;
-	vout.v_color = vin.v_color;
-	vout.v_normalW = mul(vin.v_normal,(float3x3)m_worldInverseTranspose);
-	vout.v_tangentU = vin.v_tangentU;
-	vout.v_tex0 = vin.v_tex0;
-	vout.v_tex1 = vin.v_tex1;
+	vout.positionH = mul(mul(mul(float4(vin.position, 1.0), m_world), m_view), m_proj);
+	vout.tex = vin.tex;
+	vout.normalW = mul(mul(float4(vin.normal, 0.0), m_world),m_view).xyz;
+	vout.color = vin.color;
+	vout.depth = vout.positionH.zw;
 	return vout;
+}
+
+float3 float_to_color(float f)
+{
+	float3 color;
+	f *= 256;
+	color.x = floor(f);
+	f = (f - color.x) * 256;
+	color.y = floor(f);
+	color.z = f - color.y;
+	color.xy *= 0.00390625; // *= 1.0/256
+	return color;
+}
+
+float color_to_float(float3 color)
+{
+	const float3 byte_to_float = float3(1.0, 1.0 / 256, 1.0 / (256 * 256));
+	return dot(color, byte_to_float);
 }
 
 PSOut GBufferPS(VSOut pin) : SV_Target
 {
 	PSOut result;
-	float col = pin.v_positionH.z / pin.v_positionH.w;
-	result.normal = float4(pin.v_normalW,0);
-	result.diffuse = pin.v_color;
-	result.specular = float4(0.75, 0.75, 0.75, 0.75);
-	result.depth = float4(col, col, col, col);
+	result.normal = float4(normalize(pin.normalW)*0.5f + 0.5f, 0);
+	result.diffuse = pin.color;
+	result.specular = float4(0.75, 0.75, 0.75, 1);
+	float depth = pin.depth.x / pin.depth.y;
+	result.depth.rgb = float_to_color(depth);
+	result.depth.a = 1;
 	return result;
 }
 
@@ -144,6 +159,31 @@ struct LightGSOut
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
 };
+
+float NrmDevZToViewZ(float nz)
+{
+	float a = m_proj[2].z;
+	float b = m_proj[3].z;
+
+	float vz = b / (nz - a);
+	return vz;
+}
+
+float NrmDevXToViewX(float nx, float vz)
+{
+	float a = m_proj[0].x;
+
+	float vx = (nx*vz) / a;;
+	return vx;
+}
+
+float NrmDevYToViewY(float ny, float vz)
+{
+	float a = m_proj[1].y;
+	// ny = vy/(vz*a)
+	float vy = (ny*vz) / a;
+	return vy;
+}
 
 LightVSOut LightVS(LightVSIn vin)
 {
@@ -182,7 +222,58 @@ Texture2D gBuffer_depth;
 LightPSOut LightPS(LightGSOut vout) : SV_Target
 {
 	LightPSOut result;
-	result.finalColor = gBuffer_depth.Sample(samAnisotropic, vout.uv);
+	if (vout.uv.y > 0.75)
+	{
+		if (vout.uv.x <= 0.25)
+		{
+			result.finalColor= gBuffer_normal.Sample(samAnisotropic, float2(vout.uv.x * 4, (vout.uv.y - 0.75) * 4));
+		}
+		else if (vout.uv.x <= 0.5)
+		{
+			result.finalColor = gBuffer_diffuse.Sample(samAnisotropic, float2(vout.uv.x * 4-1, (vout.uv.y - 0.75) * 4));
+		}
+		else if (vout.uv.x <= 0.75)
+		{
+			result.finalColor = gBuffer_specular.Sample(samAnisotropic, float2(vout.uv.x * 4 - 2, (vout.uv.y - 0.75) * 4));
+		}
+		else
+		{
+			result.finalColor = gBuffer_depth.Sample(samAnisotropic, float2(vout.uv.x * 4 - 3, (vout.uv.y - 0.75) * 4));
+		}
+	}
+	else
+	{
+		float4 depthSample = gBuffer_depth.Sample(samAnisotropic, vout.uv);
+		float ndcDepth = clamp(color_to_float(depthSample.xyz), 0.0f, 1.0f);
+
+		float3 vPos;
+		vPos.z = NrmDevZToViewZ(ndcDepth);
+		vPos.x = NrmDevXToViewX(vout.uv.x*2.0f - 1.0f, vPos.z);
+		vPos.y = NrmDevYToViewY(-(vout.uv.y*2.0f - 1.0f), vPos.z);
+
+		float4 vNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
+
+		float4 diffuse = gBuffer_diffuse.Sample(samAnisotropic, vout.uv);
+
+		float4 specular = gBuffer_specular.Sample(samAnisotropic, vout.uv);
+
+		float3 toEye = normalize(float3(0.0f, 0.0f, 0.0f) - vPos);
+
+		float3 r = reflect(float3(-2,-2,-2), normalize(vNormal.xyz));
+
+		float4 gSpecularLight = float4(0.1, 0.1, 0.1, 0.1);
+		float4 gDiffuseLight = float4(0.7, 0.7, 0.7, 0.7);
+		float t = pow(max(dot(r, toEye), 0.0f), specular.w*1000.0f);
+
+		float s = max(dot(-float3(-2, -2, -2), vNormal.xyz), 0.0f);
+
+		float3 specColor = t*(specular.xyz*gSpecularLight);
+		float3 diffuseColor = s*(diffuse.xyz*gDiffuseLight);
+		float3 ambientColor = (diffuse.xyz*gDiffuseLight)*0.3f;
+
+		result.finalColor.xyz = specColor + diffuseColor + ambientColor;
+		result.finalColor.a = 1.0f;
+	}
 	return result;
 }
 
