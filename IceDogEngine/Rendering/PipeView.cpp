@@ -6,14 +6,28 @@ void PipeView::UpdateViewMatrix()
 {
 #if defined __DIRECTX__
 	XMFLOAT4X4 tempMatrix;
-	XMStoreFloat4x4(&tempMatrix, XMMatrixLookAtLH(XMLoadFloat3(&XMFLOAT3(c_eyePosition.x, c_eyePosition.y, c_eyePosition.z)), XMLoadFloat3(&XMFLOAT3(c_focusPosition.x, c_focusPosition.y, c_focusPosition.z)), XMLoadFloat3(&XMFLOAT3(c_upDirection.x, c_upDirection.y, c_upDirection.z))));
+	XMMATRIX xmat = XMMatrixLookAtLH(XMLoadFloat3(&XMFLOAT3(c_eyePosition.x, c_eyePosition.y, c_eyePosition.z)), XMLoadFloat3(&XMFLOAT3(c_focusPosition.x, c_focusPosition.y, c_focusPosition.z)), XMLoadFloat3(&XMFLOAT3(c_upDirection.x, c_upDirection.y, c_upDirection.z)));
+	XMStoreFloat4x4(&tempMatrix, xmat);
 	c_viewMatrix = float4x4(tempMatrix);
 #endif
+	UpdateViewInverseMatrix();
 }
 
 void IceDogRendering::PipeView::UpdateViewMatrix(float4x4 mat)
 {
 	c_viewMatrix = mat;
+	UpdateViewInverseMatrix();
+}
+
+void IceDogRendering::PipeView::UpdateViewInverseMatrix()
+{
+#if defined __DIRECTX__
+	XMMATRIX xmat = XMMatrixLookAtLH(XMLoadFloat3(&XMFLOAT3(c_eyePosition.x, c_eyePosition.y, c_eyePosition.z)), XMLoadFloat3(&XMFLOAT3(c_focusPosition.x, c_focusPosition.y, c_focusPosition.z)), XMLoadFloat3(&XMFLOAT3(c_upDirection.x, c_upDirection.y, c_upDirection.z)));
+	XMFLOAT4X4 tempMatrix;
+	XMStoreFloat4x4(&tempMatrix, xmat);
+	XMStoreFloat4x4(&tempMatrix, XMMatrixInverse(&XMMatrixDeterminant(xmat), xmat));
+	c_viewInverse = float4x4(tempMatrix);
+#endif
 }
 
 void PipeView::UpdateProjectionMatrix()

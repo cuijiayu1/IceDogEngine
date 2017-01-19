@@ -60,6 +60,7 @@ cbuffer cbPerObject
 {
 	float4x4 m_world;
 	float4x4 m_view;
+	float4x4 m_viewInv;
 	float4x4 m_proj;
 	float4x4 m_worldInverseTranspose;
 	Material m_mat;
@@ -97,7 +98,7 @@ VSOut GBufferVS(VSIn vin)
 	VSOut vout;
 	vout.positionH = mul(mul(mul(float4(vin.position, 1.0), m_world), m_view), m_proj);
 	vout.tex = vin.tex;
-	vout.normalW = mul(mul(float4(vin.normal, 0.0), m_world),m_view).xyz;
+	vout.normalW = mul(float4(vin.normal, 0.0), m_world).xyz;
 	vout.color = vin.color;
 	vout.depth = vout.positionH.zw;
 	return vout;
@@ -246,10 +247,12 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target
 		float4 depthSample = gBuffer_depth.Sample(samAnisotropic, vout.uv);
 		float ndcDepth = clamp(color_to_float(depthSample.xyz), 0.0f, 1.0f);
 
-		float3 vPos;
+		float4 vPos;
 		vPos.z = NrmDevZToViewZ(ndcDepth);
 		vPos.x = NrmDevXToViewX(vout.uv.x*2.0f - 1.0f, vPos.z);
 		vPos.y = NrmDevYToViewY(-(vout.uv.y*2.0f - 1.0f), vPos.z);
+		//vPos.w = 1;
+		//vPos = mul(vPos,(float3x3)m_viewInv);
 
 		float4 vNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
 
@@ -259,15 +262,15 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target
 
 		float3 toEye = normalize(float3(0.0f, 0.0f, 0.0f) - vPos);
 
-		float3 r = reflect(float3(-2,-2,-2), normalize(vNormal.xyz));
+		float3 r = reflect(float3(2,-2,2), normalize(vNormal.xyz));
 
-		float4 gSpecularLight = float4(0.1, 0.1, 0.1, 0.1);
-		float4 gDiffuseLight = float4(0.7, 0.7, 0.7, 0.7);
-		float t = pow(max(dot(r, toEye), 0.0f), specular.w*1000.0f);
+		float3 gSpecularLight = float3(0.1, 0.1, 0.1);
+		float3 gDiffuseLight = float3(0.25, 0.25, 0.25);
+		float t = pow(max(dot(r, toEye), 0.0f), specular.w*1.5);
 
-		float s = max(dot(-float3(-2, -2, -2), vNormal.xyz), 0.0f);
+		float s = max(dot(float3(-2, 2, -2), vNormal.xyz), 0.0f);
 
-		float3 specColor = t*(specular.xyz*gSpecularLight);
+		float3 specColor =  t*(specular.xyz*gSpecularLight);
 		float3 diffuseColor = s*(diffuse.xyz*gDiffuseLight);
 		float3 ambientColor = (diffuse.xyz*gDiffuseLight)*0.3f;
 

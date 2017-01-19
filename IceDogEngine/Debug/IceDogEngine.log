@@ -3,11 +3,9 @@
   Copyright (C) 2013 Microsoft. All rights reserved.
   
 CUSTOMBUILD : warning X4717: Effects deprecated for D3DCompiler_47
-G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(270,25-51): warning X3206: implicit truncation of vector type
-G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(271,28-52): warning X3206: implicit truncation of vector type
-G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(272,26-50): warning X3206: implicit truncation of vector type
-G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(124,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
-G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(222,18-47): warning X3576: semantics in type overridden by variable/function or enclosing type
+G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(263,28-58): warning X3206: implicit truncation of vector type
+G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(125,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
+G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(223,18-47): warning X3576: semantics in type overridden by variable/function or enclosing type
   
   compilation object save succeeded; see G:\D3D11\D3DTestField\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fxo
   IceDogEngine.vcxproj -> G:\D3D11\D3DTestField\IceDogEngine\Debug\IceDogEngine.exe

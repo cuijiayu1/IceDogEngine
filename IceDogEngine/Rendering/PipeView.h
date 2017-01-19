@@ -10,7 +10,9 @@ namespace IceDogRendering
 	public:
 		PipeView(float aspectRatio);
 		/* get the view matrix */
-		float4x4 GetViewMatrix() { return c_viewMatrix; };
+		float4x4 GetViewMatrix() { return c_viewMatrix; }
+		/* get the view inverse matrix */
+		float4x4 GetViewInverse() { return c_viewInverse; }
 		/* get the eye position in world space */
 		float3 GetEyePosition() { return c_eyePosition; }
 		/* set eye position */
@@ -32,6 +34,8 @@ namespace IceDogRendering
 		/* use for update the view matrix, called after value change */
 		void UpdateViewMatrix();
 		void UpdateViewMatrix(float4x4 mat);
+		/* use for update the view inverse matrix, called after value change */
+		void UpdateViewInverseMatrix();
 
 	private:
 		/* use for update the projection matrix, called after value change */
@@ -40,6 +44,7 @@ namespace IceDogRendering
 	private:
 		// the view matrix
 		float4x4 c_viewMatrix;
+		float4x4 c_viewInverse;
 		float3 c_eyePosition;
 		float3 c_focusPosition;
 		float3 c_upDirection;
