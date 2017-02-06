@@ -34,6 +34,7 @@ namespace IceDogUtils
 	inline float3 operator*(const float3& pos, double dist) { return float3(pos.x*dist, pos.y*dist, pos.z*dist); }
 	inline float3 operator*(double dist, const float3& pos) { return float3(pos.x*dist, pos.y*dist, pos.z*dist); }
 	inline float3 operator+(const float3& f1, const float3& f2) { return float3(f1.x + f2.x, f1.y + f2.y, f1.z + f2.z); }
+	inline float3 operator/(const float3& pos, double dist) { return float3(pos.x / dist, pos.y / dist, pos.z / dist); }
 
 	struct float4
 	{

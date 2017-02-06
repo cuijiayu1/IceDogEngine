@@ -30,7 +30,7 @@ int Cha::OnLeftUp(float x, float y)
 int Cha::OnMove(float x, float y)
 {
 	if (!enableMove) {return 0; }
-	SetActorRotation(IceDogUtils::float3(sourceRotation.x+(y-mouseStart.y)/360.0,sourceRotation.y+(x-mouseStart.x)/360.0,sourceRotation.z));
+	SetActorRotation(IceDogUtils::float3(sourceRotation.x+(y-mouseStart.y)/6.28,sourceRotation.y+(x-mouseStart.x)/6.28,sourceRotation.z));
 	return 0;
 }
 

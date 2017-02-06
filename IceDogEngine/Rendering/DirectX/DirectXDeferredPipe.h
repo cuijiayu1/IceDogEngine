@@ -30,7 +30,7 @@ namespace IceDogRendering
 		void ReleaseAllBuffer();
 
 		/* create g buffer texture */
-		void CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt,ID3D11ShaderResourceView*& sr);
+		void CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt,ID3D11ShaderResourceView*& sr, DXGI_FORMAT format);
 
 		/* resize all buffer */
 		void UpdateAllBuffer();
@@ -49,6 +49,21 @@ namespace IceDogRendering
 
 		/* update the input layout */
 		void UpdateInputLayout();
+
+		/* the function to build up states for rendering */
+		void BuildUpStates();
+
+		/* enable the depth test, to be noticed that depth test is enabled by default, not necessary called unless there is a disable call */
+		void EnableDepthTest();
+
+		/* disable the depth test */
+		void DisableDepthTest();
+
+		/* enable the specific blend mode for lighting */
+		void EnableLightBlend();
+
+		/* disable the specific blend mode for lighting */
+		void DisableLightBlend();
 		
 
 	private:
@@ -65,18 +80,25 @@ namespace IceDogRendering
 		D3D11_SUBRESOURCE_DATA r_dflVertexRS;
 		D3D11_SUBRESOURCE_DATA r_dflIndexRS;
 
+		//states
+		ID3D11BlendState* r_lightBlendEnableState;
+		ID3D11BlendState* r_LightBlendDisableState;
+
+		ID3D11DepthStencilState* r_depthTestEnableState;
+		ID3D11DepthStencilState* r_depthTestDisableState;
+
 		//views
 		ID3D11RenderTargetView* r_backBufferRenderTargetView;
 		ID3D11DepthStencilView* r_backBufferDepthStencilView;
 
 		ID3D11RenderTargetView* r_gBufferNormalRTV;
-		ID3D11RenderTargetView* r_gBufferDiffuseRTV;
+		ID3D11RenderTargetView* r_gBufferBaseColorRTV;
 		ID3D11RenderTargetView* r_gBufferSpecularRTV;
 		ID3D11RenderTargetView* r_gBufferDepthRTV;
 		ID3D11RenderTargetView* r_gBufferFinalColorRTV;
 
 		ID3D11ShaderResourceView* r_gBufferNormalSRV;
-		ID3D11ShaderResourceView* r_gBufferDiffuseSRV;
+		ID3D11ShaderResourceView* r_gBufferBaseColorSRV;
 		ID3D11ShaderResourceView* r_gBufferSpecularSRV;
 		ID3D11ShaderResourceView* r_gBufferDepthSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
@@ -86,7 +108,7 @@ namespace IceDogRendering
 
 		//G-Buffer (Geometry stage out)
 		ID3D11Texture2D* r_gBufferNormal;
-		ID3D11Texture2D* r_gBufferDiffuse;
+		ID3D11Texture2D* r_gBufferBaseColor;
 		ID3D11Texture2D* r_gBufferSpecular;
 		ID3D11Texture2D* r_gBufferDepth;
 

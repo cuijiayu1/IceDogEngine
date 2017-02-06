@@ -152,7 +152,7 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 	// present
 	if (ISFAILED(r_mainSwapChain->Present(0, 0)))
 	{
-		s_errorlogOutStream << "Present Faild" << std::endl;
+		s_errorlogOutStream << "Present failed" << std::endl;
 	}
 	
 }

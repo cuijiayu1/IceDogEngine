@@ -383,6 +383,7 @@ void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, uns
 			Vertices[i*n + j].position = IceDogRendering::float3(x, 0.0f, z);
 			Vertices[i*n + j].normal = IceDogRendering::float3(0.0f, 1.0f, 0.0f);
 			Vertices[i*n + j].tangentU = IceDogRendering::float3(1.0f, 0.0f, 0.0f);
+			Vertices[i*n + j].color = IceDogUtils::float4(IceDogRendering::Color::Silver);
 
 			// Stretch texture over grid.
 			Vertices[i*n + j].tex0.x = j*du;

@@ -114,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\PlaneActor.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXDeferredPipe.cpp" />
     <ClCompile Include="Source\Cha.cpp" />
     <ClCompile Include="Engine\Gameplay\Camera.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\PlaneActor.h" />
     <ClInclude Include="Rendering\DirectX\DirectXDeferredPipe.h" />
     <ClInclude Include="Resources\Geometry\Geometry.h" />
     <ClInclude Include="Resources\Geometry\VertexTypes.h" />

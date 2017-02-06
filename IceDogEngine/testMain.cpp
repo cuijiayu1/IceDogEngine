@@ -2,6 +2,7 @@
 #include "Engine\Engine.h"
 #include "Source\MyActor.h"
 #include "Source\Cha.h"
+#include "Source\PlaneActor.h"
 
 using namespace std;
 
@@ -39,6 +40,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	Cha cha;
 	cha.SetActorLocation(IceDogUtils::float3(0, 0, -6));
 
+	PlaneActor plan;
+	plan.SetActorLocation(IceDogUtils::float3(0, -0.6, 0));
 	MyActor actor;
 
 	eg.Run();

@@ -43,7 +43,7 @@ namespace IceDogCore
 		/* get the rotation */
 		float3 GetRotation() override
 		{
-			return c_rotation;
+			return c_rotation*180.0f/ 3.14159265374f;
 		}
 
 		/* set the location */
@@ -53,10 +53,10 @@ namespace IceDogCore
 			MarkCoordinateDirty();
 		}
 
-		/* set the rotation */
+		/* set the rotation in degree */
 		void SetRotation(const float3& rotate) override
 		{
-			c_rotation = rotate;
+			c_rotation = 3.14159265374 * rotate/180.0f;
 			UpdateForwardRightUp();
 			MarkCoordinateDirty();
 		}

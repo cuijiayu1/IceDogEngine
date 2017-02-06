@@ -15,6 +15,7 @@ namespace IceDogRendering
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
 			DirectionalLight dl;
+			dl.direction = float3(-1, -1, 1);
 			SpotLight sl;
 			sl.position = float3(10, 10, 10);
 			PointLight pl;
@@ -34,7 +35,7 @@ namespace IceDogRendering
 		virtual void Render(std::vector<std::shared_ptr<RenderData>>& renderDatas) = 0;
 		/* init the platform dependence data */
 		virtual void InitPlatformDepedence(PlatformDependenceRenderResource pdrr) { c_PDRR = pdrr; };
-		/* regist the main pipe view */
+		/* register the main pipe view */
 		virtual void RegistMainPipeView(std::shared_ptr<PipeView> pv) { r_mainPipeView = pv; }
 	protected:
 		/* reset the render target size */
@@ -60,7 +61,7 @@ namespace IceDogRendering
 		IceDogPlatform::PlatformWindow c_platformWindow;
 		// the platform dependence rendering resource
 		PlatformDependenceRenderResource c_PDRR;
-		// whether enable the multisample anti al
+		// whether enable the multi sample anti al
 		bool c_enableMsaa;
 		// msaa quality
 		unsigned int c_msaaQuility;
@@ -73,7 +74,7 @@ namespace IceDogRendering
 		// the error out put log port
 		std::ostream& s_errorlogOutStream;
 	private:
-		// default event procesor
+		// default event processor
 		IceDogCore::MessageProc r_messageProc;
 	};
 }
