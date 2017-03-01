@@ -1,4 +1,5 @@
 #include "MyActor.h"
+#include "../Engine/Engine.h"
 #include "../Engine/Gameplay/Components/StaticMeshComponent.h"
 #include "../Resources/Geometry/GeometryGenerator.h"
 
@@ -14,6 +15,8 @@ MyActor::MyActor():sourceLocation(1,1,1)
 	r_defaultEventComponent.BindOnLeftDown(std::bind(&MyActor::OnLeftClick,this,std::placeholders::_1,std::placeholders::_2));
 
 	SetActorRotation(IceDogUtils::float3(0, 90, 0));
+
+	rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_wood.IDAssets"));
 
 	st->SetStaticMesh(rd);
 	SetEnable();

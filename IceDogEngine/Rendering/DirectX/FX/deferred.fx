@@ -72,15 +72,15 @@ struct VSIn
 	float4 color : COLOR;
 	float3 normal : NORMAL;
 	float3 tangentU : TANGENTU;
-	float2 tex : TEXCOORD0;
-	float2 tex1 : TEXCOORD1;
+	float2 diffuseUV : TEXCOORD0;
+	float2 normalUV : TEXCOORD1;
 };
 
 struct VSOut
 {
 	float4 positionH : SV_POSITION;
 	float4 color : COLOR;
-	float2 tex : TEXCOORD0;
+	float2 diffuseUV : TEXCOORD0;
 	float3 normalW : TEXCOORD1;
 	float2 depth : TEXCOORD2;
 };
@@ -97,7 +97,7 @@ VSOut GBufferVS(VSIn vin)
 {
 	VSOut vout;
 	vout.positionH = mul(mul(mul(float4(vin.position, 1.0), m_world), m_view), m_proj);
-	vout.tex = vin.tex;
+	vout.diffuseUV = vin.diffuseUV;
 	vout.normalW = normalize(mul(float4(vin.normal, 0.0), m_world).xyz);
 	vout.color = vin.color;
 	vout.depth = vout.positionH.zw;
@@ -122,23 +122,24 @@ float color_to_float(float3 color)
 	return dot(color, byte_to_float);
 }
 
+Texture2D diffuseMap;
+SamplerState samAnisotropic
+{
+	Filter = ANISOTROPIC;
+	MaxAnisotropy = 4;
+};
+
 PSOut GBufferPS(VSOut pin) : SV_Target
 {
 	PSOut result;
 	result.normal = float4(normalize(pin.normalW)*0.5f + 0.5f, 0);
-	result.baseColor = pin.color;
+	result.baseColor = diffuseMap.Sample(samAnisotropic, pin.diffuseUV);
 	result.specular = float4(0.75, 0.75, 0.75, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	result.depth.rgb = float_to_color(depth);
 	result.depth.a = 1;
 	return result;
 }
-
-SamplerState samAnisotropic
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 4;
-};
 
 struct LightVSIn
 {

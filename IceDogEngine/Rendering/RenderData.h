@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utils/Common/UtilBasic.h"
+#include "MaterialData.h"
 #include "PDRenderingDef.h"
 
 namespace IceDogRendering
@@ -34,6 +35,10 @@ namespace IceDogRendering
 		std::shared_ptr<Vertex> GetVertexData() { return c_vertexDatas; }
 		/* get the index data */
 		std::shared_ptr<unsigned int> GetIndexData() { return c_indexDatas; }
+		/* set the material data */
+		void SetMaterial(MaterialData* matData) { c_materilaData = matData; }
+		/* get the diffuse shader resource view */
+		ID3D11ShaderResourceView* GetDiffuseSRV();
 
 #if defined __DIRECTX__
 		/* get the buffer desc */
@@ -61,7 +66,7 @@ namespace IceDogRendering
 		void MarkDataStateDirty();
 		/* mark the data map state clean so will no be update */
 		void MarkDataMapStateClean();
-		/* get wheter is Dynamic Buffer or not */
+		/* get whether is Dynamic Buffer or not */
 		virtual bool GetIsDynamicBuffer();
 
 	private:
@@ -74,8 +79,9 @@ namespace IceDogRendering
 
 	protected:
 		// the material info
+		MaterialData* c_materilaData;
 		Material c_material;
-		// this mark whther the data should bu update from the resource that this render data holds. this is quite different from the data clean
+		// this mark whether the data should bu update from the resource that this render data holds. this is quite different from the data clean
 		DataMapDirtyFlag c_dataMapFlag = DataMapDirtyFlag::None;
 		// the mark whether the data should be re create, if it`s dirty ,the system would release the old data and create a new buffer from the data that this render data hold
 		bool c_isDataClean = false;

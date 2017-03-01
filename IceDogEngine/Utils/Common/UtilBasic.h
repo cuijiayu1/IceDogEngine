@@ -1,5 +1,8 @@
 #pragma once
 
+#include "../../ThirdParty/rapidxml/rapidxml.hpp"
+#include "../../ThirdParty/rapidxml/rapidxml_utils.hpp"
+#include "../../ThirdParty/rapidxml/rapidxml_print.hpp"
 #include "../../Platform/PlatformConfig.h"
 
 #if defined(__WINDOWS__)
@@ -26,7 +29,7 @@ using namespace DirectX;
 namespace IceDogUtils
 {
 	//---------------------------------------------------------------------------------------
-	// Simple check if faild
+	// Simple check if field
 	//---------------------------------------------------------------------------------------
 #define ISFAILED(hr) (((HRESULT)(hr)) < 0)
 
@@ -73,3 +76,9 @@ namespace IceDogUtils
 	}
 }
 #endif
+
+namespace IceDogUtils
+{
+	/* convert char* to wcahr_t* */
+	wchar_t* char2wchar(char* CStr);
+}

@@ -4,7 +4,6 @@
 
 namespace IceDogRendering
 {
-
 	DirectXDeferredPipe::DirectXDeferredPipe(std::ostream& errOs) : RenderingPipe(errOs)
 	{
 		r_inputLayout = 0;
@@ -277,6 +276,7 @@ namespace IceDogRendering
 			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
 			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
 			r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
+			r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetDiffuseSRV());
 
 			pass->Apply(0, c_PDRR.r_deviceContext);
 

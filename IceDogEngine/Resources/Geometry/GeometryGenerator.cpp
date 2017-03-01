@@ -239,6 +239,7 @@ void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, 
 		vxs[i].color = IceDogUtils::float4(IceDogRendering::Color::Silver);
 		vxs[i].normal = IceDogUtils::float3(vc[i].normal.x, vc[i].normal.y, vc[i].normal.z);
 		vxs[i].position = IceDogUtils::float3(vc[i].position.x, vc[i].position.y, vc[i].position.z);
+		vxs[i].tex0 = IceDogUtils::float2(vc[i].textureCoordinate.x, vc[i].textureCoordinate.y);
 	}
 	for (int i=0;i<ic.size();i++)
 	{

@@ -1,4 +1,4 @@
-#include "Engine.h"
+﻿#include "Engine.h"
 
 using namespace IceDogEngine;
 
@@ -22,7 +22,7 @@ void Engine::Init()
 	r_engineCore.Init();
 	// init the platform
 	r_enginePlatform.InitPlatform();
-	// regist the platform event
+	// register the platform event
 	r_engineCore.RegistPlatformTick(std::bind(&IceDogPlatform::Platform::TickPlatform, &r_enginePlatform));
 	r_enginePlatform.RegistMessageProcessChain(std::bind(&IceDogCore::EngineCore::ProcessMessageChain, &r_engineCore, std::placeholders::_1));
 	// init the render adapter
@@ -103,6 +103,23 @@ int IceDogEngine::Engine::EventProcessor(const IceDogPlatform::MessageType& msgT
 		r_engineCore.ProcessMessageChain(msg);
 	}
 	return 0;
+}
+
+IceDogRendering::MaterialData* IceDogEngine::Engine::LoadMaterialFromUrl(std::string url)
+{
+	// create a material object
+	IceDogRendering::MaterialData* matdata = new IceDogRendering::MaterialData();
+	// load the material description
+	rapidxml::file<> materialDesc(url.c_str());
+	rapidxml::xml_document<> doc;
+	doc.parse<0>(materialDesc.data());
+
+	if (doc.first_node()->first_node("diffuse")->first_attribute()->value()[0] == '1')
+	{
+		matdata->SetDiffuseMap(IceDogUtils::char2wchar(doc.first_node()->first_node("diffuse")->first_node("url")->value()));
+	}
+	r_renderAdapter.RegisterMaterialData(matdata);
+	return matdata;
 }
 
 IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()

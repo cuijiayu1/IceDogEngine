@@ -1,0 +1,7 @@
+<root>
+	<diffuse enable="1">
+		<url>Source/Textures/WoodCrate01.dds</url>
+	</diffuse>
+	<normal enable="0">
+	</normal>
+</root>

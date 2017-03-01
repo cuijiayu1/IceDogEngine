@@ -8,6 +8,7 @@ RenderData::RenderData()
 	c_worldInverseTransposeMatrix = float4x4::Identity();
 	r_indexBuffer = nullptr;
 	r_vertexBuffer = nullptr;
+	c_materilaData = nullptr;
 	c_material.ambient = float4(0.3, 0.3, 0.3, 1);
 	c_material.diffuse = float4(0.2, 0.2, 0.2, 1);
 	c_material.reflect = float4(0.7, 0.7, 0.7, 1);
@@ -142,4 +143,11 @@ void RenderData::UpdateVertexBufferDesc()
 	ReleaseCOM(r_vertexBuffer);
 	r_vertexBuffer = nullptr;
 }
+
+ID3D11ShaderResourceView* IceDogRendering::RenderData::GetDiffuseSRV()
+{
+	if (c_materilaData == nullptr) { return nullptr; }
+	return c_materilaData->GetDiffuseSRV();
+}
+
 #endif

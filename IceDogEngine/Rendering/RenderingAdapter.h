@@ -8,7 +8,7 @@ namespace IceDogRendering
 	class RenderingAdapter
 	{
 	public:
-		/* consturct function */
+		/* construct function */
 		RenderingAdapter(std::ostream& errOS);
 
 		/* init the adapter */
@@ -17,11 +17,15 @@ namespace IceDogRendering
 		/* rendering tick */
 		void TickRendering();
 
-		/* regist/unregist Render data, to the rendering pipe line */
+		/* register/unregister Render data, to the rendering pipe line */
 		void RegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
 		void UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
 
-		/* regist the pipeview */
+		/* register/unregister material data, to the rendering pipe line */
+		void RegisterMaterialData(IceDogRendering::MaterialData* matdata);
+		void UnRegisterMaterialData(IceDogRendering::MaterialData* matdata);
+
+		/* register the pipe view */
 		void RegistMainPipeView(std::shared_ptr<PipeView> pv);
 
 	private:
@@ -29,6 +33,8 @@ namespace IceDogRendering
 		std::shared_ptr<RenderingManager> r_renderingManager;
 		// the log output port
 		std::ostream& s_errorlogOutStream;
+		// the material data
+		std::vector<IceDogRendering::MaterialData*> r_materialDatas;
 	};
 }
 

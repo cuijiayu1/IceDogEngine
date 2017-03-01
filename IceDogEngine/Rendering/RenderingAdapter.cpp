@@ -46,6 +46,18 @@ void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<Rende
 	}
 }
 
+void IceDogRendering::RenderingAdapter::RegisterMaterialData(IceDogRendering::MaterialData* matdata)
+{
+	r_materialDatas.push_back(matdata);
+	matdata->LoadMaterial(r_renderingManager->GetPDRR());
+}
+
+void IceDogRendering::RenderingAdapter::UnRegisterMaterialData(IceDogRendering::MaterialData* matdata)
+{
+	r_materialDatas.erase(std::find(r_materialDatas.begin(), r_materialDatas.end(), matdata));
+	delete matdata;
+}
+
 void IceDogRendering::RenderingAdapter::RegistMainPipeView(std::shared_ptr<PipeView> pv)
 {
 	r_renderingManager->RegistMainPipeView(pv);

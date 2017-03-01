@@ -4,10 +4,11 @@
 #include "..\Rendering\RenderingAdapter.h"
 #include "..\Logic\LogicAdapter.h"
 #include "Gameplay\Level.h"
+#include "../Rendering/MaterialData.h"
 
 namespace IceDogEngine
 {
-	// this class player the box role, which pack everthing up
+	// this class player the box role, which pack everything up
 	class Engine
 	{
 	private:
@@ -23,19 +24,19 @@ namespace IceDogEngine
 		/* run the engine */
 		void Run();
 
-		/* regist/unregist the render data */
+		/* register/unregister the render data */
 		void RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt);
 		void UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt);
 
-		/* regist/unregist the logic data */
+		/* register/unregister the logic data */
 		void RegistLogicData(IceDogLogic::LogicData* ld);
 		void UnRegistLogicData(IceDogLogic::LogicData* ld);
 
-		/* regist/unregist the actor */
+		/* register/unregister the actor */
 		void RegistActor(IceDogGameplay::Actor* ac);
 		void UnRegistActor(IceDogGameplay::Actor* ac);
 
-		/* regist the main pipe view */
+		/* register the main pipe view */
 		void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv);
 
 		/* get the aspect ratio of this platform */
@@ -44,8 +45,11 @@ namespace IceDogEngine
 		/* return the engine core ref */
 		IceDogCore::EngineCore& GetEngineCore();
 
-		/* messaage processor function */
+		/* message processor function */
 		int EventProcessor(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
+
+		/* load material data from file */
+		IceDogRendering::MaterialData* LoadMaterialFromUrl(std::string url);
 
 	private:
 		// the total aspect ratio of this platform
