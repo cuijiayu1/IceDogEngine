@@ -82,7 +82,6 @@ namespace IceDogRendering
 		float3 position;
 		float4 color;
 		float3 normal;
-		float3 tangentU;
 		float2 tex0;
 		float2 tex1;
 
@@ -91,10 +90,9 @@ namespace IceDogRendering
 		Vertex(
 			float px, float py, float pz,
 			float nx, float ny, float nz,
-			float tx, float ty, float tz,
 			float u, float v)
 			: position(px, py, pz), normal(nx, ny, nz),
-			tangentU(tx, ty, tz), tex0(u, v),color(0.2,0.2,0.2,1) {}
+			tex0(u, v),color(0.2,0.2,0.2,1) {}
 	};
 
 	struct DirectionalLight

@@ -26,7 +26,7 @@ namespace IceDogRendering
 		/* get the material def of this obj */
 		Material GetMaterial() { return c_material; }
 		/* set the world matrix */
-		void SetWorldMatrix(const float4x4& worldMatrix) { c_worldMatrix = worldMatrix; }
+		void SetWorldMatrix(const float4x4& worldMatrix);
 		/* set the vertex data */
 		void SetVertexData(Vertex* buffer, int count);
 		/* set the index data */
@@ -37,8 +37,10 @@ namespace IceDogRendering
 		std::shared_ptr<unsigned int> GetIndexData() { return c_indexDatas; }
 		/* set the material data */
 		void SetMaterial(MaterialData* matData) { c_materilaData = matData; }
-		/* get the diffuse shader resource view */
-		ID3D11ShaderResourceView* GetDiffuseSRV();
+		/* get the texture enabled description for shader usage */
+		IceDogRendering::float4 GetTextureEnableDesc() { return c_materilaData->GetTextureEnableDesc(); }
+		/* get the material that this render data current hold */
+		MaterialData* GetMaterialData() { return c_materilaData; }
 
 #if defined __DIRECTX__
 		/* get the buffer desc */

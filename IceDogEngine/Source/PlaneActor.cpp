@@ -13,9 +13,10 @@ PlaneActor::PlaneActor()
 	std::shared_ptr<IceDogRendering::RenderData> rd = std::make_shared<IceDogRendering::RenderData>();
 	IceDogResources::IceDogGeometry::GeometryGenerator::CreateGrid(100, 100, 100, 100, rd);
 
-	rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_wood.IDAssets"));
+	rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_land.IDAssets"));
 
 	SetActorRotation(IceDogUtils::float3(0, 90, 0));
+	SetActorScale(IceDogUtils::float3(0.05, 0.05, 0.05));
 
 	st->SetStaticMesh(rd);
 	SetEnable();

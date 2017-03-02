@@ -14,7 +14,7 @@ MyActor::MyActor():sourceLocation(1,1,1)
 
 	r_defaultEventComponent.BindOnLeftDown(std::bind(&MyActor::OnLeftClick,this,std::placeholders::_1,std::placeholders::_2));
 
-	SetActorRotation(IceDogUtils::float3(0, 90, 0));
+	SetActorRotation(IceDogUtils::float3(0, 0, 0));
 
 	rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_wood.IDAssets"));
 
@@ -35,4 +35,7 @@ int MyActor::OnLeftClick(float x, float y)
 
 void MyActor::Tick(float deltaTime)
 {
+	float tar = (GetActorRotation().y + 0.01);
+	if (tar > 360) { tar = 0; }
+	//SetActorRotation(IceDogUtils::float3(0, tar, 0));
 }

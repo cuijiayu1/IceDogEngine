@@ -63,7 +63,8 @@ cbuffer cbPerObject
 	float4x4 m_viewInv;
 	float4x4 m_proj;
 	float4x4 m_worldInverseTranspose;
-	Material m_mat;
+	float4 DifNorParEmi;
+	float4 parallaxCfg;
 };
 
 struct VSIn
@@ -71,18 +72,18 @@ struct VSIn
 	float3 position : POSITION;
 	float4 color : COLOR;
 	float3 normal : NORMAL;
-	float3 tangentU : TANGENTU;
 	float2 diffuseUV : TEXCOORD0;
-	float2 normalUV : TEXCOORD1;
+	float2 lightUV : TEXCOORD1;
 };
 
 struct VSOut
 {
 	float4 positionH : SV_POSITION;
 	float4 color : COLOR;
-	float2 diffuseUV : TEXCOORD0;
-	float3 normalW : TEXCOORD1;
-	float2 depth : TEXCOORD2;
+	float4 positionW : POSITION;
+	float3 normalW : NORMAL;
+	float2 modelUV : TEXCOORD0;
+	float2 depth : TEXCOORD1;
 };
 
 struct PSOut
@@ -93,12 +94,32 @@ struct PSOut
 	float4 depth		: COLOR3;
 };
 
+float3x3 compute_tangent_frame(float3 N, float3 p, float2 uv)
+{
+	// get edge vectors of pixel triangle
+	float3 dp1 = ddx(p);
+	float3 dp2 = ddy(p);
+	float2 duv1 = ddx(uv);
+	float2 duv2 = ddy(uv);
+
+	// solve the linear system
+	float3 dp2perp = cross(dp2, N);
+	float3 dp1perp = cross(N, dp1);
+	float3 T = (dp2perp * duv1.x + dp1perp * duv2.x);
+	float3 B = (dp2perp * duv1.y + dp1perp * duv2.y);
+
+	// construct a scale-invariant frame 
+	float invmax = rsqrt(max(dot(T, T), dot(B, B)));
+	return float3x3(T*invmax, B*invmax, N);
+}
+
 VSOut GBufferVS(VSIn vin)
 {
 	VSOut vout;
 	vout.positionH = mul(mul(mul(float4(vin.position, 1.0), m_world), m_view), m_proj);
-	vout.diffuseUV = vin.diffuseUV;
-	vout.normalW = normalize(mul(float4(vin.normal, 0.0), m_world).xyz);
+	vout.positionW = mul(float4(vin.position, 1.0), m_world);
+	vout.modelUV = vin.diffuseUV;
+	vout.normalW = normalize(mul(float4(vin.normal, 0.0), m_worldInverseTranspose).xyz);
 	vout.color = vin.color;
 	vout.depth = vout.positionH.zw;
 	return vout;
@@ -122,19 +143,102 @@ float color_to_float(float3 color)
 	return dot(color, byte_to_float);
 }
 
-Texture2D diffuseMap;
 SamplerState samAnisotropic
 {
 	Filter = ANISOTROPIC;
 	MaxAnisotropy = 4;
 };
 
+Texture2D diffuseMap;
+Texture2D normalMap;
+Texture2D parallaxMap;
+
+float2 parallaxMapping_low(float3 tant_eyeVec, float2 uv)
+{
+	float3 eyeVec = tant_eyeVec;
+	float h = parallaxMap.Sample(samAnisotropic, uv).x;
+	return eyeVec.xy / eyeVec.z *h * parallaxCfg.x;
+}
+
+float2 parallaxMapping_high(float3 tant_eyeVec, float2 uv)
+{
+	float3 eyeVec = tant_eyeVec;
+	float _ParallaxScale = parallaxCfg.x;
+
+	// subdiv layers
+	float numLayers = parallaxCfg.y;
+
+	// step high in one layer
+	float layerHeight = 1.0 / numLayers;
+	// max high
+	float currentLayerHeight = 1.0;
+	// max delta
+	float2 P = eyeVec.xy * _ParallaxScale;
+	// delta step length
+	float2 deltaTexCoords = P / numLayers;
+
+	// step by step until find the cloestest
+	float2 currentTexCoords = uv;
+	float currentDepthMapValue = parallaxMap.Sample(samAnisotropic, currentTexCoords).x;
+	int times = 0;
+	while (currentLayerHeight > currentDepthMapValue&&times<41)
+	{
+		currentTexCoords -= deltaTexCoords;
+		currentDepthMapValue = parallaxMap.Sample(samAnisotropic, currentTexCoords).x;
+		currentLayerHeight -= layerHeight;
+		times = times + 1;
+	}
+
+	// cal h1, h2
+	float2 prevTexCoords = currentTexCoords + deltaTexCoords;
+	float afterHeight = currentDepthMapValue - currentLayerHeight;
+	float beforeHeight = currentLayerHeight + layerHeight - parallaxMap.Sample(samAnisotropic, prevTexCoords).x;
+	// get weight by h1 h2, interplate bet two point
+	float weight = afterHeight / (afterHeight + beforeHeight);
+	float2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+	return finalTexCoords - uv;
+}
+
 PSOut GBufferPS(VSOut pin) : SV_Target
 {
 	PSOut result;
-	result.normal = float4(normalize(pin.normalW)*0.5f + 0.5f, 0);
-	result.baseColor = diffuseMap.Sample(samAnisotropic, pin.diffuseUV);
-	result.specular = float4(0.75, 0.75, 0.75, 1);
+	
+	float3x3 tangentMat;
+	if (DifNorParEmi.z == 1 || DifNorParEmi.y == 1)
+	{
+		tangentMat = compute_tangent_frame(normalize(pin.normalW), pin.positionW, pin.modelUV);
+	}
+
+	// if use parallax mapping just modify the uv
+	if (DifNorParEmi.z == 1)
+	{
+		float3 eyeVec = normalize(mul(normalize(eyePos - pin.positionW), transpose(tangentMat)));
+		if (abs(1 - parallaxCfg.z) < 0.01)
+			pin.modelUV = pin.modelUV + parallaxMapping_high(eyeVec, pin.modelUV);
+		else
+			pin.modelUV = pin.modelUV + parallaxMapping_low(eyeVec, pin.modelUV);
+	}
+	
+	if (DifNorParEmi.y==1)
+	{
+		float3 normal_map = normalMap.Sample(samAnisotropic, pin.modelUV);
+		normal_map = normalize(2 * (normal_map - 0.5));
+		result.normal = float4(normalize(mul(normal_map, tangentMat))*0.5f + 0.5f, 0);
+	}
+	else
+	{
+		result.normal = float4(normalize(pin.normalW)*0.5f + 0.5f, 0);
+	}
+
+	if (DifNorParEmi.x==1)
+	{
+		result.baseColor = diffuseMap.Sample(samAnisotropic, pin.modelUV);
+	}
+	else
+	{
+		result.baseColor = float4(0.75, 0.75, 0.75, 1);
+	}
+	result.specular = float4(0.1, 0.1, 0.1, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	result.depth.rgb = float_to_color(depth);
 	result.depth.a = 1;
@@ -166,7 +270,6 @@ float NrmDevZToViewZ(float nz)
 {
 	float a = m_proj[2].z;
 	float b = m_proj[3].z;
-
 	float vz = b / (nz - a);
 	return vz;
 }
@@ -174,7 +277,6 @@ float NrmDevZToViewZ(float nz)
 float NrmDevXToViewX(float nx, float vz)
 {
 	float a = m_proj[0].x;
-
 	float vx = (nx*vz) / a;;
 	return vx;
 }
@@ -182,7 +284,6 @@ float NrmDevXToViewX(float nx, float vz)
 float NrmDevYToViewY(float ny, float vz)
 {
 	float a = m_proj[1].y;
-	// ny = vy/(vz*a)
 	float vy = (ny*vz) / a;
 	return vy;
 }
@@ -273,7 +374,7 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target
 		float Cosh = saturate(dot(wNormal, h));
 		float4 Lspec = ((m + 8) / (8 * Pi))*pow(Cosh, m)*Mspec;
 
-		result.finalColor = Ldiff + Lspec;
+		result.finalColor = 4*(Ldiff + Lspec);
 	}
 	return result;
 }

@@ -143,11 +143,15 @@ void RenderData::UpdateVertexBufferDesc()
 	ReleaseCOM(r_vertexBuffer);
 	r_vertexBuffer = nullptr;
 }
-
-ID3D11ShaderResourceView* IceDogRendering::RenderData::GetDiffuseSRV()
-{
-	if (c_materilaData == nullptr) { return nullptr; }
-	return c_materilaData->GetDiffuseSRV();
-}
-
 #endif
+
+void IceDogRendering::RenderData::SetWorldMatrix(const float4x4& worldMatrix)
+{
+	c_worldMatrix = worldMatrix;
+#if defined __DIRECTX__
+	XMMATRIX wMat(c_worldMatrix.m);
+	wMat = XMMatrixInverse(nullptr, wMat);
+	wMat = XMMatrixTranspose(wMat);
+	XMStoreFloat4x4((XMFLOAT4X4*)c_worldInverseTransposeMatrix.m, wMat);
+#endif
+}

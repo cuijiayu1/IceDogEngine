@@ -1,7 +1,11 @@
 <root>
 	<diffuse enable="1">
-		<url>Source/Textures/WoodCrate01.dds</url>
+		<url>Source/Textures/grass.dds</url>
 	</diffuse>
-	<normal enable="0">
+	<normal enable="1">
+		<url>Source/Textures/CliffNormals.dds</url>
 	</normal>
+	<parallax enable="1" scale='0.05' layer='20' quility='1'>
+		<url>Source/Textures/CliffHeight.dds</url>
+	</parallax>
 </root>

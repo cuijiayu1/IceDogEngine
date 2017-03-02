@@ -15,8 +15,8 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 	// Poles: note that there will be texture coordinate distortion as there is
 	// not a unique point on the texture map to assign to the pole when mapping
 	// a rectangular texture onto a sphere.
-	Vertex topVertex(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	Vertex bottomVertex(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	Vertex topVertex(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 0.0f, 0.0f);
+	Vertex bottomVertex(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f);
 
 	std::vector<Vertex> Vertices;
 	Vertices.push_back(topVertex);
@@ -36,17 +36,10 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 
 			Vertex v;
 
-			// spherical to cartesian
+			// spherical to artesian
 			v.position.x = radius*sinf(phi)*cosf(theta);
 			v.position.y = radius*cosf(phi);
 			v.position.z = radius*sinf(phi)*sinf(theta);
-
-			// Partial derivative of P with respect to theta
-			v.tangentU.x = -radius*sinf(phi)*sinf(theta);
-			v.tangentU.y = 0.0f;
-			v.tangentU.z = +radius*sinf(phi)*cosf(theta);
-
-			v.tangentU = v.tangentU.Normilize();
 
 			v.normal = v.position.Normilize();
 
@@ -315,13 +308,6 @@ void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisio
 
 		rd->GetVertexData().get()[i].tex0.x = theta / XM_2PI;
 		rd->GetVertexData().get()[i].tex0.y = phi / XM_PI;
-
-		// Partial derivative of P with respect to theta
-		rd->GetVertexData().get()[i].tangentU.x = -radius*sinf(phi)*sinf(theta);
-		rd->GetVertexData().get()[i].tangentU.y = 0.0f;
-		rd->GetVertexData().get()[i].tangentU.z = +radius*sinf(phi)*cosf(theta);
-
-		rd->GetVertexData().get()[i].tangentU = rd->GetVertexData().get()[i].tangentU.Normilize();
 	}
 }
 
@@ -383,7 +369,6 @@ void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, uns
 
 			Vertices[i*n + j].position = IceDogRendering::float3(x, 0.0f, z);
 			Vertices[i*n + j].normal = IceDogRendering::float3(0.0f, 1.0f, 0.0f);
-			Vertices[i*n + j].tangentU = IceDogRendering::float3(1.0f, 0.0f, 0.0f);
 			Vertices[i*n + j].color = IceDogUtils::float4(IceDogRendering::Color::Silver);
 
 			// Stretch texture over grid.
@@ -432,40 +417,40 @@ void GeometryGenerator::CreateBox(float width, float height, float depth, std::s
 	float d2 = 0.5f*depth;
 
 	// Fill in the front face vertex data.
-	v[0] = IceDogRendering::Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[1] = IceDogRendering::Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[2] = IceDogRendering::Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[3] = IceDogRendering::Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[0] = IceDogRendering::Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[1] = IceDogRendering::Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[2] = IceDogRendering::Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[3] = IceDogRendering::Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
 
 	// Fill in the back face vertex data.
-	v[4] = IceDogRendering::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[5] = IceDogRendering::Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[6] = IceDogRendering::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[7] = IceDogRendering::Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[4] = IceDogRendering::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	v[5] = IceDogRendering::Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+	v[6] = IceDogRendering::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	v[7] = IceDogRendering::Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
 	// Fill in the top face vertex data.
-	v[8] = IceDogRendering::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[9] = IceDogRendering::Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[10] = IceDogRendering::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[11] = IceDogRendering::Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[8] = IceDogRendering::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+	v[9] = IceDogRendering::Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+	v[10] = IceDogRendering::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+	v[11] = IceDogRendering::Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the bottom face vertex data.
-	v[12] = IceDogRendering::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[13] = IceDogRendering::Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[14] = IceDogRendering::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[15] = IceDogRendering::Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[12] = IceDogRendering::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f);
+	v[13] = IceDogRendering::Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f);
+	v[14] = IceDogRendering::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f);
+	v[15] = IceDogRendering::Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
 
 	// Fill in the left face vertex data.
-	v[16] = IceDogRendering::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
-	v[17] = IceDogRendering::Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	v[18] = IceDogRendering::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
-	v[19] = IceDogRendering::Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+	v[16] = IceDogRendering::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[17] = IceDogRendering::Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[18] = IceDogRendering::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[19] = IceDogRendering::Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the right face vertex data.
-	v[20] = IceDogRendering::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
-	v[21] = IceDogRendering::Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	v[22] = IceDogRendering::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-	v[23] = IceDogRendering::Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	v[20] = IceDogRendering::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[21] = IceDogRendering::Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[22] = IceDogRendering::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[23] = IceDogRendering::Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	rd->SetVertexData(v, 24);
 

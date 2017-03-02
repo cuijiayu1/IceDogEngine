@@ -58,7 +58,7 @@ bool WindowsWindowHandle::InitWindow(PlatformWindow pfWindow)
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	r_platformWindow.c_window = CreateWindow("D3DWndClassName", "LLEngineg",
+	r_platformWindow.c_window = CreateWindow("D3DWndClassName", "IceDogEngine",
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, r_platformWindow.c_windowInstance, 0);
 	if (!r_platformWindow.c_window)
 	{

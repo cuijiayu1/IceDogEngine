@@ -39,7 +39,7 @@ void PipeView::UpdateProjectionMatrix()
 #endif
 }
 
-PipeView::PipeView(float aspectRatio) :c_eyePosition(0, 0, -6),
+PipeView::PipeView(float aspectRatio) :c_eyePosition(0, 0, 0.001),
 										c_focusPosition(0, 0, 0),
 										c_upDirection(0, 1, 0),
 										c_aspectRatio(aspectRatio),

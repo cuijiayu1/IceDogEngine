@@ -276,7 +276,11 @@ namespace IceDogRendering
 			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
 			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
 			r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
-			r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetDiffuseSRV());
+			r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&rd->GetTextureEnableDesc(), 0, sizeof(IceDogRendering::float4));
+			r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetDiffuseSRV());
+			r_effectFX->GetVariableByName("normalMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetNormalSRV());
+			r_effectFX->GetVariableByName("parallaxMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetParallaxSRV());
+			r_effectFX->GetVariableByName("parallaxCfg")->SetRawValue(&rd->GetMaterialData()->GetParallaxCfg(), 0, sizeof(IceDogUtils::float4));
 
 			pass->Apply(0, c_PDRR.r_deviceContext);
 
