@@ -102,6 +102,10 @@ int IceDogEngine::Engine::EventProcessor(const IceDogPlatform::MessageType& msgT
 		msg.c_param0 = r_aspectRatio;
 		r_engineCore.ProcessMessageChain(msg);
 	}
+	if (msgType == IceDogPlatform::MessageType::fps)
+	{
+		r_enginePlatform.SetWindowTitle("IceDogEngine            fps:" + std::to_string(int(pm0)));
+	}
 	return 0;
 }
 

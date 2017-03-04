@@ -4,7 +4,7 @@
 #include "MessageProc.h"
 #include "Timer.h"
 
-// the engine core is the heart of this engine but not the engine itself, so the core should not consisit of other parts
+// the engine core is the heart of this engine but not the engine itself, so the core should not consist of other parts
 namespace IceDogCore
 {
 	class EngineCore
@@ -16,20 +16,22 @@ namespace IceDogCore
 		void Init();
 		/* call the engine run */
 		void Run();
-		/* regist the platform tick function */
+		/* register the platform tick function */
 		void RegistPlatformTick(std::function<void()> pfTick);
-		/* regist the rendering tick function */
+		/* register the rendering tick function */
 		void RegistRenderingTick(std::function<void()> redTick);
-		/* regist the logic tick function */
+		/* register the logic tick function */
 		void RegistLogicTick(std::function<void(float)> logicTick);
-		/* process the message in a message chain chain */
+		/* process the message in a message chain chain, let the message flow in a chain that any registered processor can have ability to receive it*/
 		void ProcessMessageChain(IceDogPlatform::Message msg);
-		/* regist the message processor */
+		/* register the message processor */
 		void RegistMessageProc(MessageProc* msprc);
-		/* unregist the message processor */
+		/* unregister the message processor */
 		void UnRegistMessageProc(MessageProc* msprc);
 		/* mark message line dirty */
 		void MarkMessageChainDirty();
+		/* board cast fps message */
+		void BoardCastFPSMessage();
 
 		std::function<void()> testTick;
 

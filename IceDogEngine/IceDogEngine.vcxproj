@@ -149,6 +149,8 @@
     <ClCompile Include="Core\Timer.cpp" />
     <ClCompile Include="Platform\Windows\WindowsMessageHandle.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
+    <ClCompile Include="Utils\Noise\PerlinNoise.cpp" />
+    <ClCompile Include="Utils\Voxel\MarchingCubeLT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rendering\MaterialData.h" />
@@ -188,6 +190,8 @@
     <ClInclude Include="ThirdParty\rapidxml\rapidxml_utils.hpp" />
     <ClInclude Include="Utils\Common\DDSTextureLoader.h" />
     <ClInclude Include="Utils\Common\DirectXTex.h" />
+    <ClInclude Include="Utils\Noise\PerlinNoise.h" />
+    <ClInclude Include="Utils\Voxel\MarchingCubeLT.h" />
     <ClInclude Include="Utils\Math\MathDef.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />

@@ -5,7 +5,7 @@
 
 namespace IceDogPlatform
 {
-	// platform indenpendence window abstract class
+	// platform independence window abstract class
 	class PlatformWindowHandle
 	{
 	public:
@@ -21,8 +21,11 @@ namespace IceDogPlatform
 		/* bind the message handle to receive the window message */
 		virtual void RegistMessageHandle(std::shared_ptr<class PlatformMsgHandle> msgHandle) = 0;
 
-		/* get the final Platfrom window, this must called after window init */
+		/* get the final Platform window, this must called after window init */
 		PlatformWindow GetFullPlatformWindow() { return r_platformWindow; }
+
+		/* Set Window Title */
+		virtual void SetWindowTitle(std::string title) = 0;
 
 	protected:
 		// the width of the window

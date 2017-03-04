@@ -38,7 +38,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	cout << "Hello Ice Dog Engine" << endl;
 
 	Cha cha;
-	cha.SetActorLocation(IceDogUtils::float3(0, 1, -1));
 
 	PlaneActor plan;
 	plan.SetActorLocation(IceDogUtils::float3(0, -0.5, 0));

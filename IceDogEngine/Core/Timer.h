@@ -16,6 +16,9 @@ namespace IceDogCore
 		/* Get FPS */
 		int GetFPS() { return r_currentFPS; }
 
+		/* Get Sleep Needed ms */
+		int GetSleepMS(int lockFPS);
+
 	private:
 		int r_currentFPS;
 		double r_deltaTime;

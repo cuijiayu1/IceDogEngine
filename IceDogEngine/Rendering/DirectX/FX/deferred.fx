@@ -240,6 +240,11 @@ PSOut GBufferPS(VSOut pin) : SV_Target
 	}
 	result.specular = float4(0.1, 0.1, 0.1, 1);
 	float depth = pin.depth.x / pin.depth.y;
+	// if use parallax mapping depth also need to be adjust
+	if (DifNorParEmi.z == 1)
+	{
+		depth += parallaxCfg.x*parallaxMap.Sample(samAnisotropic, pin.modelUV).x;
+	}
 	result.depth.rgb = float_to_color(depth);
 	result.depth.a = 1;
 	return result;

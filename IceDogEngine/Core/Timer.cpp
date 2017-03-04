@@ -21,6 +21,7 @@ void Timer::Tick()
 	if (r_deltaTime < 0) { r_deltaTime = 0.0; }
 	// update the preTime
 	r_prevTime = currentCount;
+
 	r_fpsTempCalled++;
 	r_fpsTemp += r_deltaTime;
 	if (r_fpsTemp > 1)
@@ -29,4 +30,9 @@ void Timer::Tick()
 		r_currentFPS = r_fpsTempCalled;
 		r_fpsTempCalled = 0;
 	}
+}
+
+int IceDogCore::Timer::GetSleepMS(int lockFPS)
+{
+	return r_deltaTime *1000*60;
 }

@@ -22,7 +22,7 @@ Platform::Platform(PlatformWindow pfWindow, std::ostream& errorLog):s_errorlogOu
 
 void Platform::InitPlatform()
 {
-	// regist the message handle
+	// register the message handle
 	r_platformWindowHandle->RegistMessageHandle(r_platformMsgHandle);
 	// init the window
 	r_platformWindowHandle->InitWindow(r_pfWindow);
@@ -40,4 +40,9 @@ void Platform::RegistMessageProcessChain(std::function<void(Message)> msProcChai
 {
 	// bind the message process chain to the message handle
 	r_platformMsgHandle->RegistMessageProcessChain(msProcChain);
+}
+
+void IceDogPlatform::Platform::SetWindowTitle(std::string title)
+{
+	r_platformWindowHandle->SetWindowTitle(title);
 }

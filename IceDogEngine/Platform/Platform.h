@@ -26,14 +26,17 @@ namespace IceDogPlatform
 		/* tick platform, update the information update the message loop */
 		void TickPlatform();
 
-		/* regist message process chain */
+		/* register message process chain */
 		void RegistMessageProcessChain(std::function<void(Message)> msProcChain);
 
 		/* get the constructed platformWindow */
 		PlatformWindow GetConstructedPlatformWindow() { return r_pfWindow; }
 
+		/* set window title */
+		void SetWindowTitle(std::string title);
+
 	private:
-		// the ptr to the platform msg handle to handle the platform indenpendence message
+		// the ptr to the platform msg handle to handle the platform independence message
 		std::shared_ptr<PlatformMsgHandle> r_platformMsgHandle;
 		// the ptr to the platform windows handle to deal the window
 		std::unique_ptr<PlatformWindowHandle> r_platformWindowHandle;

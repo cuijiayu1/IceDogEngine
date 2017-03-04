@@ -13,8 +13,11 @@ namespace IceDogPlatform
 		/* init the window, setup message loop */
 		bool InitWindow(PlatformWindow pfWindow) override;
 
-		/* Regist the message handle to the window */
+		/* Register the message handle to the window */
 		void RegistMessageHandle(std::shared_ptr<class PlatformMsgHandle> msgHandle) override;
+
+		/* Set Window Title */
+		void SetWindowTitle(std::string title) override;
 	};
 }
 

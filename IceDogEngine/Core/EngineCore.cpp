@@ -80,6 +80,15 @@ void IceDogCore::EngineCore::MarkMessageChainDirty()
 	c_messageChainDirty = true;
 }
 
+void IceDogCore::EngineCore::BoardCastFPSMessage()
+{
+	IceDogPlatform::Message fpsMsg;
+	fpsMsg.c_messageType = IceDogPlatform::MessageType::fps;
+	fpsMsg.c_messageAuthority = IceDogPlatform::MessageAuthority::USER;
+	fpsMsg.c_param0 = r_coreTimer.GetFPS();
+	ProcessMessageChain(fpsMsg);
+}
+
 void IceDogCore::EngineCore::MarkMessageChainClean()
 {
 	c_messageChainDirty = false;
@@ -87,15 +96,19 @@ void IceDogCore::EngineCore::MarkMessageChainClean()
 
 void EngineCore::Run()
 {
-	// main loop
+	// tick the timer first
+	r_coreTimer.Tick();
+
 	while (true)
 	{
-		// tick the timer first
-		r_coreTimer.Tick();
 		// tick platform and update the message
 		if (c_platformTickPort) { c_platformTickPort(); }
 		if (c_renderingTickPort) { c_renderingTickPort(); }
 		if (c_logicTickPort) { c_logicTickPort(r_coreTimer.GetDeltaTime()); }
 		if (testTick) { testTick(); }
+		BoardCastFPSMessage();
+		// tick the timer
+		r_coreTimer.Tick();
+		//Sleep(r_coreTimer.GetSleepMS(60));
 	}
 }

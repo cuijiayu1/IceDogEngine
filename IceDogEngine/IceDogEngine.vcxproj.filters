@@ -120,6 +120,12 @@
     <ClCompile Include="Utils\Common\UtilBasic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Voxel\MarchingCubeLT.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Noise\PerlinNoise.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -303,6 +309,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\rapidxml\rapidxml_utils.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Voxel\MarchingCubeLT.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Noise\PerlinNoise.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

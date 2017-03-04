@@ -10,6 +10,8 @@ namespace IceDogPlatform
 
 	enum class MessageType
 	{
+		fps,
+
 		systemResize,
 
 		leftButtonDoubleClick,

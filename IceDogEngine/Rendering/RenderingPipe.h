@@ -61,7 +61,7 @@ namespace IceDogRendering
 		IceDogPlatform::PlatformWindow c_platformWindow;
 		// the platform dependence rendering resource
 		PlatformDependenceRenderResource c_PDRR;
-		// whether enable the multi sample anti al
+		// whether enable the multi sample anti alain
 		bool c_enableMsaa;
 		// msaa quality
 		unsigned int c_msaaQuility;

@@ -2,6 +2,8 @@
 
 Cha::Cha()
 {
+	SetActorRotation(IceDogUtils::float3(40, 0, 0));
+	SetActorLocation(IceDogUtils::float3(0, 2, -4));
 	r_defaultEventComponent.BindOnLeftDown(std::bind(&Cha::OnLeftDown, this, std::placeholders::_1, std::placeholders::_2));
 	r_defaultEventComponent.BindOnLeftUp(std::bind(&Cha::OnLeftUp, this, std::placeholders::_1, std::placeholders::_2));
 	r_defaultEventComponent.BindOnMouseMove(std::bind(&Cha::OnMove, this, std::placeholders::_1, std::placeholders::_2));

@@ -71,3 +71,8 @@ bool WindowsWindowHandle::InitWindow(PlatformWindow pfWindow)
 
 	return true;
 }
+
+void IceDogPlatform::WindowsWindowHandle::SetWindowTitle(std::string title)
+{
+	SetWindowText(r_platformWindow.c_window, title.c_str());
+}
