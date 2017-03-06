@@ -144,6 +144,12 @@
     <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Loader\ObjMeshLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LoadTestAct.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -351,6 +357,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Loader\ObjMeshLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LoadTestAct.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

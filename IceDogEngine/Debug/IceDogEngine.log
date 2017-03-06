@@ -1,4 +1,4 @@
-﻿  testMain.cpp
+﻿  LoadTestAct.cpp
 d:\program\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
 d:\program\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
 d:\program\icedogengine\icedogengine\utils\math\mathdef.h(38): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
@@ -12,42 +12,6 @@ d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(152): warning C4
 d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(153): warning C4305: “参数”: 从“double”到“float”截断
 d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(154): warning C4305: “参数”: 从“double”到“float”截断
 d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(155): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(57): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
-d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(50): warning C4244: “参数”: 从“const float”转换到“int”，可能丢失数据
-d:\program\icedogengine\icedogengine\testmain.cpp(54): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-  MyActor.cpp
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(38): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(56): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(103): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\utils\math\mathdef.h(113): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(95): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(114): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(134): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(152): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(153): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(154): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(155): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(57): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
-d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(50): warning C4244: “参数”: 从“const float”转换到“int”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(33): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(34): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(35): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(36): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(37): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(38): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(39): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(40): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(41): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\source\myactor.cpp(51): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\source\myactor.cpp(69): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-  正在生成代码...
+d:\program\icedogengine\icedogengine\source\loadtestact.cpp(14): warning C4305: “参数”: 从“double”到“float”截断
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

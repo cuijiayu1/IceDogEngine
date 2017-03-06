@@ -114,6 +114,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\LoadTestAct.cpp" />
+    <ClCompile Include="Utils\Loader\ObjMeshLoader.cpp" />
     <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp" />
     <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp" />
     <ClCompile Include="Rendering\MaterialData.cpp" />
@@ -159,6 +161,8 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\LoadTestAct.h" />
+    <ClInclude Include="Utils\Loader\ObjMeshLoader.h" />
     <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h" />
     <ClInclude Include="Rendering\RenderData\RenderDataBase.h" />
     <ClInclude Include="Rendering\MaterialData.h" />

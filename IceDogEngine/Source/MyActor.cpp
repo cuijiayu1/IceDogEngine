@@ -1,5 +1,6 @@
 #include "MyActor.h"
 #include "../Engine/Engine.h"
+#include "../Rendering/RenderData/MeshData.h"
 #include "../Rendering/RenderData/DynamicVoxelData.h"
 #include "../Resources/Geometry/GeometryGenerator.h"
 #include "../Utils/Noise/OtherNoise.h"
@@ -11,6 +12,7 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 	using IceDogAlgorithm::NoiseSampleInPlace;
 	using IceDogUtils::float3;
 	using IceDogUtils::float4;
+
 	// test code
 	r_vc= new VoxelComponent(this);
 	rd = std::make_shared<IceDogRendering::DynamicVoxelData>();

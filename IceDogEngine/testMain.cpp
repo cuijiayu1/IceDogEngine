@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "Engine\Engine.h"
+#include "Source\LoadTestAct.h"
 #include "Source\MyActor.h"
 #include "Source\Cha.h"
 #include "Source\PlaneActor.h"
@@ -55,6 +56,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 			}
 		}
 	}
+
+	LoadTestAct Lt;
 
 	eg.Run();
 
