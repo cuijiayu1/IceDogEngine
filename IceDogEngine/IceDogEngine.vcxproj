@@ -114,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp" />
     <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp" />
     <ClCompile Include="Rendering\MaterialData.cpp" />
     <ClCompile Include="Rendering\RenderData\VoxelData.cpp" />
@@ -135,7 +136,7 @@
     <ClCompile Include="Engine\Gameplay\Planet.cpp" />
     <ClCompile Include="Core\MessageProc.cpp" />
     <ClCompile Include="Source\MyActor.cpp" />
-    <ClCompile Include="Rendering\RenderData\DynamicRenderData.cpp" />
+    <ClCompile Include="Rendering\RenderData\DynamicMeshData.cpp" />
     <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\StaticMeshComponent.cpp" />
     <ClCompile Include="Source\Sphere.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h" />
     <ClInclude Include="Rendering\RenderData\RenderDataBase.h" />
     <ClInclude Include="Rendering\MaterialData.h" />
     <ClInclude Include="Rendering\RenderData\VoxelData.h" />
@@ -188,7 +190,7 @@
     <ClInclude Include="Rendering\RenderPipeType.h" />
     <ClInclude Include="Source\MyActor.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />
-    <ClInclude Include="Rendering\RenderData\DynamicRenderData.h" />
+    <ClInclude Include="Rendering\RenderData\DynamicMeshData.h" />
     <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
     <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
     <ClInclude Include="Source\Sphere.h" />

@@ -83,10 +83,10 @@ struct PSOut
 //										Voxel Terrian Marching Cube Pass Def Begin										//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//  [ 4 5 ]
-//[ 0 1 ]
-//	[ 7 6 ]
+//  [ 7 6 ]
 //[ 3 2 ]
+//	[ 4 5 ]
+//[ 0 1 ]
 //
 Texture1D<int1> mcEdgeTable;
 Texture2D<int1> mcTriTable;

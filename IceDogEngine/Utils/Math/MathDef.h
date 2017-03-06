@@ -53,6 +53,7 @@ namespace IceDogUtils
 		explicit float4(const float* data) :x(data[0]), y(data[1]), z(data[2]), w(data[3]) {}
 		float4& operator= (const float4& Float4) { x = Float4.x; y = Float4.y; z = Float4.z; w = Float4.w; return *this; }
 	};
+	inline float4 operator/(const float4& f1, double f2) { return float4(f1.x / f2, f1.y / f2, f1.z / f2, f1.w / f2); }
 
 	template<typename T, int vecSize>
 	class Vector

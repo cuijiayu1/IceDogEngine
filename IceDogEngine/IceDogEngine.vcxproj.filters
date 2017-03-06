@@ -126,9 +126,6 @@
     <ClCompile Include="Rendering\RenderData\VoxelData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\RenderData\DynamicRenderData.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -139,6 +136,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Source\Sphere.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderData\DynamicMeshData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -332,9 +335,6 @@
     <ClInclude Include="Rendering\RenderData\VoxelData.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\RenderData\DynamicRenderData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Rendering\RenderData\RenderDataBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -345,6 +345,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Sphere.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\DynamicMeshData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "../../../Rendering/RenderData/DynamicRenderData.h"
+#include "../../../Rendering/RenderData/DynamicMeshData.h"
 
 namespace IceDogGameplay 
 {
@@ -10,7 +10,7 @@ namespace IceDogGameplay
 		DynamicMeshComponent(class Actor* owner);
 		~DynamicMeshComponent();
 	private:
-		std::shared_ptr<IceDogRendering::DynamicRenderData> r_renderData;
+		std::shared_ptr<IceDogRendering::DynamicMeshData> r_renderData;
 	};
 }
 

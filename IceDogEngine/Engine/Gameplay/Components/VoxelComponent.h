@@ -14,6 +14,9 @@ namespace IceDogGameplay
 		/* set the render data */
 		void SetVoxelData(std::shared_ptr<IceDogRendering::VoxelData> rd);
 
+		/* get the render data */
+		const std::shared_ptr<IceDogRendering::VoxelData> GetVoxelData() { return r_renderData; }
+
 		/* set enable */
 		virtual void SetEnable() override;
 		/* set disable */

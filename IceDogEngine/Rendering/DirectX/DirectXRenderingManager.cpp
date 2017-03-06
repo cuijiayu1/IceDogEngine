@@ -25,6 +25,7 @@ PlatformDependenceRenderResource DirectXRenderingManager::GetPDRR()
 void DirectXRenderingManager::UpdateRenderDataIndexBuffer(std::shared_ptr<IceDogRendering::RenderDataBase> renderData)
 {
 	std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
+	if (!rd) { return; }
 	// unmap the data and get the ptr
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	if (ISFAILED(r_deviceContext->Map(rd->GetIndexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
@@ -44,22 +45,47 @@ void DirectXRenderingManager::UpdateRenderDataIndexBuffer(std::shared_ptr<IceDog
 
 void DirectXRenderingManager::UpdateRenderDataVertexBuffer(std::shared_ptr<IceDogRendering::RenderDataBase> renderData)
 {
-	std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
-	// unmap the data and get the ptr
-	D3D11_MAPPED_SUBRESOURCE mappedData;
-	if (ISFAILED(r_deviceContext->Map(rd->GetVertexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
+	if (std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData))
 	{
-		s_errorlogOutStream << "Try map vertex buffer failed" << std::endl;
+		std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
+		// unmap the data and get the ptr
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		if (ISFAILED(r_deviceContext->Map(rd->GetVertexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
+		{
+			s_errorlogOutStream << "Try map vertex buffer failed" << std::endl;
+			return;
+		}
+		Vertex* vertexBuffer = reinterpret_cast<Vertex*>(mappedData.pData);
+		auto data = rd->GetVertexData();
+		// update the data with data inside the rd
+		for (int i = 0; i < rd->GetVertexCount(); i++)
+		{
+			vertexBuffer[i] = data.get()[i];
+		}
+		r_deviceContext->Unmap(rd->GetVertexBuffer(), 0);
 		return;
 	}
-	Vertex* vertexBuffer = reinterpret_cast<Vertex*>(mappedData.pData);
-	auto data = rd->GetVertexData();
-	// update the data with data inside the rd
-	for (int i = 0; i < rd->GetVertexCount(); i++)
+
+	if (std::dynamic_pointer_cast<IceDogRendering::VoxelData>(renderData))
 	{
-		vertexBuffer[i] = data.get()[i];
+		std::shared_ptr<IceDogRendering::VoxelData> rd = std::dynamic_pointer_cast<IceDogRendering::VoxelData>(renderData);
+		// unmap the data and get the ptr
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		if (ISFAILED(r_deviceContext->Map(rd->GetVertexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
+		{
+			s_errorlogOutStream << "Try map vertex buffer failed" << std::endl;
+			return;
+		}
+		VoxelVertex* vertexBuffer = reinterpret_cast<VoxelVertex*>(mappedData.pData);
+		auto data = rd->GetVertexData();
+		// update the data with data inside the rd
+		for (int i = 0; i < rd->GetVertexCount(); i++)
+		{
+			vertexBuffer[i] = data.get()[i];
+		}
+		r_deviceContext->Unmap(rd->GetVertexBuffer(), 0);
+		return;
 	}
-	r_deviceContext->Unmap(rd->GetVertexBuffer(), 0);
 }
 
 void DirectXRenderingManager::TickRenderingManager()

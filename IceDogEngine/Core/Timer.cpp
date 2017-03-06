@@ -9,6 +9,7 @@ Timer::Timer() :r_currentFPS(0), r_fpsTempCalled(0), r_fpsTemp(0)
 	__int64 countPersecond;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&countPersecond);
 	r_secondPerCount = 1.0 / (double)countPersecond;
+	QueryPerformanceCounter((LARGE_INTEGER*)&r_prevTime);
 }
 
 void Timer::Tick()
