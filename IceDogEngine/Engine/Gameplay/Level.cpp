@@ -10,12 +10,12 @@ Level::~Level()
 {
 }
 
-void Level::RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+void Level::RegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_renderDatas.push_back(rd);
 }
 
-void IceDogGameplay::Level::UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+void IceDogGameplay::Level::UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_renderDatas.erase(std::find(r_renderDatas.begin(), r_renderDatas.end(), rd));
 }

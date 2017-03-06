@@ -114,7 +114,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp" />
     <ClCompile Include="Rendering\MaterialData.cpp" />
+    <ClCompile Include="Rendering\RenderData\VoxelData.cpp" />
     <ClCompile Include="Source\PlaneActor.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXDeferredPipe.cpp" />
     <ClCompile Include="Source\Cha.cpp" />
@@ -133,14 +135,15 @@
     <ClCompile Include="Engine\Gameplay\Planet.cpp" />
     <ClCompile Include="Core\MessageProc.cpp" />
     <ClCompile Include="Source\MyActor.cpp" />
-    <ClCompile Include="Rendering\DynamicRenderData.cpp" />
+    <ClCompile Include="Rendering\RenderData\DynamicRenderData.cpp" />
     <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\StaticMeshComponent.cpp" />
+    <ClCompile Include="Source\Sphere.cpp" />
     <ClCompile Include="Utils\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Utils\Common\UtilBasic.cpp" />
     <ClCompile Include="Utils\Math\MathHelper.cpp" />
     <ClCompile Include="Rendering\PipeView.cpp" />
-    <ClCompile Include="Rendering\RenderData.cpp" />
+    <ClCompile Include="Rendering\RenderData\MeshData.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXRenderingPipe.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXRenderingManager.cpp" />
     <ClCompile Include="Platform\Platform.cpp" />
@@ -149,11 +152,15 @@
     <ClCompile Include="Core\Timer.cpp" />
     <ClCompile Include="Platform\Windows\WindowsMessageHandle.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
+    <ClCompile Include="Utils\Noise\OtherNoise.cpp" />
     <ClCompile Include="Utils\Noise\PerlinNoise.cpp" />
     <ClCompile Include="Utils\Voxel\MarchingCubeLT.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\RenderData\RenderDataBase.h" />
     <ClInclude Include="Rendering\MaterialData.h" />
+    <ClInclude Include="Rendering\RenderData\VoxelData.h" />
     <ClInclude Include="Source\PlaneActor.h" />
     <ClInclude Include="Rendering\DirectX\DirectXDeferredPipe.h" />
     <ClInclude Include="Resources\Geometry\Geometry.h" />
@@ -181,21 +188,23 @@
     <ClInclude Include="Rendering\RenderPipeType.h" />
     <ClInclude Include="Source\MyActor.h" />
     <ClInclude Include="Rendering\LightingGroup.h" />
-    <ClInclude Include="Rendering\DynamicRenderData.h" />
+    <ClInclude Include="Rendering\RenderData\DynamicRenderData.h" />
     <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
     <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
+    <ClInclude Include="Source\Sphere.h" />
     <ClInclude Include="ThirdParty\rapidxml\rapidxml.hpp" />
     <ClInclude Include="ThirdParty\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="ThirdParty\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="ThirdParty\rapidxml\rapidxml_utils.hpp" />
     <ClInclude Include="Utils\Common\DDSTextureLoader.h" />
     <ClInclude Include="Utils\Common\DirectXTex.h" />
+    <ClInclude Include="Utils\Noise\OtherNoise.h" />
     <ClInclude Include="Utils\Noise\PerlinNoise.h" />
     <ClInclude Include="Utils\Voxel\MarchingCubeLT.h" />
     <ClInclude Include="Utils\Math\MathDef.h" />
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
-    <ClInclude Include="Rendering\RenderData.h" />
+    <ClInclude Include="Rendering\RenderData\MeshData.h" />
     <ClInclude Include="Rendering\DirectX\DirectXRenderingPipe.h" />
     <ClInclude Include="Rendering\DirectX\DirectXRenderingManager.h" />
     <ClInclude Include="Platform\Message.h" />
@@ -216,6 +225,7 @@
     <ClInclude Include="Utils\Common\UtilBasic.h" />
     <ClInclude Include="Platform\Windows\WindowsMessageHandle.h" />
     <ClInclude Include="Platform\Windows\WindowsWindowHandle.h" />
+    <ClInclude Include="Engine\Gameplay\Components\VoxelComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\deferred.fx">

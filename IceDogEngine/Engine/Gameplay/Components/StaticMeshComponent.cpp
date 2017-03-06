@@ -11,11 +11,11 @@ IceDogGameplay::StaticMeshComponent::StaticMeshComponent(class Actor* owner):Com
 {
 }
 
-void IceDogGameplay::StaticMeshComponent::SetStaticMesh(std::shared_ptr<IceDogRendering::RenderData> rd)
+void IceDogGameplay::StaticMeshComponent::SetStaticMesh(std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	if (rd == nullptr)
 	{
-		//unregist the data
+		//unregister the data
 		r_renderData = nullptr;
 	}
 	else

@@ -5,7 +5,7 @@
 using namespace IceDogResources;
 using namespace IceDogGeometry;
 
-void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsigned int stackCount, std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsigned int stackCount, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	using namespace IceDogRendering;
 	//
@@ -118,7 +118,7 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 	rd->MarkDataStateDirty();
 }
 
-void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	using namespace IceDogRendering;
 	// Save a copy of the input geometry.
@@ -219,7 +219,7 @@ void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::RenderData> r
 	rd->SetVertexData(newVertexs, VertexsCopy.size());
 }
 
-void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, float size, bool rhcoords, std::shared_ptr<IceDogRendering::RenderData> rd)
+void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, float size, bool rhcoords, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	DirectX::VertexCollection vc;
 	DirectX::IndexCollection ic;
@@ -243,7 +243,7 @@ void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, 
 }
 
 
-void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisions, std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisions, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	using namespace IceDogRendering;
 	// Put a cap on the number of subdivisions.
@@ -311,7 +311,7 @@ void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisio
 	}
 }
 
-void GeometryGenerator::CreateHill(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::CreateHill(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	auto GetNormal = [](float x, float z)->IceDogRendering::float3
 	{
@@ -341,7 +341,7 @@ void GeometryGenerator::CreateHill(float width, float depth, unsigned int m, uns
 	}
 }
 
-void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	unsigned int vertexCount = m*n;
 	unsigned int faceCount = (m - 1)*(n - 1) * 2;
@@ -404,7 +404,7 @@ void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, uns
 	rd->SetIndexData(Indices, faceCount);
 }
 
-void GeometryGenerator::CreateBox(float width, float height, float depth, std::shared_ptr<IceDogRendering::RenderData> rd)
+void GeometryGenerator::CreateBox(float width, float height, float depth, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	//
 	// Create the vertices.

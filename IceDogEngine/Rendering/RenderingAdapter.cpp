@@ -16,7 +16,7 @@ void RenderingAdapter::TickRendering()
 	}
 }
 
-void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt)
+void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderDataBase> rd, RenderPipeType rpt)
 {
 	switch (rpt)
 	{
@@ -31,7 +31,7 @@ void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderData> rd, RenderPi
 	}
 }
 
-void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt)
+void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<RenderDataBase> rd, RenderPipeType rpt)
 {
 	switch (rpt)
 	{

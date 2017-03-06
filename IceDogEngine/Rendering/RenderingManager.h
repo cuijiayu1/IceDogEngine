@@ -2,7 +2,7 @@
 #include "../Utils/Common/UtilBasic.h"
 #include "PlatformDependenceRenderResource.h"
 #include "RenderingPipe.h"
-#include "RenderData.h"
+#include "RenderData/RenderDataBase.h"
 #include "../Platform/PlatformWindow.h"
 
 namespace IceDogRendering
@@ -24,19 +24,19 @@ namespace IceDogRendering
 		virtual bool InitRenderManager(IceDogPlatform::PlatformWindow pfWindow) = 0;
 		/* get the platform dependence resource */
 		virtual PlatformDependenceRenderResource GetPDRR() = 0;
-		/* regist the scene pipe */
+		/* register the scene pipe */
 		virtual void RegistScenePipe(std::shared_ptr<RenderingPipe> sPip) { r_scenePipe = sPip; };
-		/* regist the ui pipe */
+		/* register the ui pipe */
 		virtual void RegistUIPipe(std::shared_ptr<RenderingPipe> uiPip) { r_uiPipe = uiPip; };
-		/* regist the ui pipe render data */
-		virtual void RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) = 0;
-		/* regist the scene pipe render data */
-		virtual void RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)=0;
-		/* unregist the scene render data */
-		virtual void UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) = 0;
-		/* unregist the UI render data */
-		virtual void UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd) = 0;
-		/* regist the main pipe view */
+		/* register the ui pipe render data */
+		virtual void RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd) = 0;
+		/* register the scene pipe render data */
+		virtual void RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)=0;
+		/* unregister the scene render data */
+		virtual void UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd) = 0;
+		/* unregister the UI render data */
+		virtual void UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd) = 0;
+		/* register the main pipe view */
 		virtual void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv) = 0;
 		/* tick */
 		virtual void TickRenderingManager()=0;
@@ -47,9 +47,9 @@ namespace IceDogRendering
 		// the ui pipe
 		std::shared_ptr<RenderingPipe> r_uiPipe;
 		// the scenePipe render data
-		std::vector<std::shared_ptr<RenderData>> r_sceneRenderData;
+		std::vector<std::shared_ptr<RenderDataBase>> r_sceneRenderData;
 		// the ui render data
-		std::vector<std::shared_ptr<RenderData>> r_uiRenderData;
+		std::vector<std::shared_ptr<RenderDataBase>> r_uiRenderData;
 		// the error log output port
 		std::ostream& s_errorlogOutStream; 
 	};

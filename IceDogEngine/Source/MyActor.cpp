@@ -1,55 +1,52 @@
 #include "MyActor.h"
 #include "../Engine/Engine.h"
-#include "../Engine/Gameplay/Components/StaticMeshComponent.h"
+#include "../Engine/Gameplay/Components/VoxelComponent.h"
 #include "../Resources/Geometry/GeometryGenerator.h"
-#include "../Utils/Voxel/MarchingCubeLT.h"
+#include "../Utils/Noise/OtherNoise.h"
 
 using namespace IceDogGameplay;
 
 MyActor::MyActor() :sourceLocation(1, 1, 1)
 {
+	using IceDogAlgorithm::NoiseSampleInPlace;
+	using IceDogUtils::float3;
+	using IceDogUtils::float4;
 	// test code
-	StaticMeshComponent* st = new StaticMeshComponent(this);
-	std::shared_ptr<IceDogRendering::RenderData> rd = std::make_shared<IceDogRendering::RenderData>();
+	VoxelComponent* vc = new VoxelComponent(this);
+	std::shared_ptr<IceDogRendering::VoxelData> rd = std::make_shared<IceDogRendering::VoxelData>();
 	//IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 2, false, rd);
 
 	r_defaultEventComponent.BindOnLeftDown(std::bind(&MyActor::OnLeftClick, this, std::placeholders::_1, std::placeholders::_2));
 
-	SetActorRotation(IceDogUtils::float3(0, 0, 0));
-
-	std::vector<std::vector<std::vector<float>>> da(20);
-	for (int i=0;i<20;i++)
+	SetActorRotation(float3(0, 0, 0));
+	
+	float3 src(20, 20, 20);
+	IceDogRendering::VoxelVertex* vl = new IceDogRendering::VoxelVertex[64000];
+	for (int i=0;i<40;++i)
 	{
-		da[i].resize(20);
-	}
-	for (int i=0;i<20;i++)
-	{
-		for (int j =0;j<20;j++)
+		for (int j=0;j<40;++j)
 		{
-			da[i][j].resize(20);
-		}
-	}
-	IceDogUtils::float3 target(10, 10, 10);
-	for (int i=0;i<20;i++)
-	{
-		for (int j=0;j<20;j++)
-		{
-			for (int k=0;k<20;k++)
+			for (int k=0;k<40;++k)
 			{
-				IceDogUtils::float3 f3 = IceDogUtils::float3(i, j, k) - target;
-				if (float3length(f3) < 5) 
-					da[i][j][k] = 1;
-				else
-					da[i][j][k] = 0;
+				vl[i * 1600 + j * 40 + k].pos = float3(i, j, k);
+				vl[i * 1600 + j * 40 + k].val_f.x = IceDogUtils::float3length(float3(i, j, k) - src);
+				vl[i * 1600 + j * 40 + k].val_f.y = IceDogUtils::float3length(float3(i+1, j, k) - src);
+				vl[i * 1600 + j * 40 + k].val_f.z = IceDogUtils::float3length(float3(i+1, j+1, k) - src);
+				vl[i * 1600 + j * 40 + k].val_f.w = IceDogUtils::float3length(float3(i, j+1, k) - src);
+				vl[i * 1600 + j * 40 + k].val_b.x = IceDogUtils::float3length(float3(i, j, k+1) - src);
+				vl[i * 1600 + j * 40 + k].val_b.y = IceDogUtils::float3length(float3(i+1, j, k+1) - src);
+				vl[i * 1600 + j * 40 + k].val_b.z = IceDogUtils::float3length(float3(i+1, j+1, k+1) - src);
+				vl[i * 1600 + j * 40 + k].val_b.w = IceDogUtils::float3length(float3(i, j+1, k+1) - src);
 			}
 		}
 	}
-
-	int numTri= IceDogAlgorithm::PolygoniseArray(da, 0.3, rd);
+	
+	rd->SetIsoLevel(20);
+	rd->SetVertexData(vl, 64000);
 	//rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_wood.IDAssets"));
 
-	st->SetStaticMesh(rd);
-	SetActorScale(IceDogUtils::float3(1 / 10.0, 1 / 10.0, 1 / 10.0));
+	vc->SetVoxelData(rd);
+	SetActorScale(IceDogUtils::float3(1/40.0,1/40.0,1/40.0));
 	SetEnable();
 }
 

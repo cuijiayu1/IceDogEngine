@@ -1,4 +1,5 @@
 
+#include "../../Utils/Voxel/MarchingCubeLT.h"
 #include "DirectXDeferredPipe.h"
 #include "RenderingDef.h"
 
@@ -6,7 +7,8 @@ namespace IceDogRendering
 {
 	DirectXDeferredPipe::DirectXDeferredPipe(std::ostream& errOs) : RenderingPipe(errOs)
 	{
-		r_inputLayout = 0;
+		r_voxelInputLayout = 0;
+		r_meshInputLayout = 0;
 		r_deferredLightLayout = 0;
 
 		c_msaaQuility = 0;
@@ -129,19 +131,29 @@ namespace IceDogRendering
 
 		// build up the state for rendering
 		BuildUpStates();
+		CreateMarchingCubeLookupTable();
 	}
 
 	void DirectXDeferredPipe::UpdateInputLayout()
 	{
-		ReleaseCOM(r_inputLayout);
+		ReleaseCOM(r_meshInputLayout);
+		ReleaseCOM(r_voxelInputLayout);
 		ReleaseCOM(r_deferredLightLayout);
 
 		// create input layout
 		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		D3DX11_PASS_DESC passDesc;
-		tech->GetPassByName("GBufferStage")->GetDesc(&passDesc);
+		D3DX11_PASS_DESC meshpassDesc;
+		tech->GetPassByName("GBufferStage")->GetDesc(&meshpassDesc);
 		int inputCount = std::end(IceDogRendering::vertexDesc) - std::begin(IceDogRendering::vertexDesc);
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::vertexDesc, inputCount, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &r_inputLayout)))
+		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::vertexDesc, inputCount, meshpassDesc.pIAInputSignature, meshpassDesc.IAInputSignatureSize, &r_meshInputLayout)))
+		{
+			s_errorlogOutStream << "Create input layout failed" << std::endl;
+		}
+
+		D3DX11_PASS_DESC voxelpassDesc;
+		tech->GetPassByName("VoxelStage")->GetDesc(&voxelpassDesc);
+		inputCount = std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc);
+		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::voxelVertexDesc, inputCount, voxelpassDesc.pIAInputSignature, voxelpassDesc.IAInputSignatureSize, &r_voxelInputLayout)))
 		{
 			s_errorlogOutStream << "Create input layout failed" << std::endl;
 		}
@@ -207,6 +219,64 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->OMSetBlendState(r_LightBlendDisableState, blendFac, 0xffffffff);
 	}
 
+	void DirectXDeferredPipe::CreateMarchingCubeLookupTable()
+	{
+		D3D11_TEXTURE1D_DESC tx_1dDesc;
+		tx_1dDesc.Width = 256;
+		tx_1dDesc.MipLevels = 1;
+		tx_1dDesc.ArraySize = 1;
+		tx_1dDesc.Format = DXGI_FORMAT_R16_SINT;
+		tx_1dDesc.Usage = D3D11_USAGE_DEFAULT;
+		tx_1dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		tx_1dDesc.CPUAccessFlags = 0;
+		tx_1dDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA tx_1dSR;
+		tx_1dSR.pSysMem = IceDogAlgorithm::edgeTable;
+
+		ID3D11Texture1D* tx_1d;
+
+		if (ISFAILED(c_PDRR.r_device->CreateTexture1D(&tx_1dDesc, &tx_1dSR, &tx_1d)))
+		{
+			s_errorlogOutStream << "Create Marching Cube Edge Table Failed!" << std::endl;
+		}
+
+		D3D11_TEXTURE2D_DESC tx_2dDesc;
+		tx_2dDesc.Width = 16;
+		tx_2dDesc.Height = 256;
+		tx_2dDesc.MipLevels = 1;
+		tx_2dDesc.ArraySize = 1;
+		tx_2dDesc.Format = DXGI_FORMAT_R8_SINT;
+		tx_2dDesc.SampleDesc.Count = 1;
+		tx_2dDesc.SampleDesc.Quality = 0;
+		tx_2dDesc.Usage = D3D11_USAGE_DEFAULT;
+		tx_2dDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		tx_2dDesc.CPUAccessFlags = 0;
+		tx_2dDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA tx_2dSR;
+		tx_2dSR.pSysMem = IceDogAlgorithm::triTable;
+		tx_2dSR.SysMemPitch = sizeof(INT8) * 16;
+		ID3D11Texture2D* tx_2d;
+
+		if (ISFAILED(c_PDRR.r_device->CreateTexture2D(&tx_2dDesc, &tx_2dSR, &tx_2d)))
+		{
+			s_errorlogOutStream << "Create Marching Cube Triangle Table Failed!" << std::endl;
+		}
+
+		if (ISFAILED(c_PDRR.r_device->CreateShaderResourceView(tx_1d, 0, &r_mcEdgeSRV)))
+		{
+			s_errorlogOutStream << "Create Marching Cube Edge Table SRV Failed!" << std::endl;
+		}
+		if (ISFAILED(c_PDRR.r_device->CreateShaderResourceView(tx_2d, 0, &r_mcTriangleSRV)))
+		{
+			s_errorlogOutStream << "Create Marching Cube Triangle Table SRV Failed!" << std::endl;
+		}
+
+		ReleaseCOM(tx_1d);
+		ReleaseCOM(tx_2d);
+	}
+
 	void DirectXDeferredPipe::ClearAllViews()
 	{
 		// clear the back buffer
@@ -247,27 +317,72 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
 	}
 
-	void DirectXDeferredPipe::RenderGBuffer(std::vector<std::shared_ptr<RenderData>>& renderDatas)
+	void DirectXDeferredPipe::RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
 		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("GBufferStage");
+		auto pass_mesh = tech->GetPassByName("GBufferStage");
+		auto pass_voxel = tech->GetPassByName("VoxelStage");
 
 		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRTV,r_gBufferDepthRTV };
 
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		c_PDRR.r_deviceContext->IASetInputLayout(r_inputLayout);
-		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		c_PDRR.r_deviceContext->OMSetRenderTargets(4, renderTargets, r_backBufferDepthStencilView);
 
-		UINT stride = sizeof(IceDogRendering::Vertex);
+		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
+		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
 		UINT offset = 0;
 
-		for (auto rd : renderDatas)
+		r_effectFX->GetVariableByName("mcEdgeTable")->AsShaderResource()->SetResource(r_mcEdgeSRV);
+		r_effectFX->GetVariableByName("mcTriTable")->AsShaderResource()->SetResource(r_mcTriangleSRV);
+		// render voxel
+		c_PDRR.r_deviceContext->IASetInputLayout(r_voxelInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		float isoLevel = 0.5;
+		for (auto renderData : renderDatas)
 		{
+			std::shared_ptr<VoxelData> rd = std::dynamic_pointer_cast<VoxelData>(renderData);
+			if (!rd) { continue; }
+			if (rd->GetVertexBuffer() == nullptr) { continue; }
+			auto tempVertexBuffer = rd->GetVertexBuffer();
+			isoLevel = rd->GetIsoLevel();
+
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_voxel, &offset);
+
+			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
+			r_effectFX->GetVariableByName("isolevel")->SetRawValue(&isoLevel, 0, sizeof(float));
+			// apply the material
+			if (rd->GetMaterialData())
+			{
+				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&rd->GetTextureEnableDesc(), 0, sizeof(IceDogRendering::float4));
+				r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetDiffuseSRV());
+				r_effectFX->GetVariableByName("normalMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetNormalSRV());
+				r_effectFX->GetVariableByName("parallaxMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetParallaxSRV());
+				r_effectFX->GetVariableByName("parallaxCfg")->SetRawValue(&rd->GetMaterialData()->GetParallaxCfg(), 0, sizeof(IceDogUtils::float4));
+			}
+			else
+			{
+				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
+			}
+
+			pass_voxel->Apply(0, c_PDRR.r_deviceContext);
+			c_PDRR.r_deviceContext->Draw(rd->GetVertexCount(), 0);
+		}
+
+		// render mesh
+		c_PDRR.r_deviceContext->IASetInputLayout(r_meshInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		for (auto renderData : renderDatas)
+		{
+			std::shared_ptr<MeshData> rd = std::dynamic_pointer_cast<MeshData>(renderData);
+			if (!rd) { continue; }
 			if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
 			auto tempVertexBuffer = rd->GetVertexBuffer();
 
-			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride, &offset);
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_mesh, &offset);
 			c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
 			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
@@ -275,7 +390,6 @@ namespace IceDogRendering
 			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
 			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
 			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
-			r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
 			// apply the material
 			if (rd->GetMaterialData())
 			{
@@ -290,7 +404,7 @@ namespace IceDogRendering
 				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0,0,0,0), 0, sizeof(IceDogRendering::float4));
 			}
 			
-			pass->Apply(0, c_PDRR.r_deviceContext);
+			pass_mesh->Apply(0, c_PDRR.r_deviceContext);
 
 			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
 		}
@@ -343,7 +457,7 @@ namespace IceDogRendering
 		r_mainSwapChain->Present(0, 0);
 	}
 
-	void DirectXDeferredPipe::Render(std::vector<std::shared_ptr<RenderData>>& renderDatas)
+	void DirectXDeferredPipe::Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
 		assert(c_PDRR.r_deviceContext);
 		assert(r_mainSwapChain);

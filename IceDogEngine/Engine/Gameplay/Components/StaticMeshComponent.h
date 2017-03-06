@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "../../../Rendering/RenderData.h"
+#include "../../../Rendering/RenderData/MeshData.h"
 
 namespace IceDogGameplay
 {
@@ -11,7 +11,7 @@ namespace IceDogGameplay
 		~StaticMeshComponent();
 
 		/* set the render data */
-		void SetStaticMesh(std::shared_ptr<IceDogRendering::RenderData> rd);
+		void SetStaticMesh(std::shared_ptr<IceDogRendering::MeshData> rd);
 
 		/* set enable */
 		virtual void SetEnable() override;
@@ -22,7 +22,7 @@ namespace IceDogGameplay
 		virtual void Update() override;
 
 	private:
-		std::shared_ptr<IceDogRendering::RenderData> r_renderData;
+		std::shared_ptr<IceDogRendering::MeshData> r_renderData;
 	};
 }
 

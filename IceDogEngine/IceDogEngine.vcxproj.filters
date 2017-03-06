@@ -42,16 +42,10 @@
     <ClCompile Include="Rendering\DirectX\DirectXRenderingPipe.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\RenderData.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\PipeView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Math\MathHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Rendering\DynamicRenderData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Logic\LogicAdapter.cpp">
@@ -126,6 +120,27 @@
     <ClCompile Include="Utils\Noise\PerlinNoise.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\RenderData\MeshData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderData\VoxelData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderData\DynamicRenderData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Noise\OtherNoise.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Sphere.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -194,16 +209,10 @@
     <ClInclude Include="Rendering\PDRenderingDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\RenderData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Rendering\PipeView.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\MathHelper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Rendering\DynamicRenderData.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\LightingGroup.h">
@@ -315,6 +324,27 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Noise\PerlinNoise.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\MeshData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\VoxelData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\DynamicRenderData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderData\RenderDataBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Gameplay\Components\VoxelComponent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Noise\OtherNoise.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Sphere.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "../../../Rendering/DynamicRenderData.h"
+#include "../../../Rendering/RenderData/DynamicRenderData.h"
 
 namespace IceDogGameplay 
 {

@@ -1,7 +1,7 @@
 #include "MarchingCubeLT.h"
 
 
-int IceDogAlgorithm::PolygoniseArray(std::vector<std::vector<std::vector<float>>>& arrayDatas, const double isolevel, std::shared_ptr<IceDogRendering::RenderData> rd)
+int IceDogAlgorithm::PolygoniseArray(std::vector<std::vector<std::vector<float>>>& arrayDatas, const double isolevel, std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	int w = arrayDatas.size();
 	int h = arrayDatas[0].size();

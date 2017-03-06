@@ -14,7 +14,7 @@ namespace IceDogCore
 		MessageProc(const MessagePriority& priority);
 		~MessageProc();
 
-		/* regist the proc */
+		/* register the proc */
 		void Init();
 
 		/* set the priority of this processor */

@@ -36,14 +36,14 @@ void Engine::Init()
 	r_msgProc.Init();
 }
 
-void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd,IceDogRendering::RenderPipeType rpt)
+void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd,IceDogRendering::RenderPipeType rpt)
 {
 	// add data to level
 	r_defaultLevel.RegistRenderData(rd);
 	r_renderAdapter.RegistRenderData(rd, rpt);
 }
 
-void IceDogEngine::Engine::UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderData> rd, IceDogRendering::RenderPipeType rpt)
+void IceDogEngine::Engine::UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd, IceDogRendering::RenderPipeType rpt)
 {
 	// remove from level
 	r_defaultLevel.UnRegistRenderData(rd);

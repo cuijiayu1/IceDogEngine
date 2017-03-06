@@ -1,9 +1,15 @@
 #pragma once
-#include "../../Rendering/RenderData.h"
+#include "../../Rendering/RenderData/MeshData.h"
 #include "../Math/MathDef.h"
 
 namespace IceDogAlgorithm
 {
+	//  [ 4 5 ]
+	//[ 0 1 ]
+	//	[ 7 6 ]
+	//[ 3 2 ]
+	//
+
 	using IceDogUtils::float3;
 
 	struct TRIANGLE {
@@ -16,12 +22,12 @@ namespace IceDogAlgorithm
 	};
 
 	/* Triangulation grid array */
-	int PolygoniseArray(std::vector<std::vector<std::vector<float>>>& arrayDatas,const double isolevel, std::shared_ptr<IceDogRendering::RenderData> rd);
+	int PolygoniseArray(std::vector<std::vector<std::vector<float>>>& arrayDatas,const double isolevel, std::shared_ptr<IceDogRendering::MeshData> rd);
 
 	/* interpolation the vertex */
 	IceDogUtils::float3 VertexInterp(double isolevel, float3 p1, float3 p2, double valp1, double valp2);
 
-	const int edgeTable[256] = {
+	const INT16 edgeTable[256] = {
 		0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 		0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 		0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -56,7 +62,7 @@ namespace IceDogAlgorithm
 		0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0
 	};
 
-	const int triTable[256][16] =
+	const INT8 triTable[256][16] =
 	{ { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 	{ 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 	{ 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },

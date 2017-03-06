@@ -8,27 +8,27 @@ void DirectXRenderingPipe::Resize(int newWidth, int newHeight)
 	c_backBufferWidth = newWidth;
 	c_backBufferHeight = newHeight;
 
-	// for recreate the back buffer rendertarget view
+	// for recreate the back buffer render target view
 	ReleaseCOM(r_backBufferRenderTargetView);
 	ReleaseCOM(r_backBufferDepthStencilView);
 	ReleaseCOM(r_backBufferDepthStencilBuffer);
 
 	if (ISFAILED(r_mainSwapChain->ResizeBuffers(1, newWidth, newHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0)))
 	{
-		s_errorlogOutStream << "Resize swap chain buffer faild" << std::flush;
+		s_errorlogOutStream << "Resize swap chain buffer failed" << std::flush;
 		return;
 	}
 	// get the back buffer
 	ID3D11Texture2D* tempBackBufferTexture;
 	if (ISFAILED(r_mainSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tempBackBufferTexture))))
 	{
-		s_errorlogOutStream << "Get swap chain back buffer faild" << std::flush;
+		s_errorlogOutStream << "Get swap chain back buffer failed" << std::flush;
 		return;
 	}
 	// recreate the back buffer render target view
 	if (ISFAILED(c_PDRR.r_device->CreateRenderTargetView(tempBackBufferTexture, 0, &r_backBufferRenderTargetView)))
 	{
-		s_errorlogOutStream << "Create render target view from back buffer texture faild" << std::flush;
+		s_errorlogOutStream << "Create render target view from back buffer texture failed" << std::flush;
 		return;
 	}
 	ReleaseCOM(tempBackBufferTexture);
@@ -83,7 +83,7 @@ void DirectXRenderingPipe::Resize(int newWidth, int newHeight)
 	c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
 }
 
-void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& renderDatas)
+void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 {
 	assert(c_PDRR.r_deviceContext);
 	assert(r_mainSwapChain);
@@ -128,8 +128,9 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 
 	UINT stride = sizeof(IceDogRendering::Vertex);
 	UINT offset = 0;
-	for (auto rd : renderDatas)
+	for (auto renderData : renderDatas)
 	{
+		std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
 		if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
 		auto tempVertexBuffer = rd->GetVertexBuffer();
 
@@ -140,7 +141,6 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderData>>& rend
 		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
 		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
 		r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
-		r_effectFX->GetVariableByName("m_mat")->SetRawValue(&rd->GetMaterial(), 0, sizeof(Material));
 
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{

@@ -3,6 +3,7 @@
 #include "Source\MyActor.h"
 #include "Source\Cha.h"
 #include "Source\PlaneActor.h"
+#include "Source\Sphere.h"
 
 using namespace std;
 
@@ -42,6 +43,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PlaneActor plan;
 	plan.SetActorLocation(IceDogUtils::float3(0, -0.5, 0));
 	MyActor actor;
+
+	for (int i=0;i<2;++i)
+	{
+		for (int j=0;j<2;++j)
+		{
+			for (int k=0;k<2;++k)
+			{
+				Sphere* sps = new Sphere();
+				sps->SetActorLocation(IceDogUtils::float3(i, j, k));
+			}
+		}
+	}
 
 	eg.Run();
 

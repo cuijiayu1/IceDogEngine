@@ -22,13 +22,14 @@ PlatformDependenceRenderResource DirectXRenderingManager::GetPDRR()
 	return pdrr;
 }
 
-void DirectXRenderingManager::UpdateRenderDataIndexBuffer(std::shared_ptr<IceDogRendering::RenderData> rd)
+void DirectXRenderingManager::UpdateRenderDataIndexBuffer(std::shared_ptr<IceDogRendering::RenderDataBase> renderData)
 {
-	// un map the data and get the ptr
+	std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
+	// unmap the data and get the ptr
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	if (ISFAILED(r_deviceContext->Map(rd->GetIndexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
 	{
-		s_errorlogOutStream << "Try map index buffer faild" << std::endl;
+		s_errorlogOutStream << "Try map index buffer failed" << std::endl;
 		return;
 	}
 	unsigned int* indexBuffer = reinterpret_cast<unsigned int*>(mappedData.pData);
@@ -41,13 +42,14 @@ void DirectXRenderingManager::UpdateRenderDataIndexBuffer(std::shared_ptr<IceDog
 	r_deviceContext->Unmap(rd->GetIndexBuffer(), 0);
 }
 
-void DirectXRenderingManager::UpdateRenderDataVertexBuffer(std::shared_ptr<IceDogRendering::RenderData> rd)
+void DirectXRenderingManager::UpdateRenderDataVertexBuffer(std::shared_ptr<IceDogRendering::RenderDataBase> renderData)
 {
-	// un map the data and get the ptr
+	std::shared_ptr<IceDogRendering::MeshData> rd = std::dynamic_pointer_cast<IceDogRendering::MeshData>(renderData);
+	// unmap the data and get the ptr
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	if (ISFAILED(r_deviceContext->Map(rd->GetVertexBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData)))
 	{
-		s_errorlogOutStream << "Try map vertex buffer faild" << std::endl;
+		s_errorlogOutStream << "Try map vertex buffer failed" << std::endl;
 		return;
 	}
 	Vertex* vertexBuffer = reinterpret_cast<Vertex*>(mappedData.pData);
@@ -64,9 +66,9 @@ void DirectXRenderingManager::TickRenderingManager()
 {
 	// check and create the render data buffer
 	for (auto rd:r_sceneRenderData)
-		if (!rd->GetDataIsClean()) { rd->CreateVertexBufferWithIndexBuffer(r_device); rd->MarkDataStateClean(); }
+		if (!rd->GetDataIsClean()) { rd->CreateBuffer(r_device); rd->MarkDataStateClean(); }
 	for (auto rd:r_uiRenderData)
-		if (!rd->GetDataIsClean()) { rd->CreateVertexBufferWithIndexBuffer(r_device); rd->MarkDataStateClean(); }
+		if (!rd->GetDataIsClean()) { rd->CreateBuffer(r_device); rd->MarkDataStateClean(); }
 	
 	for (auto rd : r_sceneRenderData)
 	{
@@ -121,7 +123,7 @@ bool DirectXRenderingManager::InitRenderManager(IceDogPlatform::PlatformWindow p
 	// check if create device success
 	if (ISFAILED(hr))
 	{
-		s_errorlogOutStream << "FatalError: Create device faild" << std::flush;
+		s_errorlogOutStream << "FatalError: Create device failed" << std::flush;
 		return false;
 	}
 
@@ -134,24 +136,24 @@ bool DirectXRenderingManager::InitRenderManager(IceDogPlatform::PlatformWindow p
 	return true;
 }
 
-/* regist the ui pipe render data */
-void DirectXRenderingManager::RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+/* register the ui pipe render data */
+void DirectXRenderingManager::RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_uiRenderData.push_back(rd);
 }
 
-/* regist the scene pipe render data */
-void DirectXRenderingManager::RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+/* register the scene pipe render data */
+void DirectXRenderingManager::RegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_sceneRenderData.push_back(rd);
 }
 
-void IceDogRendering::DirectXRenderingManager::UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+void IceDogRendering::DirectXRenderingManager::UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_uiRenderData.erase(std::find(r_uiRenderData.begin(), r_uiRenderData.end(), rd));
 }
 
-void IceDogRendering::DirectXRenderingManager::UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderData> rd)
+void IceDogRendering::DirectXRenderingManager::UnRegistSceneRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_sceneRenderData.erase(std::find(r_sceneRenderData.begin(), r_sceneRenderData.end(), rd));
 }

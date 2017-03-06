@@ -18,8 +18,8 @@ namespace IceDogRendering
 		void TickRendering();
 
 		/* register/unregister Render data, to the rendering pipe line */
-		void RegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
-		void UnRegistRenderData(std::shared_ptr<RenderData> rd, RenderPipeType rpt);
+		void RegistRenderData(std::shared_ptr<RenderDataBase> rd, RenderPipeType rpt);
+		void UnRegistRenderData(std::shared_ptr<RenderDataBase> rd, RenderPipeType rpt);
 
 		/* register/unregister material data, to the rendering pipe line */
 		void RegisterMaterialData(IceDogRendering::MaterialData* matdata);

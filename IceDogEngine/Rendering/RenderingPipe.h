@@ -1,7 +1,8 @@
 #pragma once
 
 #include "PlatformDependenceRenderResource.h"
-#include "RenderData.h"
+#include "RenderData/MeshData.h"
+#include "RenderData/VoxelData.h"
 #include "PipeView.h"
 #include "LightingGroup.h"
 #include "../Core/MessageProc.h"
@@ -32,7 +33,7 @@ namespace IceDogRendering
 		/* init the pipe line */
 		virtual void InitPipe(IceDogPlatform::PlatformWindow pfWindow) = 0;
 		/* render */
-		virtual void Render(std::vector<std::shared_ptr<RenderData>>& renderDatas) = 0;
+		virtual void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) = 0;
 		/* init the platform dependence data */
 		virtual void InitPlatformDepedence(PlatformDependenceRenderResource pdrr) { c_PDRR = pdrr; };
 		/* register the main pipe view */

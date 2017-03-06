@@ -1,10 +1,10 @@
 #pragma once
 
-#include "RenderData.h"
+#include "MeshData.h"
 
 namespace IceDogRendering
 {
-	class DynamicRenderData: public RenderData
+	class DynamicRenderData: public MeshData
 	{
 	public:
 		/* mark data map dirty, so the render manager will update the data using the data that this render data holds */

@@ -1,61 +1,19 @@
-#include "RenderData.h"
+#include "MeshData.h"
 
 using namespace IceDogRendering;
 
-RenderData::RenderData()
+MeshData::MeshData()
 {
-	c_worldMatrix = float4x4::Identity();
-	c_worldInverseTransposeMatrix = float4x4::Identity();
 	r_indexBuffer = nullptr;
 	r_vertexBuffer = nullptr;
-	c_materilaData = nullptr;
-	c_material.ambient = float4(0.3, 0.3, 0.3, 1);
-	c_material.diffuse = float4(0.2, 0.2, 0.2, 1);
-	c_material.reflect = float4(0.7, 0.7, 0.7, 1);
-	c_material.specular = float4(0.8, 0.8, 0.8, 1);
 }
 
-int RenderData::GetTriangleCount()
+int MeshData::GetTriangleCount()
 {
 	return c_triangleCount;
 }
 
-int RenderData::GetVertexCount()
-{
-	return c_vertexCount;
-}
-
-bool RenderData::GetIsDynamicBuffer()
-{
-	return false;
-}
-
-void RenderData::MarkDataMapStateClean()
-{
-	c_dataMapFlag = DataMapDirtyFlag::None;
-}
-
-DataMapDirtyFlag RenderData::GetDataMapFlag()
-{
-	return c_dataMapFlag;
-}
-
-void RenderData::MarkDataStateDirty()
-{
-	c_isDataClean = false;
-}
-
-void RenderData::MarkDataStateClean()
-{
-	c_isDataClean = true;
-}
-
-bool RenderData::GetDataIsClean()
-{
-	return c_isDataClean;
-}
-
-RenderData::~RenderData()
+MeshData::~MeshData()
 {
 #if defined __DIRECTX__
 	ReleaseCOM(r_indexBuffer);
@@ -63,7 +21,7 @@ RenderData::~RenderData()
 #endif
 }
 
-void RenderData::SetVertexData(Vertex* buffer, int num)
+void MeshData::SetVertexData(Vertex* buffer, int num)
 {
 	c_vertexDatas = std::shared_ptr<Vertex>(buffer, [](Vertex* data) {delete[]data; });
 	c_vertexCount = num;
@@ -72,7 +30,7 @@ void RenderData::SetVertexData(Vertex* buffer, int num)
 #endif
 }
 
-void RenderData::SetIndexData(unsigned int* indexBuffer, int triangleCount)
+void MeshData::SetIndexData(unsigned int* indexBuffer, int triangleCount)
 {
 	c_indexDatas = std::shared_ptr<unsigned int>(indexBuffer, [](unsigned int* data) {delete[]data; });
 	c_triangleCount = triangleCount;
@@ -82,7 +40,7 @@ void RenderData::SetIndexData(unsigned int* indexBuffer, int triangleCount)
 }
 
 #if defined __DIRECTX__
-bool RenderData::CreateVertexBufferWithIndexBuffer(ID3D11Device* d3dDevice)
+bool IceDogRendering::MeshData::CreateBuffer(ID3D11Device* d3dDevice)
 {
 	ReleaseCOM(r_vertexBuffer);
 	ReleaseCOM(r_indexBuffer);
@@ -93,16 +51,17 @@ bool RenderData::CreateVertexBufferWithIndexBuffer(ID3D11Device* d3dDevice)
 	auto indexResult = d3dDevice->CreateBuffer(&c_indexBufferDesc, &c_indexSubResourceData, &r_indexBuffer);
 	return (!ISFAILED(result)) && (!ISFAILED(indexResult));
 }
-ID3D11Buffer* RenderData::GetIndexBuffer()
+
+ID3D11Buffer* MeshData::GetIndexBuffer()
 {
 	return r_indexBuffer;
 }
 
-ID3D11Buffer* RenderData::GetVertexBuffer()
+ID3D11Buffer* MeshData::GetVertexBuffer()
 {
 	return r_vertexBuffer;
 }
-void RenderData::UpdateIndexBufferDesc()
+void MeshData::UpdateIndexBufferDesc()
 {
 	if (GetIsDynamicBuffer())
 		c_indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -123,7 +82,7 @@ void RenderData::UpdateIndexBufferDesc()
 	r_indexBuffer = nullptr;
 }
 
-void RenderData::UpdateVertexBufferDesc()
+void MeshData::UpdateVertexBufferDesc()
 {
 	if (GetIsDynamicBuffer())
 		c_bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -144,14 +103,3 @@ void RenderData::UpdateVertexBufferDesc()
 	r_vertexBuffer = nullptr;
 }
 #endif
-
-void IceDogRendering::RenderData::SetWorldMatrix(const float4x4& worldMatrix)
-{
-	c_worldMatrix = worldMatrix;
-#if defined __DIRECTX__
-	XMMATRIX wMat(c_worldMatrix.m);
-	wMat = XMMatrixInverse(nullptr, wMat);
-	wMat = XMMatrixTranspose(wMat);
-	XMStoreFloat4x4((XMFLOAT4X4*)c_worldInverseTransposeMatrix.m, wMat);
-#endif
-}

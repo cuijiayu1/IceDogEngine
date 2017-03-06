@@ -95,6 +95,18 @@ namespace IceDogRendering
 			tex0(u, v),color(0.2,0.2,0.2,1) {}
 	};
 
+	struct VoxelVertex
+	{
+		//  [ 7 6 ] (back)
+		//[ 3 2 ] (front)
+		//	[ 4 5 ]
+		//[ 0 1 ]
+		//
+		float3 pos;
+		float4 val_f;
+		float4 val_b;
+	};
+
 	struct DirectionalLight
 	{
 		DirectionalLight()
@@ -155,14 +167,6 @@ namespace IceDogRendering
 		float spot;
 		float3 att;
 		float pad;
-	};
-
-	struct Material
-	{
-		float4 ambient;
-		float4 diffuse;
-		float4 specular;
-		float4 reflect;
 	};
 
 	namespace Color

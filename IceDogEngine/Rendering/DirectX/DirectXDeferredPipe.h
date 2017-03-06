@@ -13,7 +13,7 @@ namespace IceDogRendering
 		void InitPipe(IceDogPlatform::PlatformWindow pfWindow) override;
 
 		/* call the pipe to render */
-		void Render(std::vector<std::shared_ptr<RenderData>>& renderDatas) override;
+		void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) override;
 
 	protected:
 		/* reset the render target size */
@@ -39,7 +39,7 @@ namespace IceDogRendering
 		void ClearAllViews();
 
 		/* render the G-Buffer */
-		void RenderGBuffer(std::vector<std::shared_ptr<RenderData>>& renderDatas);
+		void RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
 
 		/* render the light buffer */
 		void RenderLightBuffer();
@@ -64,11 +64,15 @@ namespace IceDogRendering
 
 		/* disable the specific blend mode for lighting */
 		void DisableLightBlend();
+
+		/* create the marching cube look up table */
+		void CreateMarchingCubeLookupTable();
 		
 
 	private:
 		IDXGISwapChain* r_mainSwapChain;
-		ID3D11InputLayout* r_inputLayout;
+		ID3D11InputLayout* r_meshInputLayout;
+		ID3D11InputLayout* r_voxelInputLayout;
 		ID3D11InputLayout* r_deferredLightLayout;
 		D3D11_VIEWPORT r_viewPort;
 		ID3DX11Effect* r_effectFX;
@@ -102,6 +106,9 @@ namespace IceDogRendering
 		ID3D11ShaderResourceView* r_gBufferSpecularSRV;
 		ID3D11ShaderResourceView* r_gBufferDepthSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
+
+		ID3D11ShaderResourceView* r_mcEdgeSRV;
+		ID3D11ShaderResourceView* r_mcTriangleSRV;
 
 		//other buffer
 		ID3D11Texture2D* r_backBufferDepthStencilBuffer;
