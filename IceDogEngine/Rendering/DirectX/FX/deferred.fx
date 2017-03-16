@@ -224,6 +224,10 @@ void MCGS(point MCVsIn gIn[1], inout TriangleStream<VSOut> triStream)
 //										Voxel Terrian Marching Cube Pass Def End										//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										G-Buffer Pass Start																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float3x3 compute_tangent_frame(float3 N, float3 p, float2 uv)
 {
 	// get edge vectors of pixel triangle
@@ -379,6 +383,14 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	return result;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										G-Buffer Pass End																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Lighting Pass Start																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 struct LightVSIn
 {
 	float3 position : POSITION;
@@ -458,6 +470,11 @@ Texture2D gBuffer_depth;
 
 const static float Pi = 3.14159265374;
 
+float3 CalRf(float3 Rf0, float thetai)
+{
+	return Rf0 + (1.0 - Rf0)*pow((1.0 - max(cos(thetai), 0.0)), 5);
+}
+
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
 	LightPSOut result;
 	if (vout.uv.y > 0.75)
@@ -491,26 +508,28 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		wPos.w = 1;
 		wPos = mul(wPos, m_viewInv);
 
+		float m = 10;
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
-		float3 El = float3(1,1,1);
+		float3 El = float3(3.5,3.5,3.5);
 		float3 l = normalize(-directionLight.direction);
 		float Cosi = saturate(dot(wNormal, l));
 		float4 Cdiff = gBuffer_baseColor.Sample(samAnisotropic, vout.uv);
-		float4 Mdiff = float4(Cdiff.xyz * El * Cosi,Cdiff.w);
-		float4 Ldiff = Mdiff / Pi;
-
-		float m = 10;
 		float4 Cspec = gBuffer_specular.Sample(samAnisotropic, vout.uv);
-		float4 Mspec = float4(Cspec.xyz * El * Cosi, Cspec.w);
 		float3 v = normalize(eyePos - wPos.xyz);
 		float3 h = normalize(l + v);
 		float Cosh = saturate(dot(wNormal, h));
-		float4 Lspec = ((m + 8) / (8 * Pi))*pow(Cosh, m)*Mspec;
 
-		result.finalColor = 4*(Ldiff + Lspec);
+		// the brdf: diff term      the hight light term
+		float4 brdf = Cdiff / Pi + ((m + 8) / (8 * Pi))*pow(Cosh, m)*Cspec;
+
+		result.finalColor = brdf * float4(El*Cosi, 1);
 	}
 	return result;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Lighting Pass End																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 technique11 Deferred
 {
