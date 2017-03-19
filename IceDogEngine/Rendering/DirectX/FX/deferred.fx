@@ -552,12 +552,15 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float3 h = normalize(l + v);
 		float Cosi = saturate(dot(wNormal, l));
 
+		//float4 spcenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, reflect(v, wNormal), roughness * 10);
+		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, wNormal, 10);
 		// the brdf: diff term      the hight light term
-		float4 brdf = Cdiff / Pi + (D(roughness, wNormal, h)*F(saturate(dot(wNormal, h)), f0)*G(roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
-
+		float4 brdf_diff = Cdiff / Pi;
+		float4 brdf_spec = (D(roughness, wNormal, h)*F(saturate(dot(wNormal, h)), f0)*G(roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+		
 		float4 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(cubeSample, -v);
 
-		result.finalColor = (all(ndcDepth))*brdf * float4(El*Cosi, 1) + Lenv;
+		result.finalColor = (all(ndcDepth))*(brdf_diff + brdf_spec) * float4(El*Cosi, 1) + (all(ndcDepth))*brdf_diff*difenvE + Lenv;
 
 		/* old lighting equation */
 		/*
