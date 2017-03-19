@@ -343,6 +343,8 @@ SamplerState cubeSample {
 	AddressV = Wrap;
 };
 
+Texture2D brdfLut;
+
 PSOut GBufferPS(VSOut pin) : SV_Target{
 	PSOut result;
 	
@@ -485,14 +487,17 @@ float3 CalRf(float3 Rf0, float thetai)
 	return Rf0 + (1.0 - Rf0)*pow((1.0 - max(cos(thetai), 0.0)), 5);
 }
 
-float F(float costheta, float f0)
+float F(float VoH, float f0)
 {
-	return f0 + (1 - f0)*pow(2, (-9.60232*pow(costheta, 8) - 8.58092*costheta));
+	return f0 + (1 - f0)*pow(2, (-5.55473*VoH - 6.98316)*VoH);
 }
 
 float D(float roughness, float3 n, float3 h)
 {
-	return pow(roughness, 4) / (Pi*pow((pow(dot(n, h), 2)*(pow(roughness, 4) - 1)) + 1, 2));
+	float a = roughness*roughness;
+	float a2 = a*a;
+	float d = Pi*pow((pow(dot(n,h),2)*(a2-1)+1),2);
+	return a2 / d;
 }
 
 float G1(float3 n, float3 v, float roughness)
@@ -504,6 +509,165 @@ float G1(float3 n, float3 v, float roughness)
 float G(float roughness, float3 n, float3 l, float3 v)
 {
 	return G1(n,l,roughness)*G1(n,v,roughness);
+}
+
+float3 EnvBRDFApprox(float3 SpecularColor, float Roughness, float NoV)
+{
+	const half4 c0 = { -1, -0.0275, -0.572, 0.022 };
+	const half4 c1 = { 1, 0.0425, 1.04, -0.04 };
+	half4 r = Roughness * c0 + c1;
+	half a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;
+	half2 AB = half2(-1.04, 1.04) * a004 + r.zw;
+	return SpecularColor * AB.x + AB.y;
+}
+
+// shlick aproxx
+float GGX(float NdotV, float a)
+{
+	float k = (a * a) / 2;
+	return NdotV / (NdotV * (1.0f - k) + k);
+}
+
+float G_Smith(float a, float nDotV, float nDotL)
+{
+
+	return GGX(nDotL, a) * GGX(nDotV, a);
+}
+
+float radicalInverse_VdC(uint bits)
+{
+	bits = (bits << 16u) | (bits >> 16u);
+	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+	return float(bits) * 2.3283064365386963e-10f; // / 0x100000000
+}
+
+float2 hammersley(uint i, uint N)
+{
+	return float2(float(i) / float(N), radicalInverse_VdC(i));
+}
+
+float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 N) {
+	float a = Roughness * Roughness;
+	float Phi = 2 * Pi * Xi.x; 
+	float CosTheta = sqrt((1 - Xi.y) / (1 + (a*a - 1) * Xi.y)); 
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+	float3 H; 
+	H.x = SinTheta * cos(Phi); 
+	H.y = SinTheta * sin(Phi); 
+	H.z = CosTheta;
+	float3 UpVector = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0); 
+	float3 TangentX = normalize(cross(UpVector, N)); 
+	float3 TangentY = cross(N, TangentX); 
+	// Tangent to world space 
+	return TangentX * H.x + TangentY * H.y + N * H.z;
+}
+
+float2 IntegrateBRDF(float Roughness, float NoV) 
+{
+	float3 V;
+	V.x = sqrt(1.0f - NoV * NoV); // sin 
+	V.y = 0; 
+	V.z = NoV; // cos
+	float A = 0; 
+	float B = 0;
+	const uint NumSamples = 1024; 
+	for (uint i = 0; i < NumSamples; i++) 
+	{
+		float2 Xi = hammersley(i, NumSamples);
+		float3 H = ImportanceSampleGGX(Xi, Roughness, float3(0,0,1)); 
+		float3 L = 2 * dot(V, H) * H - V;
+		float NoL = saturate(L.z); 
+		float NoH = saturate(H.z); 
+		float VoH = saturate(dot(V, H));
+		if (NoL > 0) {
+			float G = G_Smith(Roughness, NoV, NoL);
+			float G_Vis = G * VoH / (NoH * NoV); 
+			float Fc = pow(1 - VoH, 5);
+			A += (1 - Fc) * G_Vis;
+			B += Fc * G_Vis;
+		}
+	}
+	return float2(A, B) / NumSamples;
+}
+
+// calculate the specular IBL using the gt
+float3 SpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V) {
+	float3 SpecularLighting = 0;
+	const uint NumSamples = 1024; 
+	for (uint i = 0; i < NumSamples; i++) 
+	{
+		float2 Xi = hammersley(i, NumSamples);
+		float3 H = ImportanceSampleGGX(Xi, Roughness, N); 
+		float3 L = 2 * dot(V, H) * H - V;
+		float NoV = saturate(dot(N, V)); 
+		float NoL = saturate(dot(N, L)); 
+		float NoH = saturate(dot(N, H)); 
+		float VoH = saturate(dot(V, H));
+		if (NoL > 0) {
+			float3 SampleColor = cubeMap.SampleLevel(cubeSample, L, 0).rgb;
+			float G = G_Smith(Roughness, NoV, NoL);
+			float Fc = pow(1 - VoH, 5); 
+			float3 F = (1 - Fc) * SpecularColor + Fc;
+			// Incident light = SampleColor * NoL 
+			// Microfacet specular = D*G*F / (4*NoL*NoV) 
+			// pdf = D * NoH / (4 * VoH) 
+			SpecularLighting += SampleColor * F * G * VoH / (NoH * NoV);
+		}
+	}
+	return SpecularLighting / NumSamples;
+}
+
+float3 PrefilterEnvMap(float Roughness, float3 R) {
+	float3 N = R;
+	float3 V = R;
+	float3 PrefilteredColor = 0;
+	float TotalWeight = 0;
+	const uint NumSamples = 1024;
+	for (uint i = 0; i < NumSamples; i++) {
+		float2 Xi = hammersley(i, NumSamples);
+		float3 H = ImportanceSampleGGX(Xi, Roughness, N);
+		float3 L = 2 * dot(V, H) * H - V;
+		float NoL = saturate(dot(N, L));
+		if (NoL > 0) {
+			PrefilteredColor += cubeMap.SampleLevel(cubeSample, L, 0).rgb * NoL;
+			TotalWeight += NoL;
+		}
+	}
+	return PrefilteredColor / TotalWeight;
+}
+
+float3 hackEnvMap(float Roughness, float3 R)
+{
+	return cubeMap.Sample(cubeSample, R, Roughness * 20);
+}
+
+// calculate the BRDF LUT hack
+LightPSOut CalBRDFLut(LightGSOut vout) : SV_Target{
+	LightPSOut result;
+	result.finalColor.rg = IntegrateBRDF(1-vout.uv.y, vout.uv.x);
+	result.finalColor.b = 0;
+	result.finalColor.a = 1;
+	return result;
+}
+
+// calculate the BRDF Ambient Map
+LightPSOut CalBRDFAmbient(LightGSOut vout) : SV_Target{
+	LightPSOut result;
+	result.finalColor.rg = PrefilterEnvMap(1 - vout.uv.y, vout.uv.x);
+	result.finalColor.b = 0;
+	result.finalColor.a = 1;
+	return result;
+}
+
+float3 ApproximateSpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V) {
+	float NoV = saturate(dot(N, V));
+	float3 R = 2 * dot(V, N) * N - V;
+	float3 PrefilteredColor = hackEnvMap(Roughness, R);
+	float2 EnvBRDF = brdfLut.Sample(samAnisotropic, float2(Roughness, NoV));
+	return PrefilteredColor * (SpecularColor * EnvBRDF.x + EnvBRDF.y);
 }
 
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
@@ -539,28 +703,36 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		wPos.w = 1;
 		wPos = mul(wPos, m_viewInv);
 
-
-		float roughness = 0.2;
+		float3 BaseColor = gBuffer_baseColor.Sample(samAnisotropic, vout.uv).xyz;
+		float3 SpecularColor = gBuffer_specular.Sample(samAnisotropic, vout.uv).xyz;
+		float Metallic = 0;
+		float Roughness = 0.7;
 		float f0 = 0.02;
+		float Specular = 0.6;
+
+		float3 Cdiff = lerp(BaseColor, 0, Metallic);
+		float3 Cspec = lerp(0.08 * Specular, BaseColor, Metallic);
+		//Specular = Cavity*0.5;
+
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
 		wNormal = normalize(wNormal);
-		float3 El = float3(3.5, 3.5, 3.5);
+		float3 El = float3(0, 0, 0);
 		float3 l = normalize(-directionLight.direction);
-		float4 Cdiff = gBuffer_baseColor.Sample(samAnisotropic, vout.uv);
-		float4 Cspec = gBuffer_specular.Sample(samAnisotropic, vout.uv);
 		float3 v = normalize(eyePos - wPos.xyz);
 		float3 h = normalize(l + v);
 		float Cosi = saturate(dot(wNormal, l));
 
-		//float4 spcenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, reflect(v, wNormal), roughness * 10);
+		float4 spcenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, -reflect(v, wNormal), Roughness * 10);
 		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, wNormal, 10);
 		// the brdf: diff term      the hight light term
-		float4 brdf_diff = Cdiff / Pi;
-		float4 brdf_spec = (D(roughness, wNormal, h)*F(saturate(dot(wNormal, h)), f0)*G(roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+		float3 brdf_diff = Cdiff / Pi;
+		float3 brdf_spec = Cspec*(D(Roughness, wNormal, h)*F(dot(v,h), f0)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
 		
-		float4 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(cubeSample, -v);
+		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(cubeSample, -v).xyz;
 
-		result.finalColor = (all(ndcDepth))*(brdf_diff + brdf_spec) * float4(El*Cosi, 1) + (all(ndcDepth))*brdf_diff*difenvE + Lenv;
+		float3 combine = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi + Lenv + (all(ndcDepth))*brdf_diff*difenvE +(all(ndcDepth))*ApproximateSpecularIBL(float3(1, 1, 1), Roughness, wNormal, v);
+		//float3 combine = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi + Lenv + (all(ndcDepth))*EnvBRDFApprox(Specular, Roughness, dot(wNormal, v))*spcenvE + (all(ndcDepth))*brdf_diff*difenvE;
+		result.finalColor = float4(combine, 1);
 
 		/* old lighting equation */
 		/*
@@ -611,5 +783,17 @@ technique11 Deferred
 		SetVertexShader(CompileShader(vs_5_0, LightVS()));
 		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
 		SetPixelShader(CompileShader(ps_5_0, LightPS()));
+	}
+	pass BRDFLutStage
+	{
+		SetVertexShader(CompileShader(vs_5_0, LightVS()));
+		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
+		SetPixelShader(CompileShader(ps_5_0, CalBRDFLut()));
+	}
+	pass BRDFAmbientMapStage
+	{
+		SetVertexShader(CompileShader(vs_5_0, LightVS()));
+		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
+		SetPixelShader(CompileShader(ps_5_0, CalBRDFAmbient()));
 	}
 }

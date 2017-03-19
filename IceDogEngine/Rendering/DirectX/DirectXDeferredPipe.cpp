@@ -12,8 +12,8 @@ namespace IceDogRendering
 		r_deferredLightLayout = 0;
 
 		c_msaaQuility = 0;
-		c_backBufferHeight = 600;
-		c_backBufferWidth = 800;
+		c_backBufferHeight = 1024;
+		c_backBufferWidth = 1024;
 		c_swapChainBufferRefreshRate = 60;
 		c_enableMsaa = false;
 		r_backBufferDepthStencilView = nullptr;
@@ -48,7 +48,7 @@ namespace IceDogRendering
 		swapDesc.BufferDesc.Height = c_platformWindow.height;
 		swapDesc.BufferDesc.RefreshRate.Numerator = c_swapChainBufferRefreshRate;
 		swapDesc.BufferDesc.RefreshRate.Denominator = 1;
-		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		swapDesc.SampleDesc.Count = 1;
@@ -132,6 +132,14 @@ namespace IceDogRendering
 		// test code begin
 		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
 		// test code end
+
+		// load BRDF LUT DDS file
+		ID3D11Resource* tempRes = nullptr;
+		if (ISFAILED(DirectX::CreateDDSTextureFromFile(c_PDRR.r_device, L"Resources/LUT.dds", &tempRes, &r_brdfLutSRV)))
+		{
+			s_errorlogOutStream << "Load BRDF LUT failed" << std::flush;
+		}
+		ReleaseCOM(tempRes); // view saves reference
 
 		// build up the state for rendering
 		BuildUpStates();
@@ -437,6 +445,9 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
 		r_effectFX->GetVariableByName("gBuffer_specular")->AsShaderResource()->SetResource(r_gBufferSpecularSRV);
 		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(r_gBufferDepthSRV);
+
+		// set BRDF LUT
+		r_effectFX->GetVariableByName("brdfLut")->AsShaderResource()->SetResource(r_brdfLutSRV);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
 		

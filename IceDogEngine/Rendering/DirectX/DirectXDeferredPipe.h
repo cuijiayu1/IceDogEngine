@@ -110,6 +110,8 @@ namespace IceDogRendering
 		ID3D11ShaderResourceView* r_mcEdgeSRV;
 		ID3D11ShaderResourceView* r_mcTriangleSRV;
 
+		ID3D11ShaderResourceView* r_brdfLutSRV;
+
 		//other buffer
 		ID3D11Texture2D* r_backBufferDepthStencilBuffer;
 
