@@ -485,13 +485,34 @@ float3 CalRf(float3 Rf0, float thetai)
 	return Rf0 + (1.0 - Rf0)*pow((1.0 - max(cos(thetai), 0.0)), 5);
 }
 
+float F(float costheta, float f0)
+{
+	return f0 + (1 - f0)*pow(2, (-9.60232*pow(costheta, 8) - 8.58092*costheta));
+}
+
+float D(float roughness, float3 n, float3 h)
+{
+	return pow(roughness, 4) / (Pi*pow((pow(dot(n, h), 2)*(pow(roughness, 4) - 1)) + 1, 2));
+}
+
+float G1(float3 n, float3 v, float roughness)
+{
+	float k = pow(roughness + 1, 2) / 8.0;
+	return dot(n, v) / (dot(n, v)*(1 - k) + k);
+}
+
+float G(float roughness, float3 n, float3 l, float3 v)
+{
+	return G1(n,l,roughness)*G1(n,v,roughness);
+}
+
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
 	LightPSOut result;
 	if (vout.uv.y > 0.75)
 	{
 		if (vout.uv.x <= 0.25)
 		{
-			result.finalColor= gBuffer_normal.Sample(samAnisotropic, float2(vout.uv.x * 4, (vout.uv.y - 0.75) * 4));
+			result.finalColor = gBuffer_normal.Sample(samAnisotropic, float2(vout.uv.x * 4, (vout.uv.y - 0.75) * 4));
 		}
 		else if (vout.uv.x <= 0.5)
 		{
@@ -518,6 +539,28 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		wPos.w = 1;
 		wPos = mul(wPos, m_viewInv);
 
+
+		float roughness = 0.2;
+		float f0 = 0.02;
+		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
+		wNormal = normalize(wNormal);
+		float3 El = float3(3.5, 3.5, 3.5);
+		float3 l = normalize(-directionLight.direction);
+		float4 Cdiff = gBuffer_baseColor.Sample(samAnisotropic, vout.uv);
+		float4 Cspec = gBuffer_specular.Sample(samAnisotropic, vout.uv);
+		float3 v = normalize(eyePos - wPos.xyz);
+		float3 h = normalize(l + v);
+		float Cosi = saturate(dot(wNormal, l));
+
+		// the brdf: diff term      the hight light term
+		float4 brdf = Cdiff / Pi + (D(roughness, wNormal, h)*F(saturate(dot(wNormal, h)), f0)*G(roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+
+		float4 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(cubeSample, -v);
+
+		result.finalColor = (all(ndcDepth))*brdf * float4(El*Cosi, 1) + Lenv;
+
+		/* old lighting equation */
+		/*
 		float m = 1/0.005;
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
 		wNormal = normalize(wNormal);
@@ -532,11 +575,12 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		Cspec = float4(CalRf(Cspec, acos(dot(wNormal, h))), 1);
 
 		// the brdf: diff term      the hight light term
-		float4 brdf = Cdiff / Pi + ((m + 8) / (8 * Pi))*pow(Cosh, m)*Cspec;
+		float4 brdf = Cdiff / Pi + ((m + 8) / (8 * Pi))*pow(Cosh, m)*Cspec;// *(all(ndcDepth))*cubeMap.Sample(cubeSample, -reflect(v, wNormal));
 
-		float4 Lenv =((int)(1-ndcDepth))*cubeMap.Sample(cubeSample, -v);
+		float4 Lenv = (1-all(ndcDepth))*cubeMap.Sample(cubeSample, -v)+ (all(ndcDepth))*cubeMap.Sample(cubeSample, -reflect(v, wNormal));
 
-		result.finalColor = brdf * float4(El*Cosi, 1) +Lenv;
+		result.finalColor = Lenv;// + brdf * float4(El*Cosi, 1);
+		*/
 	}
 	return result;
 }
