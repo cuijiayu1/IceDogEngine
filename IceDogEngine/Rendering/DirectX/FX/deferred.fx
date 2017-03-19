@@ -1,4 +1,3 @@
-
 struct DirectionalLight
 {
 	float4 ambient;
@@ -208,13 +207,16 @@ void MCGS(point MCVsIn gIn[1], inout TriangleStream<VSOut> triStream)
 		v2.modelUV = float2(1, 1);
 
 		// cal world normal
-		float3 normal = normalize(cross(v2.positionW - v0.positionW, v1.positionW - v0.positionW));
+		//float3 normal = normalize(cross(v2.positionW - v0.positionW, v1.positionW - v0.positionW));
+		float3 normal = normalize(cross(v1.positionW - v0.positionW, v2.positionW - v0.positionW));
 		v0.normalW = normal;
 		v1.normalW = normal;
 		v2.normalW = normal;
 
-		triStream.Append(v1);
+		//triStream.Append(v1);
+		//triStream.Append(v0);
 		triStream.Append(v0);
+		triStream.Append(v1);
 		triStream.Append(v2);
 		triStream.RestartStrip();
 	}
@@ -228,6 +230,7 @@ void MCGS(point MCVsIn gIn[1], inout TriangleStream<VSOut> triStream)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										G-Buffer Pass Start																//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 float3x3 compute_tangent_frame(float3 N, float3 p, float2 uv)
 {
 	// get edge vectors of pixel triangle
@@ -333,6 +336,13 @@ float2 parallaxMapping_high(float3 tant_eyeVec, float2 uv)
 	return finalTexCoords - uv;
 }
 
+TextureCube cubeMap;
+SamplerState cubeSample {
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
+};
+
 PSOut GBufferPS(VSOut pin) : SV_Target{
 	PSOut result;
 	
@@ -369,15 +379,15 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	}
 	else
 	{
-		result.baseColor = float4(0.75, 0.75, 0.75, 1);
+		result.baseColor = pin.color;
 	}
-	result.specular = float4(0.1, 0.1, 0.1, 1);
+	result.specular = float4(0.05, 0.05, 0.05, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	// if use parallax mapping depth also need to be adjust
-	if (DifNorParEmi.z == 1)
-	{
-		depth += parallaxCfg.x*parallaxMap.Sample(samAnisotropic, pin.modelUV).x;
-	}
+	//if (DifNorParEmi.z == 1)
+	//{
+	//	depth += parallaxCfg.x*parallaxMap.Sample(samAnisotropic, pin.modelUV).x;
+	//}
 	result.depth.rgb = float_to_color(depth);
 	result.depth.a = 1;
 	return result;
@@ -508,8 +518,9 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		wPos.w = 1;
 		wPos = mul(wPos, m_viewInv);
 
-		float m = 10;
+		float m = 1/0.005;
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
+		wNormal = normalize(wNormal);
 		float3 El = float3(3.5,3.5,3.5);
 		float3 l = normalize(-directionLight.direction);
 		float Cosi = saturate(dot(wNormal, l));
@@ -518,11 +529,14 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float3 v = normalize(eyePos - wPos.xyz);
 		float3 h = normalize(l + v);
 		float Cosh = saturate(dot(wNormal, h));
+		Cspec = float4(CalRf(Cspec, acos(dot(wNormal, h))), 1);
 
 		// the brdf: diff term      the hight light term
 		float4 brdf = Cdiff / Pi + ((m + 8) / (8 * Pi))*pow(Cosh, m)*Cspec;
 
-		result.finalColor = brdf * float4(El*Cosi, 1);
+		float4 Lenv =((int)(1-ndcDepth))*cubeMap.Sample(cubeSample, -v);
+
+		result.finalColor = brdf * float4(El*Cosi, 1) +Lenv;
 	}
 	return result;
 }

@@ -114,6 +114,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\CubeMapSource.cpp" />
+    <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp" />
     <ClCompile Include="Source\LoadTestAct.cpp" />
     <ClCompile Include="Utils\Loader\ObjMeshLoader.cpp" />
     <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp" />
@@ -161,6 +163,7 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\CubeMapSource.h" />
     <ClInclude Include="Source\LoadTestAct.h" />
     <ClInclude Include="Utils\Loader\ObjMeshLoader.h" />
     <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h" />

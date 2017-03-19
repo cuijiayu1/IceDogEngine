@@ -13,4 +13,34 @@ namespace IceDogRendering
 #endif
 #endif
 	}; 
+
+	class PIDShaderResourceView
+	{
+	public:
+#if defined __DIRECTX__
+		ID3D11ShaderResourceView*& GetResourceView();
+		void SetResourceView(ID3D11ShaderResourceView* res);
+#endif
+		/* release the hold resource */
+		void Release();
+	private:
+#if defined __DIRECTX__
+		ID3D11ShaderResourceView* r_shaderResourceView;
+#endif
+	};
+
+	class PIDShaderResource
+	{
+	public:
+#if defined __DIRECTX__
+		ID3D11Resource*& GetResource();
+		void SetResource(ID3D11Resource* res);
+#endif
+		/* release the hold resource */
+		void Release();
+	private:
+#if defined __DIRECTX__
+		ID3D11Resource* r_shaderResource;
+#endif
+	};
 }

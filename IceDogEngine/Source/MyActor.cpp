@@ -23,8 +23,11 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 	vl = new IceDogRendering::VoxelVertex[8000];
 	SetActorRotation(float3(0, 0, 0));
 
-	s_1 = float3(0, 10, 10);
-	s_2 = float3(20, 10, 10);
+	s_1 = float3(5, 13, 10);
+	s_2 = float3(15, 8, 10);
+	float3 s_3(10, 19, 15);
+	float rad = 10;
+	float rad_1 = 15;
 	
 	for (int i = 0; i < 20; ++i)
 	{
@@ -32,7 +35,7 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 		{
 			for (int k = 0; k < 20; ++k)
 			{
-				vl[i * 400 + j * 20 + k].pos = float3(i, j, k);
+				/*vl[i * 400 + j * 20 + k].pos = float3(i, j, k);
 				vl[i * 400 + j * 20 + k].val_f.x = min(IceDogUtils::float3length(float3(i, j, k) - s_1), IceDogUtils::float3length(float3(i, j, k) - s_2));
 				vl[i * 400 + j * 20 + k].val_f.y = min(IceDogUtils::float3length(float3(i + 1, j, k) - s_1), IceDogUtils::float3length(float3(i + 1, j, k) - s_2));
 				vl[i * 400 + j * 20 + k].val_f.z = min(IceDogUtils::float3length(float3(i + 1, j + 1, k) - s_1), IceDogUtils::float3length(float3(i + 1, j + 1, k) - s_2));
@@ -41,6 +44,16 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 				vl[i * 400 + j * 20 + k].val_b.y = min(IceDogUtils::float3length(float3(i + 1, j, k + 1) - s_1), IceDogUtils::float3length(float3(i + 1, j, k + 1) - s_2));
 				vl[i * 400 + j * 20 + k].val_b.z = min(IceDogUtils::float3length(float3(i + 1, j + 1, k + 1) - s_1), IceDogUtils::float3length(float3(i + 1, j + 1, k + 1) - s_2));
 				vl[i * 400 + j * 20 + k].val_b.w = min(IceDogUtils::float3length(float3(i, j + 1, k + 1) - s_1), IceDogUtils::float3length(float3(i, j + 1, k + 1) - s_2));
+				*/
+				vl[i * 400 + j * 20 + k].pos = float3(i, j, k);
+				vl[i * 400 + j * 20 + k].val_f.x = MetaBall(rad, float3(i, j, k), s_1) + MetaBall(rad, float3(i, j, k), s_2)+MetaBall(rad_1, float3(i, j, k), s_3);
+				vl[i * 400 + j * 20 + k].val_f.y = MetaBall(rad, float3(i + 1, j, k), s_1) + MetaBall(rad, float3(i + 1, j, k), s_2)+MetaBall(rad_1, float3(i + 1, j, k), s_3);
+				vl[i * 400 + j * 20 + k].val_f.z = MetaBall(rad, float3(i + 1, j + 1, k), s_1) + MetaBall(rad, float3(i + 1, j + 1, k), s_2) + MetaBall(rad_1, float3(i + 1, j + 1, k), s_3);
+				vl[i * 400 + j * 20 + k].val_f.w = MetaBall(rad, float3(i, j + 1, k), s_1) + MetaBall(rad, float3(i, j + 1, k), s_2) + MetaBall(rad_1, float3(i, j + 1, k), s_3);
+				vl[i * 400 + j * 20 + k].val_b.x = MetaBall(rad, float3(i, j, k + 1), s_1) + MetaBall(rad, float3(i, j, k + 1), s_2) + MetaBall(rad_1, float3(i, j, k + 1), s_3);
+				vl[i * 400 + j * 20 + k].val_b.y = MetaBall(rad, float3(i + 1, j, k + 1), s_1) + MetaBall(rad, float3(i + 1, j, k + 1), s_2) + MetaBall(rad_1, float3(i + 1, j, k + 1), s_3);
+				vl[i * 400 + j * 20 + k].val_b.z = MetaBall(rad, float3(i + 1, j + 1, k + 1), s_1) + MetaBall(rad, float3(i + 1, j + 1, k + 1), s_2) + MetaBall(rad_1, float3(i + 1, j + 1, k + 1), s_3);
+				vl[i * 400 + j * 20 + k].val_b.w = MetaBall(rad, float3(i, j + 1, k + 1), s_1) + MetaBall(rad, float3(i, j + 1, k + 1), s_2) + MetaBall(rad_1, float3(i, j + 1, k + 1), s_3);
 			}
 		}
 	}
@@ -62,6 +75,11 @@ MyActor::~MyActor()
 int MyActor::OnLeftClick(float x, float y)
 {
 	return 0;
+}
+
+float MyActor::MetaBall(float r, float3 start, float3 center)
+{
+	return r / float3length( center- start);
 }
 
 void MyActor::Tick(float deltaTime)

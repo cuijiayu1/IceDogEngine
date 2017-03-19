@@ -114,7 +114,7 @@ namespace IceDogRendering
 			ambient = float4(0.2, 0.2, 0.2, 1);
 			diffuse = float4(0.5, 0.5, 0.5, 1);
 			specular = float4(0.5, 0.5, 0.5, 1);
-			direction = float3(0.57735f, -0.57735f, 0.57735f);
+			direction = float3(0, 1, 0);
 		}
 
 		float4 ambient;

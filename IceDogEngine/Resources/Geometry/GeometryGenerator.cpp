@@ -17,6 +17,8 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 	// a rectangular texture onto a sphere.
 	Vertex topVertex(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 0.0f, 0.0f);
 	Vertex bottomVertex(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f);
+	bottomVertex.color = float4(0.95, 0, 0, 1);
+	topVertex.color = float4(0.95, 0, 0, 1);
 
 	std::vector<Vertex> Vertices;
 	Vertices.push_back(topVertex);
@@ -40,6 +42,7 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 			v.position.x = radius*sinf(phi)*cosf(theta);
 			v.position.y = radius*cosf(phi);
 			v.position.z = radius*sinf(phi)*sinf(theta);
+			v.color = float4(0.95, 0, 0, 1);
 
 			v.normal = v.position.Normilize();
 

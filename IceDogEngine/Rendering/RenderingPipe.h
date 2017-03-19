@@ -5,6 +5,7 @@
 #include "RenderData/VoxelData.h"
 #include "PipeView.h"
 #include "LightingGroup.h"
+#include "CubeMapSource.h"
 #include "../Core/MessageProc.h"
 #include "../Platform/PlatformWindow.h"
 
@@ -16,7 +17,7 @@ namespace IceDogRendering
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
 			DirectionalLight dl;
-			dl.direction = float3(-1, -1, 1);
+			dl.direction = float3(0.4, -1, 1);
 			SpotLight sl;
 			sl.position = float3(10, 10, 10);
 			PointLight pl;
@@ -62,6 +63,8 @@ namespace IceDogRendering
 		IceDogPlatform::PlatformWindow c_platformWindow;
 		// the platform dependence rendering resource
 		PlatformDependenceRenderResource c_PDRR;
+		// the cube map resource
+		CubeMapSource r_cubeMapSource;
 		// whether enable the multi sample anti alain
 		bool c_enableMsaa;
 		// msaa quality

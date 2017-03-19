@@ -129,6 +129,10 @@ namespace IceDogRendering
 			s_errorlogOutStream << "Create Light index buffer failed" << std::flush;
 		}
 
+		// test code begin
+		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
+		// test code end
+
 		// build up the state for rendering
 		BuildUpStates();
 		CreateMarchingCubeLookupTable();
@@ -467,6 +471,8 @@ namespace IceDogRendering
 
 		ClearAllViews();
 		SetupConstBuffer();
+		if (!r_cubeMapSource.IsDirty())
+			r_effectFX->GetVariableByName("cubeMap")->AsShaderResource()->SetResource(r_cubeMapSource.GetCubeMapSRV().GetResourceView());
 		RenderGBuffer(renderDatas);
 		RenderLightBuffer();
 		MergeOutput();

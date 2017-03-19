@@ -11,7 +11,7 @@ Sphere::Sphere()
 	// test code
 	IceDogGameplay::StaticMeshComponent* vc = new IceDogGameplay::StaticMeshComponent(this);
 	std::shared_ptr<IceDogRendering::MeshData> rd = std::make_shared<IceDogRendering::MeshData>();
-	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(0.05, 5, 5,rd);
+	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(0.05, 20, 20,rd);
 	//IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 2, false, rd);
 
 	vc->SetStaticMesh(rd);

@@ -150,6 +150,12 @@
     <ClCompile Include="Source\LoadTestAct.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\CubeMapSource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -363,6 +369,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\LoadTestAct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CubeMapSource.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

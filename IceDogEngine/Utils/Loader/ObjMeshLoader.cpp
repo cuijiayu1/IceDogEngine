@@ -8,6 +8,7 @@ bool IceDogUtils::ObjMeshLoader::LoadObj2Mesh(std::string url, std::shared_ptr<I
 	using IceDogRendering::Vertex;
 	using IceDogUtils::float3;
 	using IceDogUtils::float2;
+	using IceDogUtils::float4;
 
 	std::ifstream inFile;
 	std::string line, v = "v", vt = "vt", vn = "vn", f = "f";
@@ -78,6 +79,7 @@ bool IceDogUtils::ObjMeshLoader::LoadObj2Mesh(std::string url, std::shared_ptr<I
 
 		streamChunk >> vInd;
 		vertexs[i].position = vs[vInd - 1];
+		vertexs[i].color = float4(0.7, 0.7, 0.7, 1);
 		indsbf[i] = i;
 
 		streamChunk >> dummy;

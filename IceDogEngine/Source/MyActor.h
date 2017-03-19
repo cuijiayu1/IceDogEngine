@@ -11,6 +11,9 @@ public:
 
 	int OnLeftClick(float x, float y);
 
+private:
+	float MetaBall(float r, IceDogCore::float3 start, IceDogCore::float3 center);
+
 protected:
 	void Tick(float deltaTime) override;
 
