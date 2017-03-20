@@ -20,14 +20,14 @@ namespace IceDogRendering
 		r_backBufferRenderTargetView = nullptr;
 		r_backBufferDepthStencilBuffer = nullptr;
 		r_gBufferNormal = nullptr;
-		r_gBufferSpecular = nullptr;
+		r_gBufferSpecularRoughnessMetallic = nullptr;
 		r_gBufferFinalColor = nullptr;
 		r_gBufferBaseColor = nullptr;
 		r_gBufferDepth = nullptr;
 
 		r_gBufferNormalRTV = nullptr;
 		r_gBufferBaseColorRTV = nullptr;
-		r_gBufferSpecularRTV = nullptr;
+		r_gBufferSpecularRoughnessMetallicRTV = nullptr;
 		r_gBufferDepthRTV = nullptr;
 		r_gBufferFinalColorRTV = nullptr;
 
@@ -35,7 +35,7 @@ namespace IceDogRendering
 		r_gBufferBaseColorSRV = nullptr;
 		r_gBufferFinalColorSRV = nullptr;
 		r_gBufferNormalSRV = nullptr;
-		r_gBufferSpecularSRV = nullptr;
+		r_gBufferSpecularRoughnessMetallicSRV = nullptr;
 	}
 
 	void DirectXDeferredPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
@@ -133,17 +133,10 @@ namespace IceDogRendering
 		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
 		// test code end
 
-		// load BRDF LUT DDS file
-		ID3D11Resource* tempRes = nullptr;
-		if (ISFAILED(DirectX::CreateDDSTextureFromFile(c_PDRR.r_device, L"Resources/LUT.dds", &tempRes, &r_brdfLutSRV)))
-		{
-			s_errorlogOutStream << "Load BRDF LUT failed" << std::flush;
-		}
-		ReleaseCOM(tempRes); // view saves reference
-
 		// build up the state for rendering
 		BuildUpStates();
 		CreateMarchingCubeLookupTable();
+		PrePass();
 	}
 
 	void DirectXDeferredPipe::UpdateInputLayout()
@@ -301,7 +294,7 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferBaseColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferFinalColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferNormalRTV, IceDogRendering::Color::Black);
-		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRTV, IceDogRendering::Color::Black);
+		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRoughnessMetallicRTV, IceDogRendering::Color::Black);
 	}
 
 	void DirectXDeferredPipe::SetupConstBuffer()
@@ -335,7 +328,7 @@ namespace IceDogRendering
 		auto pass_mesh = tech->GetPassByName("GBufferStage");
 		auto pass_voxel = tech->GetPassByName("VoxelStage");
 
-		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRTV,r_gBufferDepthRTV };
+		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRoughnessMetallicRTV,r_gBufferDepthRTV };
 
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
 		c_PDRR.r_deviceContext->OMSetRenderTargets(4, renderTargets, r_backBufferDepthStencilView);
@@ -443,7 +436,7 @@ namespace IceDogRendering
 		// set g buffer as shader resource			
 		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
-		r_effectFX->GetVariableByName("gBuffer_specular")->AsShaderResource()->SetResource(r_gBufferSpecularSRV);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
 		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(r_gBufferDepthSRV);
 
 		// set BRDF LUT
@@ -461,10 +454,41 @@ namespace IceDogRendering
 		// unbind g buffer shader resource
 		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_specular")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(NULL);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
+	}
+
+	void DirectXDeferredPipe::RenderBRDFLut()
+	{
+		// get tech
+		auto tech = r_effectFX->GetTechniqueByName("Deferred");
+		auto pass = tech->GetPassByName("BRDFLutStage");
+
+		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
+		UINT offset = 0;
+		// set input layout
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_brdfLutRTV, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+
+		DisableDepthTest();
+		// loop for light drawing
+		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+		EnableDepthTest();
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+	}
+
+	void DirectXDeferredPipe::PrePass()
+	{
+		CreateRenderTargetTexture2D(r_brdfLutBuffer, r_brdfLutRTV, r_brdfLutSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		RenderBRDFLut();
 	}
 
 	void DirectXDeferredPipe::MergeOutput()
@@ -500,11 +524,11 @@ namespace IceDogRendering
 		ReleaseCOM(r_gBufferBaseColor);
 		ReleaseCOM(r_gBufferFinalColor);
 		ReleaseCOM(r_gBufferNormal);
-		ReleaseCOM(r_gBufferSpecular);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallic);
 
 		ReleaseCOM(r_gBufferNormalRTV);
 		ReleaseCOM(r_gBufferBaseColorRTV);
-		ReleaseCOM(r_gBufferSpecularRTV);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallicRTV);
 		ReleaseCOM(r_gBufferDepthRTV);
 		ReleaseCOM(r_gBufferFinalColorRTV);
 
@@ -512,7 +536,7 @@ namespace IceDogRendering
 		ReleaseCOM(r_gBufferBaseColorSRV);
 		ReleaseCOM(r_gBufferFinalColorSRV);
 		ReleaseCOM(r_gBufferNormalSRV);
-		ReleaseCOM(r_gBufferSpecularSRV);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallicSRV);
 	}
 
 	void DirectXDeferredPipe::CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format)
@@ -610,7 +634,7 @@ namespace IceDogRendering
 		CreateRenderTargetTexture2D(r_gBufferBaseColor, r_gBufferBaseColorRTV, r_gBufferBaseColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferNormal, r_gBufferNormalRTV, r_gBufferNormalSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
-		CreateRenderTargetTexture2D(r_gBufferSpecular, r_gBufferSpecularRTV, r_gBufferSpecularSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		CreateRenderTargetTexture2D(r_gBufferSpecularRoughnessMetallic, r_gBufferSpecularRoughnessMetallicRTV, r_gBufferSpecularRoughnessMetallicSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 	}
 
 	void DirectXDeferredPipe::Resize(int newWidth, int newHeight)

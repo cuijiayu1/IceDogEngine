@@ -44,6 +44,12 @@ namespace IceDogRendering
 		/* render the light buffer */
 		void RenderLightBuffer();
 
+		/* BRDF LUT generate Pass */
+		void RenderBRDFLut();
+
+		/* Pre Pass, the pass go when init */
+		void PrePass();
+
 		/* merge the buffer and output */
 		void MergeOutput();
 
@@ -97,13 +103,15 @@ namespace IceDogRendering
 
 		ID3D11RenderTargetView* r_gBufferNormalRTV;
 		ID3D11RenderTargetView* r_gBufferBaseColorRTV;
-		ID3D11RenderTargetView* r_gBufferSpecularRTV;
+		ID3D11RenderTargetView* r_gBufferSpecularRoughnessMetallicRTV;
 		ID3D11RenderTargetView* r_gBufferDepthRTV;
 		ID3D11RenderTargetView* r_gBufferFinalColorRTV;
 
+		ID3D11RenderTargetView* r_brdfLutRTV;
+
 		ID3D11ShaderResourceView* r_gBufferNormalSRV;
 		ID3D11ShaderResourceView* r_gBufferBaseColorSRV;
-		ID3D11ShaderResourceView* r_gBufferSpecularSRV;
+		ID3D11ShaderResourceView* r_gBufferSpecularRoughnessMetallicSRV;
 		ID3D11ShaderResourceView* r_gBufferDepthSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
 
@@ -118,8 +126,11 @@ namespace IceDogRendering
 		//G-Buffer (Geometry stage out)
 		ID3D11Texture2D* r_gBufferNormal;
 		ID3D11Texture2D* r_gBufferBaseColor;
-		ID3D11Texture2D* r_gBufferSpecular;
+		ID3D11Texture2D* r_gBufferSpecularRoughnessMetallic;
 		ID3D11Texture2D* r_gBufferDepth;
+
+		//BRDF LUT (BRDF GGX LUT out)
+		ID3D11Texture2D* r_brdfLutBuffer;
 
 		//Final color buffer (light stage out)
 		ID3D11Texture2D* r_gBufferFinalColor;

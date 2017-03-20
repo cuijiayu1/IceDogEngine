@@ -337,7 +337,7 @@ float2 parallaxMapping_high(float3 tant_eyeVec, float2 uv)
 }
 
 TextureCube cubeMap;
-SamplerState cubeSample {
+SamplerState linearSample {
 	Filter = MIN_MAG_MIP_LINEAR;
 	AddressU = Wrap;
 	AddressV = Wrap;
@@ -383,7 +383,7 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	{
 		result.baseColor = pin.color;
 	}
-	result.specular = float4(0.05, 0.05, 0.05, 1);
+	result.specular = float4(0.04, 0.3, 0.5, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	// if use parallax mapping depth also need to be adjust
 	//if (DifNorParEmi.z == 1)
@@ -477,7 +477,7 @@ inout TriangleStream<LightGSOut> triStream)
 
 Texture2D gBuffer_normal;
 Texture2D gBuffer_baseColor;
-Texture2D gBuffer_specular;
+Texture2D gBuffer_specularRoughnessMetallic;
 Texture2D gBuffer_depth;
 
 const static float Pi = 3.14159265374;
@@ -487,7 +487,7 @@ float3 CalRf(float3 Rf0, float thetai)
 	return Rf0 + (1.0 - Rf0)*pow((1.0 - max(cos(thetai), 0.0)), 5);
 }
 
-float F(float VoH, float f0)
+float3 F(float VoH, float3 f0)
 {
 	return f0 + (1 - f0)*pow(2, (-5.55473*VoH - 6.98316)*VoH);
 }
@@ -594,30 +594,32 @@ float2 IntegrateBRDF(float Roughness, float NoV)
 }
 
 // calculate the specular IBL using the gt
-float3 SpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V) {
+float3 SpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V)
+{
 	float3 SpecularLighting = 0;
-	const uint NumSamples = 1024; 
-	for (uint i = 0; i < NumSamples; i++) 
+	const uint NumSamples = 1024;
+	for (uint i = 0; i < NumSamples; i++)
 	{
 		float2 Xi = hammersley(i, NumSamples);
-		float3 H = ImportanceSampleGGX(Xi, Roughness, N); 
+		float3 H = ImportanceSampleGGX(Xi, Roughness, N);
 		float3 L = 2 * dot(V, H) * H - V;
-		float NoV = saturate(dot(N, V)); 
-		float NoL = saturate(dot(N, L)); 
-		float NoH = saturate(dot(N, H)); 
+		float NoV = saturate(dot(N, V));
+		float NoL = saturate(dot(N, L));
+		float NoH = saturate(dot(N, H));
 		float VoH = saturate(dot(V, H));
-		if (NoL > 0) {
-			float3 SampleColor = cubeMap.SampleLevel(cubeSample, L, 0).rgb;
+		if (NoL > 0)
+		{
+			float3 SampleColor = cubeMap.SampleLevel(linearSample, L, 0).rgb;
 			float G = G_Smith(Roughness, NoV, NoL);
-			float Fc = pow(1 - VoH, 5); 
+			float Fc = pow(1 - VoH, 5);
 			float3 F = (1 - Fc) * SpecularColor + Fc;
-			// Incident light = SampleColor * NoL 
-			// Microfacet specular = D*G*F / (4*NoL*NoV) 
-			// pdf = D * NoH / (4 * VoH) 
+			// Incident light = SampleColor * NoL
+			// Microfacet specular = D*G*F / (4*NoL*NoV)
+			// pdf = D * NoH / (4 * VoH)
 			SpecularLighting += SampleColor * F * G * VoH / (NoH * NoV);
 		}
 	}
-	return SpecularLighting / NumSamples;
+	return saturate(SpecularLighting / NumSamples);
 }
 
 float3 PrefilterEnvMap(float Roughness, float3 R) {
@@ -632,7 +634,7 @@ float3 PrefilterEnvMap(float Roughness, float3 R) {
 		float3 L = 2 * dot(V, H) * H - V;
 		float NoL = saturate(dot(N, L));
 		if (NoL > 0) {
-			PrefilteredColor += cubeMap.SampleLevel(cubeSample, L, 0).rgb * NoL;
+			PrefilteredColor += cubeMap.SampleLevel(linearSample, L, 0).rgb * NoL;
 			TotalWeight += NoL;
 		}
 	}
@@ -641,13 +643,13 @@ float3 PrefilterEnvMap(float Roughness, float3 R) {
 
 float3 hackEnvMap(float Roughness, float3 R)
 {
-	return cubeMap.Sample(cubeSample, R, Roughness * 20);
+	return cubeMap.Sample(linearSample, R, Roughness * 17);
 }
 
 // calculate the BRDF LUT hack
 LightPSOut CalBRDFLut(LightGSOut vout) : SV_Target{
 	LightPSOut result;
-	result.finalColor.rg = IntegrateBRDF(1-vout.uv.y, vout.uv.x);
+	result.finalColor.rg = IntegrateBRDF(vout.uv.x, vout.uv.y);
 	result.finalColor.b = 0;
 	result.finalColor.a = 1;
 	return result;
@@ -667,7 +669,7 @@ float3 ApproximateSpecularIBL(float3 SpecularColor, float Roughness, float3 N, f
 	float3 R = 2 * dot(V, N) * N - V;
 	float3 PrefilteredColor = hackEnvMap(Roughness, R);
 	float2 EnvBRDF = brdfLut.Sample(samAnisotropic, float2(Roughness, NoV));
-	return PrefilteredColor * (SpecularColor * EnvBRDF.x + EnvBRDF.y);
+	return PrefilteredColor * (SpecularColor * EnvBRDF.x + saturate(50.0 * SpecularColor.g)*EnvBRDF.y);
 }
 
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
@@ -684,7 +686,7 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		}
 		else if (vout.uv.x <= 0.75)
 		{
-			result.finalColor = gBuffer_specular.Sample(samAnisotropic, float2(vout.uv.x * 4 - 2, (vout.uv.y - 0.75) * 4));
+			result.finalColor = gBuffer_specularRoughnessMetallic.Sample(samAnisotropic, float2(vout.uv.x * 4 - 2, (vout.uv.y - 0.75) * 4));
 		}
 		else
 		{
@@ -704,34 +706,31 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		wPos = mul(wPos, m_viewInv);
 
 		float3 BaseColor = gBuffer_baseColor.Sample(samAnisotropic, vout.uv).xyz;
-		float3 SpecularColor = gBuffer_specular.Sample(samAnisotropic, vout.uv).xyz;
-		float Metallic = 0;
-		float Roughness = 0.7;
-		float f0 = 0.02;
-		float Specular = 0.6;
+		float3 SpecularRoughnessMetallic = gBuffer_specularRoughnessMetallic.Sample(samAnisotropic, vout.uv).xyz;
+		float Specular = SpecularRoughnessMetallic.x;
+		float Roughness = SpecularRoughnessMetallic.y;
+		float Metallic = SpecularRoughnessMetallic.z;
+		float3 El = float3(2, 2, 2);
 
-		float3 Cdiff = lerp(BaseColor, 0, Metallic);
-		float3 Cspec = lerp(0.08 * Specular, BaseColor, Metallic);
-		//Specular = Cavity*0.5;
+		float3 DiffuseColor = BaseColor;
 
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
 		wNormal = normalize(wNormal);
-		float3 El = float3(0, 0, 0);
 		float3 l = normalize(-directionLight.direction);
 		float3 v = normalize(eyePos - wPos.xyz);
 		float3 h = normalize(l + v);
 		float Cosi = saturate(dot(wNormal, l));
 
-		float4 spcenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, -reflect(v, wNormal), Roughness * 10);
-		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(cubeSample, wNormal, 10);
-		// the brdf: diff term      the hight light term
-		float3 brdf_diff = Cdiff / Pi;
-		float3 brdf_spec = Cspec*(D(Roughness, wNormal, h)*F(dot(v,h), f0)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(linearSample, wNormal, 10); // the brdf: direction lighting diff term 
+		float3 brdf_diff = DiffuseColor / Pi; // the brdf: direction lighting light term
+		float3 brdf_spec = (D(Roughness, wNormal, h)*F(saturate(dot(v,h)), Specular)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
 		
-		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(cubeSample, -v).xyz;
+		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(linearSample, -v).xyz;
+		float3 Ldir_diff_spec = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi;
+		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(Specular, Roughness, wNormal, v);
+		float3 Lenv_diff = (all(ndcDepth))*brdf_diff*difenvE;
 
-		float3 combine = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi + Lenv + (all(ndcDepth))*brdf_diff*difenvE +(all(ndcDepth))*ApproximateSpecularIBL(float3(1, 1, 1), Roughness, wNormal, v);
-		//float3 combine = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi + Lenv + (all(ndcDepth))*EnvBRDFApprox(Specular, Roughness, dot(wNormal, v))*spcenvE + (all(ndcDepth))*brdf_diff*difenvE;
+		float3 combine = Ldir_diff_spec + Lenv + Lenv_spec + Lenv_diff;
 		result.finalColor = float4(combine, 1);
 
 		/* old lighting equation */
@@ -743,7 +742,7 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float3 l = normalize(-directionLight.direction);
 		float Cosi = saturate(dot(wNormal, l));
 		float4 Cdiff = gBuffer_baseColor.Sample(samAnisotropic, vout.uv);
-		float4 Cspec = gBuffer_specular.Sample(samAnisotropic, vout.uv);
+		float4 Cspec = gBuffer_specularRoughnessMetallic.Sample(samAnisotropic, vout.uv);
 		float3 v = normalize(eyePos - wPos.xyz);
 		float3 h = normalize(l + v);
 		float Cosh = saturate(dot(wNormal, h));
