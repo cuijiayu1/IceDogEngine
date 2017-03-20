@@ -9,20 +9,20 @@ D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(211,29-91)
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(354,16-88): warning X3206: 'compute_tangent_frame': implicit truncation of vector type
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(360,43-64): warning X3206: implicit truncation of vector type
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(369,10-67): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(646,2-56): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(661,2-65): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(671,9-72): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(717,10-77): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(731,22-54): warning X3206: implicit truncation of vector type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(681,2-56): warning X3206: implicit truncation of vector type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(696,2-65): warning X3206: implicit truncation of vector type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(706,9-72): warning X3206: implicit truncation of vector type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(752,10-77): warning X3206: implicit truncation of vector type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(767,22-58): warning X3206: implicit truncation of vector type
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(348,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(324,26-77): warning X3570: gradient instruction used in a loop with varying iteration, forcing loop to unroll
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(327,2): warning X4121: gradient-based operations must be moved out of flow control to prevent divergence. Performance may improve by using a non-gradient operation
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(348,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(324,26-77): warning X3570: gradient instruction used in a loop with varying iteration, forcing loop to unroll
 D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(327,2): warning X4121: gradient-based operations must be moved out of flow control to prevent divergence. Performance may improve by using a non-gradient operation
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(675,18-47): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(650,21-50): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(659,25-54): warning X3576: semantics in type overridden by variable/function or enclosing type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(710,18-47): warning X3576: semantics in type overridden by variable/function or enclosing type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(685,21-50): warning X3576: semantics in type overridden by variable/function or enclosing type
+D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(694,25-54): warning X3576: semantics in type overridden by variable/function or enclosing type
   
   compilation object save succeeded; see D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fxo
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.exe

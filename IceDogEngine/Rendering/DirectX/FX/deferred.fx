@@ -383,7 +383,7 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	{
 		result.baseColor = pin.color;
 	}
-	result.specular = float4(0.04, 0.3, 0.5, 1);
+	result.specular = float4(0.1, 0.1, 0.5, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	// if use parallax mapping depth also need to be adjust
 	//if (DifNorParEmi.z == 1)
@@ -482,22 +482,31 @@ Texture2D gBuffer_depth;
 
 const static float Pi = 3.14159265374;
 
+float Pow5(float x)
+{
+	float x2 = x*x;
+	return x2 * x2 * x;
+}
+
 float3 CalRf(float3 Rf0, float thetai)
 {
 	return Rf0 + (1.0 - Rf0)*pow((1.0 - max(cos(thetai), 0.0)), 5);
 }
 
-float3 F(float VoH, float3 f0)
+// [Schlick 1994, "An Inexpensive BRDF Model for Physically-Based Rendering"]
+float3 F(float VoH, float3 SpecularColor)
 {
-	return f0 + (1 - f0)*pow(2, (-5.55473*VoH - 6.98316)*VoH);
+	float Fc = Pow5(1 - VoH);
+	return saturate(50.0 * SpecularColor.g) * Fc + (1 - Fc) * SpecularColor;
+	//return f0 + (1 - f0)*pow(2, (-5.55473*VoH - 6.98316)*VoH);
 }
 
-float D(float roughness, float3 n, float3 h)
+float D(float Roughness, float NoH)
 {
-	float a = roughness*roughness;
-	float a2 = a*a;
-	float d = Pi*pow((pow(dot(n,h),2)*(a2-1)+1),2);
-	return a2 / d;
+	float a = Roughness * Roughness;
+	float a2 = a * a;
+	float d = (NoH * a2 - NoH) * NoH + 1;	// 2 mad
+	return a2 / (Pi*d*d);					// 4 mul, 1 rcp
 }
 
 float G1(float3 n, float3 v, float roughness)
@@ -510,6 +519,32 @@ float G(float roughness, float3 n, float3 l, float3 v)
 {
 	return G1(n,l,roughness)*G1(n,v,roughness);
 }
+
+//////////////////////////////////////
+//		Diffuse brdf begin			//
+//////////////////////////////////////
+
+float3 Diffuse_Burley(float3 DiffuseColor, float Roughness, float NoV, float NoL, float VoH)
+{
+	float FD90 = 0.5 + 2 * VoH * VoH * Roughness;
+	float FdV = 1 + (FD90 - 1) * Pow5(1 - NoV);
+	float FdL = 1 + (FD90 - 1) * Pow5(1 - NoL);
+	return DiffuseColor * ((1 / Pi) * FdV * FdL);
+}
+
+float3 Diffuse_Lambert(float3 DiffuseColor)
+{
+	return DiffuseColor * (1 / Pi);
+}
+
+float3 Diffuse(float3 DiffuseColor, float Roughness, float NoV, float NoL, float VoH)
+{
+	return Diffuse_Burley(DiffuseColor, Roughness, NoV, NoL, VoH);
+}
+
+//////////////////////////////////////
+//		Diffuse brdf end			//
+//////////////////////////////////////
 
 float3 EnvBRDFApprox(float3 SpecularColor, float Roughness, float NoV)
 {
@@ -722,13 +757,14 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float Cosi = saturate(dot(wNormal, l));
 
 		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(linearSample, wNormal, 10); // the brdf: direction lighting diff term 
-		float3 brdf_diff = DiffuseColor / Pi; // the brdf: direction lighting light term
-		float3 brdf_spec = (D(Roughness, wNormal, h)*F(saturate(dot(v,h)), Specular)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+		float3 brdf_diff = Diffuse(DiffuseColor, Roughness, saturate(dot(wNormal, v)), saturate(dot(wNormal, l)), saturate(dot(h, v)));
+		float3 brdf_spec = (D(Roughness, saturate(dot(wNormal, h)))*F(saturate(dot(v,h)), Specular)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
+		float3 brdf_env_diff = Diffuse(DiffuseColor, Roughness, saturate(dot(wNormal, v)), 1, saturate(dot(normalize(wNormal + v), v)));
 		
 		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(linearSample, -v).xyz;
 		float3 Ldir_diff_spec = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi;
 		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(Specular, Roughness, wNormal, v);
-		float3 Lenv_diff = (all(ndcDepth))*brdf_diff*difenvE;
+		float3 Lenv_diff = (all(ndcDepth))*brdf_env_diff*difenvE;
 
 		float3 combine = Ldir_diff_spec + Lenv + Lenv_spec + Lenv_diff;
 		result.finalColor = float4(combine, 1);
