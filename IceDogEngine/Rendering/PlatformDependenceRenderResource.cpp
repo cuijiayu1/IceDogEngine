@@ -1,5 +1,12 @@
 #include "PlatformDependenceRenderResource.h"
 
+IceDogRendering::PIDShaderResourceView::PIDShaderResourceView()
+{
+#if defined __DIRECTX__
+	r_shaderResourceView = nullptr;
+#endif
+}
+
 ID3D11ShaderResourceView*& IceDogRendering::PIDShaderResourceView::GetResourceView()
 {
 	return r_shaderResourceView;
@@ -12,7 +19,16 @@ void IceDogRendering::PIDShaderResourceView::SetResourceView(ID3D11ShaderResourc
 
 void IceDogRendering::PIDShaderResourceView::Release()
 {
-	ReleaseCOM(r_shaderResourceView);
+	if(r_shaderResourceView)
+		ReleaseCOM(r_shaderResourceView);
+	r_shaderResourceView = nullptr;
+}
+
+IceDogRendering::PIDShaderResource::PIDShaderResource()
+{
+#if defined __DIRECTX__
+	r_shaderResource = nullptr;
+#endif
 }
 
 ID3D11Resource*& IceDogRendering::PIDShaderResource::GetResource()
@@ -27,5 +43,7 @@ void IceDogRendering::PIDShaderResource::SetResource(ID3D11Resource* res)
 
 void IceDogRendering::PIDShaderResource::Release()
 {
-	ReleaseCOM(r_shaderResource);
+	if(r_shaderResource)
+		ReleaseCOM(r_shaderResource);
+	r_shaderResource = nullptr;
 }

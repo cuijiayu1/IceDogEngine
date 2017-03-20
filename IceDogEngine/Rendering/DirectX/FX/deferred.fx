@@ -75,7 +75,7 @@ struct PSOut
 {
 	float4 normal		: COLOR0;
 	float4 baseColor	: COLOR1;
-	float4 specular		: COLOR2;
+	float4 specularRoughnessMetallic		: COLOR2;
 	float4 depth		: COLOR3;
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -383,7 +383,7 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	{
 		result.baseColor = pin.color;
 	}
-	result.specular = float4(0.1, 0.1, 0.5, 1);
+	result.specularRoughnessMetallic = float4(0.5, 1, 0, 1);
 	float depth = pin.depth.x / pin.depth.y;
 	// if use parallax mapping depth also need to be adjust
 	//if (DifNorParEmi.z == 1)
@@ -509,15 +509,15 @@ float D(float Roughness, float NoH)
 	return a2 / (Pi*d*d);					// 4 mul, 1 rcp
 }
 
-float G1(float3 n, float3 v, float roughness)
+float G1(float NoV, float roughness)
 {
-	float k = pow(roughness + 1, 2) / 8.0;
-	return dot(n, v) / (dot(n, v)*(1 - k) + k);
+	float k = pow(roughness, 2) / 2.0;
+	return NoV / (NoV*(1 - k) + k);
 }
 
 float G(float roughness, float3 n, float3 l, float3 v)
 {
-	return G1(n,l,roughness)*G1(n,v,roughness);
+	return saturate(G1(saturate(dot(n, l)), roughness)*G1(saturate(dot(n, v)), roughness));
 }
 
 //////////////////////////////////////
@@ -539,6 +539,7 @@ float3 Diffuse_Lambert(float3 DiffuseColor)
 
 float3 Diffuse(float3 DiffuseColor, float Roughness, float NoV, float NoL, float VoH)
 {
+	//return Diffuse_Lambert(DiffuseColor);
 	return Diffuse_Burley(DiffuseColor, Roughness, NoV, NoL, VoH);
 }
 
@@ -565,7 +566,6 @@ float GGX(float NdotV, float a)
 
 float G_Smith(float a, float nDotV, float nDotL)
 {
-
 	return GGX(nDotL, a) * GGX(nDotV, a);
 }
 
@@ -747,7 +747,8 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float Metallic = SpecularRoughnessMetallic.z;
 		float3 El = float3(2, 2, 2);
 
-		float3 DiffuseColor = BaseColor;
+		float3 DiffuseColor = BaseColor * (1 - Metallic);
+		float3 SpecularColor = lerp(0.08 * Specular.xxx, BaseColor, Metallic.xxx);
 
 		float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
 		wNormal = normalize(wNormal);
@@ -758,13 +759,12 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 
 		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(linearSample, wNormal, 10); // the brdf: direction lighting diff term 
 		float3 brdf_diff = Diffuse(DiffuseColor, Roughness, saturate(dot(wNormal, v)), saturate(dot(wNormal, l)), saturate(dot(h, v)));
-		float3 brdf_spec = (D(Roughness, saturate(dot(wNormal, h)))*F(saturate(dot(v,h)), Specular)*G(Roughness, wNormal, l, v)) / (4 * dot(wNormal, l)*dot(wNormal, v));
-		float3 brdf_env_diff = Diffuse(DiffuseColor, Roughness, saturate(dot(wNormal, v)), 1, saturate(dot(normalize(wNormal + v), v)));
+		float3 brdf_spec = (D(Roughness, saturate(dot(wNormal, h)))*F(saturate(dot(v, h)), SpecularColor)*G(Roughness, wNormal, l, v))/ (4 * dot(wNormal, l)*dot(wNormal, v));
 		
 		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(linearSample, -v).xyz;
 		float3 Ldir_diff_spec = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi;
-		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(Specular, Roughness, wNormal, v);
-		float3 Lenv_diff = (all(ndcDepth))*brdf_env_diff*difenvE;
+		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(SpecularColor, Roughness, wNormal, v);
+		float3 Lenv_diff = DiffuseColor * (all(ndcDepth))*difenvE;
 
 		float3 combine = Ldir_diff_spec + Lenv + Lenv_spec + Lenv_diff;
 		result.finalColor = float4(combine, 1);

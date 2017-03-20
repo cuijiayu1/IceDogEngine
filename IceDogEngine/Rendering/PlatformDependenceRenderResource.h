@@ -17,6 +17,7 @@ namespace IceDogRendering
 	class PIDShaderResourceView
 	{
 	public:
+		PIDShaderResourceView();
 #if defined __DIRECTX__
 		ID3D11ShaderResourceView*& GetResourceView();
 		void SetResourceView(ID3D11ShaderResourceView* res);
@@ -32,6 +33,7 @@ namespace IceDogRendering
 	class PIDShaderResource
 	{
 	public:
+		PIDShaderResource();
 #if defined __DIRECTX__
 		ID3D11Resource*& GetResource();
 		void SetResource(ID3D11Resource* res);
