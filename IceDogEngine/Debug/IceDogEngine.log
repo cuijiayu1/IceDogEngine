@@ -1,29 +1,24 @@
-﻿  fxc compile for release: D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx
-  Microsoft (R) Direct3D Shader Compiler 6.3.9600.16384
-  Copyright (C) 2013 Microsoft. All rights reserved.
-  
-CUSTOMBUILD : warning X4717: Effects deprecated for D3DCompiler_47
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(93,14): warning X3207: Initializer used on a global 'const' variable. This requires setting an external constant. If a literal is desired, use 'static const' instead.
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(211,29-91): warning X3206: 'cross': implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(211,29-91): warning X3206: 'cross': implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(354,16-88): warning X3206: 'compute_tangent_frame': implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(360,43-64): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(369,10-67): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(681,2-56): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(696,2-65): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(706,9-72): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(753,10-77): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(767,22-59): warning X3206: implicit truncation of vector type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(348,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(324,26-77): warning X3570: gradient instruction used in a loop with varying iteration, forcing loop to unroll
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(327,2): warning X4121: gradient-based operations must be moved out of flow control to prevent divergence. Performance may improve by using a non-gradient operation
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(348,15-38): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(324,26-77): warning X3570: gradient instruction used in a loop with varying iteration, forcing loop to unroll
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(327,2): warning X4121: gradient-based operations must be moved out of flow control to prevent divergence. Performance may improve by using a non-gradient operation
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(710,18-47): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(685,21-50): warning X3576: semantics in type overridden by variable/function or enclosing type
-D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fx(694,25-54): warning X3576: semantics in type overridden by variable/function or enclosing type
-  
-  compilation object save succeeded; see D:\Program\IceDogEngine\IceDogEngine\Rendering\DirectX\FX\deferred.fxo
+﻿  DirectXDeferredPipe.cpp
+d:\program\icedogengine\icedogengine\utils\math\mathdef.h(34): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+d:\program\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+d:\program\icedogengine\icedogengine\utils\math\mathdef.h(38): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+d:\program\icedogengine\icedogengine\utils\math\mathdef.h(56): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+d:\program\icedogengine\icedogengine\utils\math\mathdef.h(103): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  d:\program\icedogengine\icedogengine\utils\math\mathdef.h(113): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(12): warning C4305: “初始化”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(118): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(156): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(174): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(175): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(176): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(177): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(123): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
+d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(35): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
+  d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(58): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
+d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(20): warning C4305: “参数”: 从“double”到“float”截断
+d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(51): warning C4244: “参数”: 从“const float”转换到“int”，可能丢失数据
+d:\program\icedogengine\icedogengine\rendering\directx\directxdeferredpipe.cpp(737): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
+d:\program\icedogengine\icedogengine\rendering\directx\directxdeferredpipe.cpp(738): warning C4244: “=”: 从“unsigned int”转换到“FLOAT”，可能丢失数据
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

@@ -9,6 +9,9 @@ namespace IceDogRendering
 	using IceDogUtils::float4;
 	using IceDogUtils::Vector;
 
+	const float DEFAULT_NEARZ = 0.01;
+	const float DEFAULT_FARZ = 100;
+
 	struct float4x4
 	{
 		float m[16];
@@ -41,11 +44,31 @@ namespace IceDogRendering
 			return float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 		}
 
+		static float4x4 OrthographicLH(const float& width, const float& height, const float& nearZ, const float& farZ)
+		{
+#if defined __DIRECTX__
+			DirectX::XMFLOAT4X4 temp4x4;
+			DirectX::XMStoreFloat4x4(&temp4x4, DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ));
+			return float4x4(temp4x4);
+#endif
+			return Identity();
+		}
+
 		static float4x4 GetRotationMatrix(const float3& rotate)
 		{
 #if defined __DIRECTX__
 			DirectX::XMFLOAT4X4 temp4x4;
 			DirectX::XMStoreFloat4x4(&temp4x4,DirectX::XMMatrixRotationRollPitchYaw(rotate.x, rotate.y, rotate.z));
+			return float4x4(temp4x4);
+#endif
+			return Identity();
+		}
+
+		static float4x4 LookAtLH(const float3& eyePosition, const float3& eyeFocus, const float3& upVector)
+		{
+#if defined __DIRECTX__
+			DirectX::XMFLOAT4X4 temp4x4;
+			DirectX::XMStoreFloat4x4(&temp4x4, DirectX::XMMatrixLookAtLH(XMLoadFloat3((XMFLOAT3*)&eyePosition), XMLoadFloat3((XMFLOAT3*)&eyeFocus), XMLoadFloat3((XMFLOAT3*)&upVector)));
 			return float4x4(temp4x4);
 #endif
 			return Identity();
@@ -107,24 +130,23 @@ namespace IceDogRendering
 		float4 val_b;
 	};
 
-	struct DirectionalLight
+	struct LightDef {};
+
+	struct DirectionalLight:LightDef
 	{
 		DirectionalLight()
 		{
-			ambient = float4(0.2, 0.2, 0.2, 1);
-			diffuse = float4(0.5, 0.5, 0.5, 1);
-			specular = float4(0.5, 0.5, 0.5, 1);
-			direction = float3(0, 1, 0);
+			direction = float4(1, -1, 1, 0);
+			diffuse = float3(1, 1, 1);
+			intensity = 2;
 		}
 
-		float4 ambient;
-		float4 diffuse;
-		float4 specular;
-		float3 direction;
-		float pad;
+		float4 direction;
+		float3 diffuse;
+		float intensity;
 	};
 
-	struct PointLight
+	struct PointLight :LightDef
 	{
 		PointLight()
 		{
@@ -145,7 +167,7 @@ namespace IceDogRendering
 		float pad;
 	};
 
-	struct SpotLight
+	struct SpotLight :LightDef
 	{
 		SpotLight()
 		{
@@ -179,6 +201,7 @@ namespace IceDogRendering
 		const float Yellow[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 		const float Cyan[] = { 0.0f, 1.0f, 1.0f, 1.0f };
 		const float Magenta[] = { 1.0f, 0.0f, 1.0f, 1.0f };
+		const float NONECOLOR[] = { 0.0f,0.0f,0.0f,0.0f };
 
 		const float Silver[] = { 0.75f, 0.75f, 0.75f, 1.0f };
 		const float LightSteelBlue[] = { 0.69f, 0.77f, 0.87f, 1.0f };

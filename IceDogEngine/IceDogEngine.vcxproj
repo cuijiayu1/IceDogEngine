@@ -114,6 +114,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\LightData\DirectionLightData.cpp" />
+    <ClCompile Include="Rendering\LightData\LightBase.cpp" />
     <ClCompile Include="Rendering\CubeMapSource.cpp" />
     <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp" />
     <ClCompile Include="Source\LoadTestAct.cpp" />
@@ -163,6 +165,8 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\LightData\DirectionLightData.h" />
+    <ClInclude Include="Rendering\LightData\LightBase.h" />
     <ClInclude Include="Rendering\CubeMapSource.h" />
     <ClInclude Include="Source\LoadTestAct.h" />
     <ClInclude Include="Utils\Loader\ObjMeshLoader.h" />

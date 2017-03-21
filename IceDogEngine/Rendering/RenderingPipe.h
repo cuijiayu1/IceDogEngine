@@ -17,7 +17,7 @@ namespace IceDogRendering
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
 			DirectionalLight dl;
-			dl.direction = float3(0.4, -1, 1);
+			dl.direction = float4(0.4, -1, 1, 0);
 			SpotLight sl;
 			sl.position = float3(10, 10, 10);
 			PointLight pl;

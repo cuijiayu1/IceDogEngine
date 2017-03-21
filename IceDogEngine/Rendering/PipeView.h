@@ -15,6 +15,8 @@ namespace IceDogRendering
 		float4x4 GetViewInverse() { return c_viewInverse; }
 		/* get the eye position in world space */
 		float3 GetEyePosition() { return c_eyePosition; }
+		/* get the near and the far plane */
+		float2 GetNearFarPlane() { return float2(c_nearPlane, c_farPlane); }
 		/* set eye position */
 		void SetEyePosition(float3);
 		/* set eye focus position */
@@ -25,7 +27,7 @@ namespace IceDogRendering
 		float4x4 GetProjectionMatrix() { return c_projMatrix; };
 		/* set the aspect ratio */
 		void SetAspectRatio(float ratio);
-		/* set the fov angle in degree */
+		/* set the FOV angle in degree */
 		void SetFOVDegree(float degree);
 		/* set the near plane */
 		void SetNearPlane(float nearPlane);

@@ -23,15 +23,12 @@ namespace IceDogRendering
 		r_gBufferSpecularRoughnessMetallic = nullptr;
 		r_gBufferFinalColor = nullptr;
 		r_gBufferBaseColor = nullptr;
-		r_gBufferDepth = nullptr;
 
 		r_gBufferNormalRTV = nullptr;
 		r_gBufferBaseColorRTV = nullptr;
 		r_gBufferSpecularRoughnessMetallicRTV = nullptr;
-		r_gBufferDepthRTV = nullptr;
 		r_gBufferFinalColorRTV = nullptr;
 
-		r_gBufferDepthSRV = nullptr;
 		r_gBufferBaseColorSRV = nullptr;
 		r_gBufferFinalColorSRV = nullptr;
 		r_gBufferNormalSRV = nullptr;
@@ -132,6 +129,8 @@ namespace IceDogRendering
 		// test code begin
 		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
 		// test code end
+
+		r_dl.UpdateShadowTexture(c_PDRR);
 
 		// build up the state for rendering
 		BuildUpStates();
@@ -290,22 +289,23 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
 		// clear other rt view
-		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferDepthRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferBaseColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferFinalColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferNormalRTV, IceDogRendering::Color::Black);
-		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRoughnessMetallicRTV, IceDogRendering::Color::Black);
+		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRoughnessMetallicRTV, IceDogRendering::Color::NONECOLOR);
 	}
 
 	void DirectXDeferredPipe::SetupConstBuffer()
 	{
 		// set const buffer per frame
 		r_effectFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
+		r_effectFX->GetVariableByName("zNearFar")->SetRawValue(&r_mainPipeView->GetNearFarPlane(), 0, sizeof(float2));
 		float3 lightOn = float3(0, 0, 0);
 		// update each light
 		if (r_defaultLG.HasDirectionalLightsSpace() != r_defaultLG.GetPerLightCount())
-		{
-			r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+		{	
+			r_effectFX->GetVariableByName("directionLight")->SetRawValue(r_dl.GetLightDef().get(), 0, sizeof(DirectionalLight));
+			//r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
 			lightOn.x = 1;
 		}
 		if (r_defaultLG.HasSpotLightsSpace() != r_defaultLG.GetPerLightCount())
@@ -322,16 +322,100 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
 	}
 
+	void DirectXDeferredPipe::RenderShadowMap(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
+	{
+		float shadow_map_size = r_dl.GetShadowMapSize();
+		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&r_dl.GetViewport());
+		r_effectFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix(r_dl.GetProjectionMatrix().m);
+		r_effectFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix(r_dl.GetViewMatrix().m);
+		r_effectFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
+
+		// get the pass first
+		auto tech = r_effectFX->GetTechniqueByName("Deferred");
+		auto pass_mesh = tech->GetPassByName("ShadowStage");
+		auto pass_voxel = tech->GetPassByName("VoxelShadowStage");
+
+		ID3D11RenderTargetView* renderTargets[] = { r_dl.GetShadowMapRTV().GetRenderTargetView() };
+
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, renderTargets, r_dl.GetDepthStencilView().GetDepthStencilView());
+
+		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
+		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
+		UINT offset = 0;
+
+		r_effectFX->GetVariableByName("mcEdgeTable")->AsShaderResource()->SetResource(r_mcEdgeSRV);
+		r_effectFX->GetVariableByName("mcTriTable")->AsShaderResource()->SetResource(r_mcTriangleSRV);
+		// render voxel
+		c_PDRR.r_deviceContext->IASetInputLayout(r_voxelInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		float isoLevel = 0.5;
+		for (auto renderData : renderDatas)
+		{
+			std::shared_ptr<VoxelData> rd = std::dynamic_pointer_cast<VoxelData>(renderData);
+			if (!rd) { continue; }
+			if (rd->GetVertexBuffer() == nullptr) { continue; }
+			auto tempVertexBuffer = rd->GetVertexBuffer();
+			isoLevel = rd->GetIsoLevel();
+
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_voxel, &offset);
+
+			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
+			r_effectFX->GetVariableByName("isolevel")->SetRawValue(&isoLevel, 0, sizeof(float));
+			// apply the material
+			r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
+
+			pass_voxel->Apply(0, c_PDRR.r_deviceContext);
+			c_PDRR.r_deviceContext->Draw(rd->GetVertexCount(), 0);
+		}
+
+		// render mesh
+		c_PDRR.r_deviceContext->IASetInputLayout(r_meshInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		for (auto renderData : renderDatas)
+		{
+			std::shared_ptr<MeshData> rd = std::dynamic_pointer_cast<MeshData>(renderData);
+			if (!rd) { continue; }
+			if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
+			auto tempVertexBuffer = rd->GetVertexBuffer();
+
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_mesh, &offset);
+			c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
+			// apply the material
+			r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
+
+			pass_mesh->Apply(0, c_PDRR.r_deviceContext);
+
+			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
+		}
+		// bind the shadow map texture to shader resource
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(r_dl.GetShadowMapSRV().GetResourceView());
+
+		// reset the view port
+		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
+	}
+
 	void DirectXDeferredPipe::RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
 		auto tech = r_effectFX->GetTechniqueByName("Deferred");
 		auto pass_mesh = tech->GetPassByName("GBufferStage");
 		auto pass_voxel = tech->GetPassByName("VoxelStage");
 
-		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRoughnessMetallicRTV,r_gBufferDepthRTV };
+		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRoughnessMetallicRTV };
 
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		c_PDRR.r_deviceContext->OMSetRenderTargets(4, renderTargets, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(3, renderTargets, r_backBufferDepthStencilView);
 
 		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
 		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
@@ -437,7 +521,6 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
 		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
-		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(r_gBufferDepthSRV);
 
 		// set BRDF LUT
 		r_effectFX->GetVariableByName("brdfLut")->AsShaderResource()->SetResource(r_brdfLutSRV);
@@ -456,6 +539,7 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(NULL);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
 	}
@@ -504,6 +588,8 @@ namespace IceDogRendering
 		// check if have a pipeView
 		if (r_mainPipeView == nullptr) { return; }
 
+		// render shadow map first
+		RenderShadowMap(renderDatas);
 		ClearAllViews();
 		SetupConstBuffer();
 		if (!r_cubeMapSource.IsDirty())
@@ -511,6 +597,7 @@ namespace IceDogRendering
 		RenderGBuffer(renderDatas);
 		RenderLightBuffer();
 		MergeOutput();
+		r_dl.CleanBuffer(c_PDRR);
 		return;
 	}
 
@@ -520,7 +607,6 @@ namespace IceDogRendering
 		ReleaseCOM(r_backBufferRenderTargetView);
 		ReleaseCOM(r_backBufferDepthStencilView);
 		ReleaseCOM(r_backBufferDepthStencilBuffer);
-		ReleaseCOM(r_gBufferDepth);
 		ReleaseCOM(r_gBufferBaseColor);
 		ReleaseCOM(r_gBufferFinalColor);
 		ReleaseCOM(r_gBufferNormal);
@@ -529,10 +615,8 @@ namespace IceDogRendering
 		ReleaseCOM(r_gBufferNormalRTV);
 		ReleaseCOM(r_gBufferBaseColorRTV);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallicRTV);
-		ReleaseCOM(r_gBufferDepthRTV);
 		ReleaseCOM(r_gBufferFinalColorRTV);
 
-		ReleaseCOM(r_gBufferDepthSRV);
 		ReleaseCOM(r_gBufferBaseColorSRV);
 		ReleaseCOM(r_gBufferFinalColorSRV);
 		ReleaseCOM(r_gBufferNormalSRV);
@@ -541,13 +625,17 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format)
 	{
+		CreateRenderTargetTexture2D(c_backBufferWidth, c_backBufferHeight, texture, rt, sr, format);
+	}
+
+	void DirectXDeferredPipe::CreateRenderTargetTexture2D(UINT width, UINT height, ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format)
+	{
 		D3D11_TEXTURE2D_DESC dsd;
-		dsd.Width = c_backBufferWidth;
-		dsd.Height = c_backBufferHeight;
+		dsd.Width = width;
+		dsd.Height = height;
 		dsd.MipLevels = 1;
 		dsd.ArraySize = 1;
 		dsd.Format = format;
-		//dsd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		dsd.SampleDesc.Count = 1;
 		dsd.SampleDesc.Quality = 0;
 		dsd.Usage = D3D11_USAGE_DEFAULT;
@@ -630,11 +718,10 @@ namespace IceDogRendering
 			return;
 		}
 
-		CreateRenderTargetTexture2D(r_gBufferDepth, r_gBufferDepthRTV, r_gBufferDepthSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferBaseColor, r_gBufferBaseColorRTV, r_gBufferBaseColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferNormal, r_gBufferNormalRTV, r_gBufferNormalSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
-		CreateRenderTargetTexture2D(r_gBufferSpecularRoughnessMetallic, r_gBufferSpecularRoughnessMetallicRTV, r_gBufferSpecularRoughnessMetallicSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		CreateRenderTargetTexture2D(r_gBufferSpecularRoughnessMetallic, r_gBufferSpecularRoughnessMetallicRTV, r_gBufferSpecularRoughnessMetallicSRV,DXGI_FORMAT_R32G32B32A32_FLOAT);
 	}
 
 	void DirectXDeferredPipe::Resize(int newWidth, int newHeight)

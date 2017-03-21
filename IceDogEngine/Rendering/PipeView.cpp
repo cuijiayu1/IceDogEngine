@@ -44,8 +44,8 @@ PipeView::PipeView(float aspectRatio) :c_eyePosition(0, 0, 0.001),
 										c_upDirection(0, 1, 0),
 										c_aspectRatio(aspectRatio),
 										c_fovDegrees(90),
-										c_nearPlane(0.01),
-										c_farPlane(1000)
+										c_nearPlane(DEFAULT_NEARZ),
+										c_farPlane(DEFAULT_FARZ)
 {
 	// build up the view matrix
 	UpdateViewMatrix();

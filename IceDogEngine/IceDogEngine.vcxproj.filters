@@ -156,6 +156,12 @@
     <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\LightData\LightBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\LightData\DirectionLightData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -372,6 +378,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\CubeMapSource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\LightData\LightBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\LightData\DirectionLightData.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../RenderingPipe.h"
+#include "../LightData/DirectionLightData.h"
 
 namespace IceDogRendering
 {
@@ -31,6 +32,7 @@ namespace IceDogRendering
 
 		/* create g buffer texture */
 		void CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt,ID3D11ShaderResourceView*& sr, DXGI_FORMAT format);
+		void CreateRenderTargetTexture2D(UINT width, UINT height, ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format);
 
 		/* resize all buffer */
 		void UpdateAllBuffer();
@@ -43,6 +45,9 @@ namespace IceDogRendering
 
 		/* render the light buffer */
 		void RenderLightBuffer();
+
+		/* shadow map pass */
+		void RenderShadowMap(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
 
 		/* BRDF LUT generate Pass */
 		void RenderBRDFLut();
@@ -98,21 +103,24 @@ namespace IceDogRendering
 		ID3D11DepthStencilState* r_depthTestDisableState;
 
 		//views
+
+		// RTV
+
 		ID3D11RenderTargetView* r_backBufferRenderTargetView;
 		ID3D11DepthStencilView* r_backBufferDepthStencilView;
 
 		ID3D11RenderTargetView* r_gBufferNormalRTV;
 		ID3D11RenderTargetView* r_gBufferBaseColorRTV;
 		ID3D11RenderTargetView* r_gBufferSpecularRoughnessMetallicRTV;
-		ID3D11RenderTargetView* r_gBufferDepthRTV;
 		ID3D11RenderTargetView* r_gBufferFinalColorRTV;
 
 		ID3D11RenderTargetView* r_brdfLutRTV;
 
+		// SRV
+
 		ID3D11ShaderResourceView* r_gBufferNormalSRV;
 		ID3D11ShaderResourceView* r_gBufferBaseColorSRV;
 		ID3D11ShaderResourceView* r_gBufferSpecularRoughnessMetallicSRV;
-		ID3D11ShaderResourceView* r_gBufferDepthSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
 
 		ID3D11ShaderResourceView* r_mcEdgeSRV;
@@ -127,12 +135,15 @@ namespace IceDogRendering
 		ID3D11Texture2D* r_gBufferNormal;
 		ID3D11Texture2D* r_gBufferBaseColor;
 		ID3D11Texture2D* r_gBufferSpecularRoughnessMetallic;
-		ID3D11Texture2D* r_gBufferDepth;
 
 		//BRDF LUT (BRDF GGX LUT out)
 		ID3D11Texture2D* r_brdfLutBuffer;
 
 		//Final color buffer (light stage out)
 		ID3D11Texture2D* r_gBufferFinalColor;
+
+
+		// test code a light
+		DirectionLightData r_dl;
 	};
 }
