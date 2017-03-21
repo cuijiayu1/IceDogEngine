@@ -1,6 +1,6 @@
 #include "DirectionLightData.h"
 
-IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(4),c_shadowWidth(4)
+IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(5),c_shadowWidth(5),c_shadowDistance(5)
 {
 	r_lightDef = std::make_shared<DirectionalLight>();
 	r_viewport.c_height = c_shadowMapSize;
@@ -10,8 +10,10 @@ IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(4),c_sh
 	r_viewport.c_minDepth = 0;
 	r_viewport.c_maxDepth = 1;
 
-	c_projectionMatrix = IceDogRendering::float4x4::OrthographicLH(c_shadowWidth, c_shadowHeight, DEFAULT_NEARZ, DEFAULT_FARZ);
-	c_viewMatrix = IceDogRendering::float4x4::LookAtLH(float3(0, 10, 0), float3(0, 0, 0), float3(1, 0, 0));
+	// must be unit length
+	((DirectionalLight*)r_lightDef.get())->direction = float4(float3(((DirectionalLight*)r_lightDef.get())->direction).Normilize(), 0);
+
+	UpdateMatrixs();
 }
 
 void IceDogRendering::DirectionLightData::SetIntensity(float intensity)
@@ -85,6 +87,20 @@ void IceDogRendering::DirectionLightData::CleanBuffer(PlatformDependenceRenderRe
 
 	// clear other rt view
 	pdrr.r_deviceContext->ClearRenderTargetView(r_shadowMapRTV.GetRenderTargetView(), IceDogRendering::Color::NONECOLOR);
+}
+
+void IceDogRendering::DirectionLightData::SetLightDirection(float3 direction)
+{
+	((DirectionalLight*)r_lightDef.get())->direction = float4(direction.Normilize(), 0);
+	UpdateMatrixs();
+}
+
+void IceDogRendering::DirectionLightData::UpdateMatrixs()
+{
+	float3 direction = ((DirectionalLight*)r_lightDef.get())->direction;
+	float3 up = IceDogUtils::float3Cross(IceDogUtils::float3Cross(direction, float3(0, 1, 0)).Normilize(), direction).Normilize();
+	c_projectionMatrix = IceDogRendering::float4x4::OrthographicLH(c_shadowWidth, c_shadowHeight, DEFAULT_NEARZ, DEFAULT_FARZ);
+	c_viewMatrix = IceDogRendering::float4x4::LookAtLH(-c_shadowDistance*direction, float3(0, 0, 0), up);
 }
 
 bool IceDogRendering::DirectionLightData::CreateRenderTargetTexture2D(PlatformDependenceRenderResource pdrr,UINT width, UINT height, ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format)

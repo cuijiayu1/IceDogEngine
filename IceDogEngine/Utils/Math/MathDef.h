@@ -28,6 +28,7 @@ namespace IceDogUtils
 		}
 		float3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
 		float3() :x(0), y(0), z(0) {}
+		float3(const class float4& data);
 		explicit float3(const float* data) :x(data[0]), y(data[1]), z(data[2]) {}
 		float3& operator= (const float3& Float3) { x = Float3.x; y = Float3.y; z = Float3.z; return *this; }
 	};

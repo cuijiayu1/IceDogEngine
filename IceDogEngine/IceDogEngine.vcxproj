@@ -148,6 +148,7 @@
     <ClCompile Include="Source\Sphere.cpp" />
     <ClCompile Include="Utils\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Utils\Common\UtilBasic.cpp" />
+    <ClCompile Include="Utils\Math\MathDef.cpp" />
     <ClCompile Include="Utils\Math\MathHelper.cpp" />
     <ClCompile Include="Rendering\PipeView.cpp" />
     <ClCompile Include="Rendering\RenderData\MeshData.cpp" />

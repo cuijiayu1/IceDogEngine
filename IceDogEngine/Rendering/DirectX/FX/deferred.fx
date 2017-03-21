@@ -490,7 +490,7 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 		result.baseColor = pin.color;
 	}
 	float depth = pin.depth.x / pin.depth.y;
-	result.specularRoughnessMetallic = float4(0.5, 1, 0, 1);
+	result.specularRoughnessMetallic = float4(0.5, 0.2, 0.2, 1);
 	result.specularRoughnessMetallic.a = depth;
 	// if use parallax mapping depth also need to be adjust
 	//if (DifNorParEmi.z == 1)
