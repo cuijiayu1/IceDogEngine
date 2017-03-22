@@ -25,7 +25,12 @@ void IceDogGameplay::DirectionalLightComponent::SetDisable()
 	IceDogEngine::Engine::GetEngine()->UnRegisterLightData(r_holdLight, IceDogRendering::LightType::Directional);
 }
 
+void IceDogGameplay::DirectionalLightComponent::SetLightDirection(IceDogUtils::float3 direction)
+{
+	std::dynamic_pointer_cast<IceDogRendering::DirectionLightData>(r_holdLight)->SetLightDirection(direction);
+}
+
 void IceDogGameplay::DirectionalLightComponent::Update()
 {
-
+	
 }

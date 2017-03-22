@@ -39,9 +39,6 @@
     <ClCompile Include="Rendering\DirectX\DirectXRenderingManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\DirectX\DirectXRenderingPipe.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\PipeView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -225,9 +222,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\DirectX\DirectXRenderingManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Rendering\DirectX\DirectXRenderingPipe.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Common\d3dx11effect.h">
@@ -414,6 +408,7 @@
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\deferred.fx" />
     <CustomBuild Include="Rendering\DirectX\FX\basic.fx" />
+    <CustomBuild Include="Rendering\DirectX\FX\directLighting.fx" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="DirectXTex.lib" />

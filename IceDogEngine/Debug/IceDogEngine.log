@@ -1,24 +1,10 @@
-﻿  testMain.cpp
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(35): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(36): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(39): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(45): warning C4099: “IceDogUtils::float4”: 类型名称以前使用“class”现在使用的是“struct”
-  d:\program\icedogengine\icedogengine\utils\math\mathdef.h(44): note: 参见“IceDogUtils::float4”的声明
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(57): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-d:\program\icedogengine\icedogengine\utils\math\mathdef.h(104): warning C4814: “IceDogUtils::Vector<T,vecSize>::Length”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\utils\math\mathdef.h(114): note: 参见对正在编译的类 模板 实例化“IceDogUtils::Vector<T,vecSize>”的引用
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(12): warning C4305: “初始化”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(125): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(163): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(181): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(182): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(183): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\pdrenderingdef.h(184): warning C4305: “参数”: 从“double”到“float”截断
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(36): warning C4814: “IceDogRendering::LightingGroup<perLightCount>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(124): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<perLightCount>”的引用
-d:\program\icedogengine\icedogengine\rendering\lightinggroup.h(36): warning C4814: “IceDogRendering::LightingGroup<1>::GetPerLightCount”: 在 C++14 中，"constexpr" 将不表示“常量”；请考虑显式指定“常量”
-  d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(59): note: 参见对正在编译的类 模板 实例化“IceDogRendering::LightingGroup<1>”的引用
-d:\program\icedogengine\icedogengine\rendering\renderingpipe.h(52): warning C4244: “参数”: 从“const float”转换到“int”，可能丢失数据
-d:\program\icedogengine\icedogengine\testmain.cpp(57): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+﻿Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(d3dxGlobal.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Effects11d.lib(EffectAPI.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(EffectAPI.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Effects11d.lib(EffectLoad.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(EffectLoad.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(EffectNonRuntime.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Effects11d.lib(EffectReflection.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(EffectReflection.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 未找到 PDB“Effects11d.pdb”(使用“Effects11d.lib(EffectRuntime.obj)”或在“D:\Program\IceDogEngine\Debug\Effects11d.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+DirectXTK.lib(Geometry.obj) : warning LNK4099: 未找到 PDB“DirectXTK.pdb”(使用“DirectXTK.lib(Geometry.obj)”或在“D:\Program\IceDogEngine\Debug\DirectXTK.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+DirectXTK.lib(pch.obj) : warning LNK4099: 未找到 PDB“DirectXTK.pdb”(使用“DirectXTK.lib(pch.obj)”或在“D:\Program\IceDogEngine\Debug\DirectXTK.pdb”中寻找)；正在链接对象，如同没有调试信息一样
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.exe
   IceDogEngine.vcxproj -> D:\Program\IceDogEngine\Debug\IceDogEngine.pdb (Partial PDB)

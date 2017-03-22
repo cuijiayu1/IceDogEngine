@@ -16,12 +16,6 @@ namespace IceDogRendering
 	public:
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
-			SpotLight sl;
-			sl.position = float3(10, 10, 10);
-			PointLight pl;
-			pl.position = float3(0, 4, -4);
-			//r_defaultLG.AddSpotLight(sl);
-			r_defaultLG.AddPointLight(pl);
 			//bind the event processor
 			r_messageProc.BindProcessor(std::bind(&RenderingPipe::EventProcessor, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3));
 			r_messageProc.Init();
@@ -54,9 +48,12 @@ namespace IceDogRendering
 			return 0;
 		}
 
+		/* add directional light to light group */
+		void AddDirectionalLightToLightGroup(std::shared_ptr<DirectionLightData> dl);
+
 	protected:
 		// default light group
-		LightingGroup<1> r_defaultLG;
+		std::vector<LightingGroup<1>> r_lightGroups;
 		// the pipe view
 		std::shared_ptr<PipeView> r_mainPipeView;
 		std::vector < std::shared_ptr<PipeView> > r_pipeViewList;

@@ -14,6 +14,8 @@ namespace IceDogGameplay
 		virtual void SetEnable() override;
 		/* set disable */
 		virtual void SetDisable() override;
+		/* set direction */
+		void SetLightDirection(IceDogUtils::float3 direction);
 
 		/* update the location from owner */
 		virtual void Update() override;

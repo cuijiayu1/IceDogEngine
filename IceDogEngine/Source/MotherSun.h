@@ -9,5 +9,9 @@ class MotherSun : public IceDogGameplay::Actor
 public:
 	MotherSun();
 	~MotherSun();
+
+	void SetDirection(IceDogUtils::float3);
+
+	IceDogGameplay::DirectionalLightComponent* st;
 };
 

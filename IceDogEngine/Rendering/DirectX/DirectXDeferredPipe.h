@@ -43,11 +43,20 @@ namespace IceDogRendering
 		/* render the G-Buffer */
 		void RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
 
-		/* render the light buffer */
-		void RenderLightBuffer();
+		/* render direct light, need geo for shadow map calculation */
+		void RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
 
-		/* shadow map pass */
-		void RenderShadowMap(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
+		/* render single direct light */
+		void RenderSingleDirectLight();
+
+		/* render single shadow map */
+		void RenderSingleShadowMap(std::shared_ptr<LightBase> light, std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
+
+		/* render environment with direct lighting */
+		void RenderEnvWithDirLight();
+
+		/* update all lights */
+		void UpdateAllLights();
 
 		/* BRDF LUT generate Pass */
 		void RenderBRDFLut();
@@ -79,17 +88,27 @@ namespace IceDogRendering
 		/* create the marching cube look up table */
 		void CreateMarchingCubeLookupTable();
 
-		/* update the light data when the light is dirty */
-		void UpdateLightData();
+		/* create the input layout of the pass */
+		void CreateInputLayout(ID3DX11Effect* effect, std::string technique, std::string stage, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout);
 		
 
 	private:
 		IDXGISwapChain* r_mainSwapChain;
+		// g pass
 		ID3D11InputLayout* r_meshInputLayout;
 		ID3D11InputLayout* r_voxelInputLayout;
 		ID3D11InputLayout* r_deferredLightLayout;
+		// g pass
+
+		// l pass
+		ID3D11InputLayout* r_lvoxelInputLayout;
+		ID3D11InputLayout* r_lvertexShadowInputLayout;
+		ID3D11InputLayout* r_lvertexLightInputLayout;
+		// l pass
+
 		D3D11_VIEWPORT r_viewPort;
 		ID3DX11Effect* r_effectFX;
+		ID3DX11Effect* r_lightFX;
 
 		ID3D11Buffer* r_singleVertexBuffer;
 		ID3D11Buffer* r_singleIndexBuffer;
@@ -117,6 +136,8 @@ namespace IceDogRendering
 		ID3D11RenderTargetView* r_gBufferSpecularRoughnessMetallicRTV;
 		ID3D11RenderTargetView* r_gBufferFinalColorRTV;
 
+		ID3D11RenderTargetView* r_lBufferDirectLightRTV;
+
 		ID3D11RenderTargetView* r_brdfLutRTV;
 
 		// SRV
@@ -125,6 +146,8 @@ namespace IceDogRendering
 		ID3D11ShaderResourceView* r_gBufferBaseColorSRV;
 		ID3D11ShaderResourceView* r_gBufferSpecularRoughnessMetallicSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
+
+		ID3D11ShaderResourceView* r_lBufferDirectLightSRV;
 
 		ID3D11ShaderResourceView* r_mcEdgeSRV;
 		ID3D11ShaderResourceView* r_mcTriangleSRV;
@@ -138,6 +161,9 @@ namespace IceDogRendering
 		ID3D11Texture2D* r_gBufferNormal;
 		ID3D11Texture2D* r_gBufferBaseColor;
 		ID3D11Texture2D* r_gBufferSpecularRoughnessMetallic;
+
+		//Light-Buffer 
+		ID3D11Texture2D* r_lBufferDirectLightBuffer;
 
 		//BRDF LUT (BRDF GGX LUT out)
 		ID3D11Texture2D* r_brdfLutBuffer;

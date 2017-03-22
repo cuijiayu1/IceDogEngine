@@ -43,6 +43,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	Cha cha;
 	MotherSun sun;
 
+	MotherSun sun2;
+	sun2.SetDirection(IceDogUtils::float3(-1, -1, 0));
+
+
 	PlaneActor plan;
 	plan.SetActorLocation(IceDogUtils::float3(0, -0.5, 0));
 	MyActor actor;

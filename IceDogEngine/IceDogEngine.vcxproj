@@ -156,7 +156,6 @@
     <ClCompile Include="Utils\Math\MathHelper.cpp" />
     <ClCompile Include="Rendering\PipeView.cpp" />
     <ClCompile Include="Rendering\RenderData\MeshData.cpp" />
-    <ClCompile Include="Rendering\DirectX\DirectXRenderingPipe.cpp" />
     <ClCompile Include="Rendering\DirectX\DirectXRenderingManager.cpp" />
     <ClCompile Include="Platform\Platform.cpp" />
     <ClCompile Include="Rendering\RenderingAdapter.cpp" />
@@ -226,7 +225,6 @@
     <ClInclude Include="Utils\Math\MathHelper.h" />
     <ClInclude Include="Rendering\PipeView.h" />
     <ClInclude Include="Rendering\RenderData\MeshData.h" />
-    <ClInclude Include="Rendering\DirectX\DirectXRenderingPipe.h" />
     <ClInclude Include="Rendering\DirectX\DirectXRenderingManager.h" />
     <ClInclude Include="Platform\Message.h" />
     <ClInclude Include="Platform\Platform.h" />
@@ -268,6 +266,14 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\basic.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Rendering\DirectX\FX\directLighting.fx">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>

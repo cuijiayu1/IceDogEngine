@@ -10,6 +10,9 @@ namespace IceDogRendering
 		r_voxelInputLayout = 0;
 		r_meshInputLayout = 0;
 		r_deferredLightLayout = 0;
+		r_lvertexLightInputLayout = 0;
+		r_lvertexShadowInputLayout = 0;
+		r_lvoxelInputLayout = 0;
 
 		c_msaaQuility = 0;
 		c_backBufferHeight = 1024;
@@ -23,16 +26,23 @@ namespace IceDogRendering
 		r_gBufferSpecularRoughnessMetallic = nullptr;
 		r_gBufferFinalColor = nullptr;
 		r_gBufferBaseColor = nullptr;
+		
+		r_lBufferDirectLightBuffer = nullptr;
 
 		r_gBufferNormalRTV = nullptr;
 		r_gBufferBaseColorRTV = nullptr;
 		r_gBufferSpecularRoughnessMetallicRTV = nullptr;
 		r_gBufferFinalColorRTV = nullptr;
+	
+		r_lBufferDirectLightRTV = nullptr;
 
 		r_gBufferBaseColorSRV = nullptr;
 		r_gBufferFinalColorSRV = nullptr;
 		r_gBufferNormalSRV = nullptr;
 		r_gBufferSpecularRoughnessMetallicSRV = nullptr;
+
+		r_lBufferDirectLightSRV = nullptr;
+
 	}
 
 	void DirectXDeferredPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
@@ -92,6 +102,10 @@ namespace IceDogRendering
 		{
 			s_errorlogOutStream << "Create effect failed" << std::endl;
 		}
+		if (!IceDogRendering::BuildFX("Rendering/DirectX/FX/directLighting.fxo", c_PDRR.r_device, r_lightFX))
+		{
+			s_errorlogOutStream << "Create effect failed" << std::endl;
+		}
 
 		UpdateInputLayout();
 
@@ -136,37 +150,36 @@ namespace IceDogRendering
 		PrePass();
 	}
 
+	void DirectXDeferredPipe::CreateInputLayout(ID3DX11Effect* effect, std::string technique ,std::string stage, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout)
+	{
+		D3DX11_PASS_DESC passDesc;
+		auto tech = effect->GetTechniqueByName(technique.c_str());
+		tech->GetPassByName(stage.c_str())->GetDesc(&passDesc);
+		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(desc, descCount, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &inputLayout)))
+		{
+			s_errorlogOutStream << "Create input layout failed" << std::endl;
+		}
+	}
+
 	void DirectXDeferredPipe::UpdateInputLayout()
 	{
 		ReleaseCOM(r_meshInputLayout);
 		ReleaseCOM(r_voxelInputLayout);
 		ReleaseCOM(r_deferredLightLayout);
 
-		// create input layout
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		D3DX11_PASS_DESC meshpassDesc;
-		tech->GetPassByName("GBufferStage")->GetDesc(&meshpassDesc);
-		int inputCount = std::end(IceDogRendering::vertexDesc) - std::begin(IceDogRendering::vertexDesc);
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::vertexDesc, inputCount, meshpassDesc.pIAInputSignature, meshpassDesc.IAInputSignatureSize, &r_meshInputLayout)))
-		{
-			s_errorlogOutStream << "Create input layout failed" << std::endl;
-		}
+		ReleaseCOM(r_lvoxelInputLayout);
+		ReleaseCOM(r_lvertexShadowInputLayout);
+		ReleaseCOM(r_lvertexLightInputLayout);
 
-		D3DX11_PASS_DESC voxelpassDesc;
-		tech->GetPassByName("VoxelStage")->GetDesc(&voxelpassDesc);
-		inputCount = std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc);
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::voxelVertexDesc, inputCount, voxelpassDesc.pIAInputSignature, voxelpassDesc.IAInputSignatureSize, &r_voxelInputLayout)))
-		{
-			s_errorlogOutStream << "Create input layout failed" << std::endl;
-		}
+		// create g input layout
+		CreateInputLayout(r_effectFX, "Deferred", "GBufferStage", std::end(IceDogRendering::vertexDesc) - std::begin(IceDogRendering::vertexDesc), IceDogRendering::vertexDesc, r_meshInputLayout);
+		CreateInputLayout(r_effectFX, "Deferred", "VoxelStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_voxelInputLayout);
+		CreateInputLayout(r_effectFX, "Deferred", "LightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_deferredLightLayout);
 
-		D3DX11_PASS_DESC lpassDesc;
-		tech->GetPassByName("LightingStage")->GetDesc(&lpassDesc);
-		inputCount = std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc);
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(IceDogRendering::deferredLightVertexDesc, inputCount, lpassDesc.pIAInputSignature, lpassDesc.IAInputSignatureSize, &r_deferredLightLayout)))
-		{
-			s_errorlogOutStream << "Create input layout failed" << std::endl;
-		}
+		// create l input layout
+		CreateInputLayout(r_lightFX, "Lighting", "VoxelShadowStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
+		CreateInputLayout(r_lightFX, "Lighting", "ShadowStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
+		CreateInputLayout(r_lightFX, "Lighting", "DirectLightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexLightInputLayout);
 	}
 
 	void DirectXDeferredPipe::BuildUpStates()
@@ -279,16 +292,6 @@ namespace IceDogRendering
 		ReleaseCOM(tx_2d);
 	}
 
-	void DirectXDeferredPipe::UpdateLightData()
-	{
-		// just test code
-
-		if (r_defaultLG.GetDirectionalLight()[0]->IsDirty())
-		{
-			r_defaultLG.GetDirectionalLight()[0]->UpdateShadowTexture(c_PDRR);
-		}
-	}
-
 	void DirectXDeferredPipe::ClearAllViews()
 	{
 		// clear the back buffer
@@ -297,6 +300,7 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
 		// clear other rt view
+		c_PDRR.r_deviceContext->ClearRenderTargetView(r_lBufferDirectLightRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferBaseColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferFinalColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferNormalRTV, IceDogRendering::Color::Black);
@@ -308,109 +312,62 @@ namespace IceDogRendering
 		// set const buffer per frame
 		r_effectFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
 		r_effectFX->GetVariableByName("zNearFar")->SetRawValue(&r_mainPipeView->GetNearFarPlane(), 0, sizeof(float2));
-		float3 lightOn = float3(0, 0, 0);
-		// update each light
-		if (r_defaultLG.HasDirectionalLightsSpace() != r_defaultLG.GetPerLightCount())
-		{	
-			r_effectFX->GetVariableByName("directionLight")->SetRawValue(r_defaultLG.GetDirectionalLight()[0].get()->GetLightDef().get(), 0, sizeof(DirectionalLight));
-			lightOn.x = 1;
-		}
-		if (r_defaultLG.HasSpotLightsSpace() != r_defaultLG.GetPerLightCount())
-		{
-			r_effectFX->GetVariableByName("spotLight")->SetRawValue(&(r_defaultLG.GetSpotLight()[0]), 0, sizeof(SpotLight));
-			lightOn.y = 1;
-		}
-		if (r_defaultLG.HasPointLightsSpace() != r_defaultLG.GetPerLightCount())
-		{
-			r_effectFX->GetVariableByName("pointLight")->SetRawValue(&(r_defaultLG.GetPointLight()[0]), 0, sizeof(PointLight));
-			lightOn.z = 1;
-		}
-		// update light on state
-		r_effectFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
+		r_lightFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
+		r_lightFX->GetVariableByName("zNearFar")->SetRawValue(&r_mainPipeView->GetNearFarPlane(), 0, sizeof(float2));
 	}
 
-	void DirectXDeferredPipe::RenderShadowMap(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
+	void DirectXDeferredPipe::RenderEnvWithDirLight()
 	{
-		float shadow_map_size = r_defaultLG.GetDirectionalLight()[0]->GetShadowMapSize();
-		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&(r_defaultLG.GetDirectionalLight()[0]->GetViewport()));
-		r_effectFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix((r_defaultLG.GetDirectionalLight()[0]->GetProjectionMatrix()).m);
-		r_effectFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((r_defaultLG.GetDirectionalLight()[0]->GetViewMatrix()).m);
-		r_effectFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
-
-		// get the pass first
+		// get tech
 		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass_mesh = tech->GetPassByName("ShadowStage");
-		auto pass_voxel = tech->GetPassByName("VoxelShadowStage");
+		auto pass = tech->GetPassByName("LightingStage");
 
-		ID3D11RenderTargetView* renderTargets[] = { r_defaultLG.GetDirectionalLight()[0]->GetShadowMapRTV().GetRenderTargetView() };
+		// clear depth stencil view
+		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		c_PDRR.r_deviceContext->OMSetRenderTargets(1, renderTargets, r_defaultLG.GetDirectionalLight()[0]->GetDepthStencilView().GetDepthStencilView());
-
-		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
-		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
+		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
 		UINT offset = 0;
-
-		r_effectFX->GetVariableByName("mcEdgeTable")->AsShaderResource()->SetResource(r_mcEdgeSRV);
-		r_effectFX->GetVariableByName("mcTriTable")->AsShaderResource()->SetResource(r_mcTriangleSRV);
-		// render voxel
-		c_PDRR.r_deviceContext->IASetInputLayout(r_voxelInputLayout);
+		// set input layout
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
 		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		float isoLevel = 0.5;
-		for (auto renderData : renderDatas)
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_backBufferRenderTargetView, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		// set g buffer as shader resource			
+		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
+		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
+		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(r_lBufferDirectLightSRV);
+
+		// set BRDF LUT
+		r_effectFX->GetVariableByName("brdfLut")->AsShaderResource()->SetResource(r_brdfLutSRV);
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+
+		DisableDepthTest();
+		// loop for light drawing
+		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+		EnableDepthTest();
+
+		// unbind g buffer shader resource
+		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(NULL);
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+	}
+
+	void DirectXDeferredPipe::UpdateAllLights()
+	{
+		for (int i=0;i<r_lightGroups.size();++i)
 		{
-			std::shared_ptr<VoxelData> rd = std::dynamic_pointer_cast<VoxelData>(renderData);
-			if (!rd) { continue; }
-			if (rd->GetVertexBuffer() == nullptr) { continue; }
-			auto tempVertexBuffer = rd->GetVertexBuffer();
-			isoLevel = rd->GetIsoLevel();
-
-			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_voxel, &offset);
-
-			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
-			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
-			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
-			r_effectFX->GetVariableByName("isolevel")->SetRawValue(&isoLevel, 0, sizeof(float));
-			// apply the material
-			r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
-
-			pass_voxel->Apply(0, c_PDRR.r_deviceContext);
-			c_PDRR.r_deviceContext->Draw(rd->GetVertexCount(), 0);
+			if (r_lightGroups[i].GetDirectionalLight()[0]->IsDirty())
+			{
+				r_lightGroups[i].GetDirectionalLight()[0]->UpdateShadowTexture(c_PDRR);
+			}
 		}
-
-		// render mesh
-		c_PDRR.r_deviceContext->IASetInputLayout(r_meshInputLayout);
-		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		for (auto renderData : renderDatas)
-		{
-			std::shared_ptr<MeshData> rd = std::dynamic_pointer_cast<MeshData>(renderData);
-			if (!rd) { continue; }
-			if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
-			auto tempVertexBuffer = rd->GetVertexBuffer();
-
-			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_mesh, &offset);
-			c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-
-			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
-			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
-			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
-			// apply the material
-			r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
-
-			pass_mesh->Apply(0, c_PDRR.r_deviceContext);
-
-			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
-		}
-		// bind the shadow map texture to shader resource
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource( r_defaultLG.GetDirectionalLight()[0]->GetShadowMapSRV().GetResourceView());
-
-		// reset the view port
-		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
 	}
 
 	void DirectXDeferredPipe::RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
@@ -421,7 +378,6 @@ namespace IceDogRendering
 
 		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRoughnessMetallicRTV };
 
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
 		c_PDRR.r_deviceContext->OMSetRenderTargets(3, renderTargets, r_backBufferDepthStencilView);
 
 		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
@@ -504,13 +460,46 @@ namespace IceDogRendering
 
 			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
 		}
+
 	}
 
-	void DirectXDeferredPipe::RenderLightBuffer()
+	void DirectXDeferredPipe::RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
+	{
+		for (int i=0;i<r_lightGroups.size();++i)
+		{
+			float3 lightOn = float3(0, 0, 0);
+			// update each light
+			if (r_lightGroups[i].HasDirectionalLightsSpace() != r_lightGroups[i].GetPerLightCount())
+			{
+				r_lightFX->GetVariableByName("directionLight")->SetRawValue(r_lightGroups[i].GetDirectionalLight()[0].get()->GetLightDef().get(), 0, sizeof(DirectionalLight));
+				lightOn.x = 1;
+			}
+			if (r_lightGroups[i].HasSpotLightsSpace() != r_lightGroups[i].GetPerLightCount())
+			{
+				r_lightFX->GetVariableByName("spotLight")->SetRawValue(&(r_lightGroups[i].GetSpotLight()[0]), 0, sizeof(SpotLight));
+				lightOn.y = 1;
+			}
+			if (r_lightGroups[i].HasPointLightsSpace() != r_lightGroups[i].GetPerLightCount())
+			{
+				r_lightFX->GetVariableByName("pointLight")->SetRawValue(&(r_lightGroups[i].GetPointLight()[0]), 0, sizeof(PointLight));
+				lightOn.z = 1;
+			}
+			// update light on state
+			r_lightFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
+
+			RenderSingleShadowMap(r_lightGroups[i].GetDirectionalLight()[0], renderDatas);
+			RenderSingleDirectLight();
+
+			r_lightGroups[i].GetDirectionalLight()[0]->CleanBuffer(c_PDRR);
+		}
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+	}
+
+	void DirectXDeferredPipe::RenderSingleDirectLight()
 	{
 		// get tech
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("LightingStage");
+		auto tech = r_lightFX->GetTechniqueByName("Lighting");
+		auto pass = tech->GetPassByName("DirectLightingStage");
 
 		// clear depth stencil view
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -518,22 +507,19 @@ namespace IceDogRendering
 		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
 		UINT offset = 0;
 		// set input layout
-		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetInputLayout(r_lvertexLightInputLayout);
 		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_backBufferRenderTargetView, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_lBufferDirectLightRTV, r_backBufferDepthStencilView);
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		// set g buffer as shader resource			
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
-
-		// set BRDF LUT
-		r_effectFX->GetVariableByName("brdfLut")->AsShaderResource()->SetResource(r_brdfLutSRV);
+		r_lightFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
+		r_lightFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
+		r_lightFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
-		
+
 		EnableLightBlend();
 		DisableDepthTest();
 		// loop for light drawing
@@ -542,12 +528,93 @@ namespace IceDogRendering
 		DisableLightBlend();
 
 		// unbind g buffer shader resource
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(NULL);
+		r_lightFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
+		r_lightFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
+		r_lightFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
+		r_lightFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(NULL);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
+	}
+
+	void DirectXDeferredPipe::RenderSingleShadowMap(std::shared_ptr<LightBase> light, std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
+	{
+		float shadow_map_size = light->GetShadowMapSize();
+		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&(light->GetViewport()));
+		r_lightFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix((light->GetProjectionMatrix()).m);
+		r_lightFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((light->GetViewMatrix()).m);
+		r_lightFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
+
+		// get the pass first
+		auto tech = r_lightFX->GetTechniqueByName("Lighting");
+		auto pass_mesh = tech->GetPassByName("ShadowStage");
+		auto pass_voxel = tech->GetPassByName("VoxelShadowStage");
+
+		ID3D11RenderTargetView* renderTargets[] = { light->GetShadowMapRTV().GetRenderTargetView() };
+
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, renderTargets, light->GetDepthStencilView().GetDepthStencilView());
+
+		// though the vertex used in shader is just a float3, we can pass the full vertex to it, so here we just set the stride to get it work right
+		UINT stride_mesh = sizeof(IceDogRendering::Vertex); 
+
+		// the voxel should no change
+		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
+		UINT offset = 0;
+
+		r_lightFX->GetVariableByName("mcEdgeTable")->AsShaderResource()->SetResource(r_mcEdgeSRV);
+		r_lightFX->GetVariableByName("mcTriTable")->AsShaderResource()->SetResource(r_mcTriangleSRV);
+		// render voxel
+		c_PDRR.r_deviceContext->IASetInputLayout(r_lvoxelInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		float isoLevel = 0.5;
+		for (auto renderData : renderDatas)
+		{
+			std::shared_ptr<VoxelData> rd = std::dynamic_pointer_cast<VoxelData>(renderData);
+			if (!rd) { continue; }
+			if (rd->GetVertexBuffer() == nullptr) { continue; }
+			auto tempVertexBuffer = rd->GetVertexBuffer();
+			isoLevel = rd->GetIsoLevel();
+
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_voxel, &offset);
+
+			r_lightFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+			r_lightFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+			r_lightFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+			r_lightFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+			r_lightFX->GetVariableByName("isolevel")->SetRawValue(&isoLevel, 0, sizeof(float));
+
+			pass_voxel->Apply(0, c_PDRR.r_deviceContext);
+			c_PDRR.r_deviceContext->Draw(rd->GetVertexCount(), 0);
+		}
+
+		// render mesh
+		c_PDRR.r_deviceContext->IASetInputLayout(r_lvertexShadowInputLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		for (auto renderData : renderDatas)
+		{
+			//continue;
+			std::shared_ptr<MeshData> rd = std::dynamic_pointer_cast<MeshData>(renderData);
+			if (!rd) { continue; }
+			if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
+			auto tempVertexBuffer = rd->GetVertexBuffer();
+
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_mesh, &offset);
+			c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+			r_lightFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
+			r_lightFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+			r_lightFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+			r_lightFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+
+			pass_mesh->Apply(0, c_PDRR.r_deviceContext);
+
+			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
+		}
+		// bind the shadow map texture to shader resource
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+		r_lightFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(light->GetShadowMapSRV().GetResourceView());
+
+		// reset the view port
+		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
 	}
 
 	void DirectXDeferredPipe::RenderBRDFLut()
@@ -595,16 +662,15 @@ namespace IceDogRendering
 		if (r_mainPipeView == nullptr) { return; }
 
 		// render shadow map first
-		UpdateLightData();
-		RenderShadowMap(renderDatas);
+		UpdateAllLights();
 		ClearAllViews();
 		SetupConstBuffer();
+		RenderGBuffer(renderDatas);
+		RenderDirectLight(renderDatas);
 		if (!r_cubeMapSource.IsDirty())
 			r_effectFX->GetVariableByName("cubeMap")->AsShaderResource()->SetResource(r_cubeMapSource.GetCubeMapSRV().GetResourceView());
-		RenderGBuffer(renderDatas);
-		RenderLightBuffer();
+		RenderEnvWithDirLight();
 		MergeOutput();
-		r_defaultLG.GetDirectionalLight()[0]->CleanBuffer(c_PDRR);
 		return;
 	}
 
@@ -619,15 +685,21 @@ namespace IceDogRendering
 		ReleaseCOM(r_gBufferNormal);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallic);
 
+		ReleaseCOM(r_lBufferDirectLightBuffer);
+
 		ReleaseCOM(r_gBufferNormalRTV);
 		ReleaseCOM(r_gBufferBaseColorRTV);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallicRTV);
 		ReleaseCOM(r_gBufferFinalColorRTV);
 
+		ReleaseCOM(r_lBufferDirectLightRTV);
+
 		ReleaseCOM(r_gBufferBaseColorSRV);
 		ReleaseCOM(r_gBufferFinalColorSRV);
 		ReleaseCOM(r_gBufferNormalSRV);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallicSRV);
+
+		ReleaseCOM(r_lBufferDirectLightSRV);
 	}
 
 	void DirectXDeferredPipe::CreateRenderTargetTexture2D(ID3D11Texture2D*& texture, ID3D11RenderTargetView*& rt, ID3D11ShaderResourceView*& sr, DXGI_FORMAT format)
@@ -725,6 +797,8 @@ namespace IceDogRendering
 			return;
 		}
 
+		CreateRenderTargetTexture2D(r_lBufferDirectLightBuffer,r_lBufferDirectLightRTV , r_lBufferDirectLightSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		
 		CreateRenderTargetTexture2D(r_gBufferBaseColor, r_gBufferBaseColorRTV, r_gBufferBaseColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferNormal, r_gBufferNormalRTV, r_gBufferNormalSRV, DXGI_FORMAT_R16G16B16A16_UNORM);

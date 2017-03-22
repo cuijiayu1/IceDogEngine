@@ -4,7 +4,7 @@
 
 MotherSun::MotherSun()
 {
-	IceDogGameplay::DirectionalLightComponent* st = new IceDogGameplay::DirectionalLightComponent(this);
+	st = new IceDogGameplay::DirectionalLightComponent(this);
 
 	SetEnable();
 }
@@ -12,4 +12,9 @@ MotherSun::MotherSun()
 
 MotherSun::~MotherSun()
 {
+}
+
+void MotherSun::SetDirection(IceDogUtils::float3 dir)
+{
+	st->SetLightDirection(dir);
 }
