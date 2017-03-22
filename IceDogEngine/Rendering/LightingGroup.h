@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utils/Common/UtilBasic.h"
+#include "LightData/DirectionLightData.h"
 #include "PDRenderingDef.h"
 
 // the lighting group is a group that hold 3 kinds of light and each type of light has at least one.
@@ -35,7 +36,7 @@ namespace IceDogRendering
 		}
 
 		// return the directional light that this group hold
-		IceDogRendering::DirectionalLight* GetDirectionalLight()
+		std::shared_ptr<IceDogRendering::DirectionLightData>* GetDirectionalLight()
 		{
 			return r_directionalLights;
 		}
@@ -81,7 +82,7 @@ namespace IceDogRendering
 		}
 
 		// add a direction light to group
-		bool AddDirectionalLight(IceDogRendering::DirectionalLight dl)
+		bool AddDirectionalLight(std::shared_ptr<IceDogRendering::DirectionLightData> dl)
 		{
 			int place = HasDirectionalLightsSpace();
 			if (place == 0) { return false; }
@@ -117,7 +118,7 @@ namespace IceDogRendering
 		bool c_holdPointLights[perLightCount];
 
 		// hold the lights
-		IceDogRendering::DirectionalLight r_directionalLights[perLightCount];
+		std::shared_ptr<IceDogRendering::DirectionLightData> r_directionalLights[perLightCount];
 		IceDogRendering::SpotLight r_SpotLights[perLightCount];
 		IceDogRendering::PointLight r_PointLights[perLightCount];
 	};

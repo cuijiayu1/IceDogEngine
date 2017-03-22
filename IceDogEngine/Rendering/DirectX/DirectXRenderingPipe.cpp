@@ -110,7 +110,7 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderDataBase>>& 
 	// update each light
 	if (r_defaultLG.HasDirectionalLightsSpace()!=r_defaultLG.GetPerLightCount())
 	{
-		r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+		r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0].get()->GetLightDef()), 0, sizeof(DirectionalLight));
 		lightOn.x = 1;
 	}
 	if (r_defaultLG.HasSpotLightsSpace() != r_defaultLG.GetPerLightCount())

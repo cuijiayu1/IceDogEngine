@@ -28,6 +28,10 @@ namespace IceDogEngine
 		void RegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd, IceDogRendering::RenderPipeType rpt);
 		void UnRegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd, IceDogRendering::RenderPipeType rpt);
 
+		/* register/unregister the light data */
+		void RegisterLightData(std::shared_ptr<class IceDogRendering::LightBase> ld, IceDogRendering::LightType ltp);
+		void UnRegisterLightData(std::shared_ptr<class IceDogRendering::LightBase> ld, IceDogRendering::LightType ltp);
+
 		/* register/unregister the logic data */
 		void RegistLogicData(IceDogLogic::LogicData* ld);
 		void UnRegistLogicData(IceDogLogic::LogicData* ld);

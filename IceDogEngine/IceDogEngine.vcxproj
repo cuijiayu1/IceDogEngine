@@ -114,10 +114,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Gameplay\Components\DirectionalLightComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\LightComponent.cpp" />
+    <ClCompile Include="Source\MotherSun.cpp" />
     <ClCompile Include="Rendering\LightData\DirectionLightData.cpp" />
     <ClCompile Include="Rendering\LightData\LightBase.cpp" />
     <ClCompile Include="Rendering\CubeMapSource.cpp" />
     <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp" />
+    <ClCompile Include="Rendering\RenderingPipe.cpp" />
     <ClCompile Include="Source\LoadTestAct.cpp" />
     <ClCompile Include="Utils\Loader\ObjMeshLoader.cpp" />
     <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp" />
@@ -166,6 +170,9 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Gameplay\Components\DirectionalLightComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\LightComponent.h" />
+    <ClInclude Include="Source\MotherSun.h" />
     <ClInclude Include="Rendering\LightData\DirectionLightData.h" />
     <ClInclude Include="Rendering\LightData\LightBase.h" />
     <ClInclude Include="Rendering\CubeMapSource.h" />

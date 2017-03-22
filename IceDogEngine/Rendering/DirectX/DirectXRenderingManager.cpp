@@ -188,3 +188,13 @@ void IceDogRendering::DirectXRenderingManager::RegistMainPipeView(std::shared_pt
 {
 	r_scenePipe->RegistMainPipeView(pv);
 }
+
+void IceDogRendering::DirectXRenderingManager::RegistLightData(std::shared_ptr<IceDogRendering::LightBase> ld, LightType ltp)
+{
+	r_scenePipe->RegistLightData(ld, ltp);
+}
+
+void IceDogRendering::DirectXRenderingManager::UnRegistLightData(std::shared_ptr<IceDogRendering::LightBase> ld, LightType ltp)
+{
+	r_scenePipe->UnRegistLightData(ld, ltp);
+}

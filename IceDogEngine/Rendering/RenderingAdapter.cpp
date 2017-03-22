@@ -58,6 +58,16 @@ void IceDogRendering::RenderingAdapter::UnRegisterMaterialData(IceDogRendering::
 	delete matdata;
 }
 
+void IceDogRendering::RenderingAdapter::RegisterLightData(std::shared_ptr<LightBase> ld, LightType ltp)
+{
+	r_renderingManager->RegistLightData(ld, ltp);
+}
+
+void IceDogRendering::RenderingAdapter::UnRegisterLightData(std::shared_ptr<LightBase> ld, LightType ltp)
+{
+	r_renderingManager->UnRegistLightData(ld, ltp);
+}
+
 void IceDogRendering::RenderingAdapter::RegistMainPipeView(std::shared_ptr<PipeView> pv)
 {
 	r_renderingManager->RegistMainPipeView(pv);

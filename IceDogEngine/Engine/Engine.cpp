@@ -51,6 +51,20 @@ void IceDogEngine::Engine::UnRegistRenderData(std::shared_ptr<IceDogRendering::R
 }
 
 
+void IceDogEngine::Engine::RegisterLightData(std::shared_ptr<class IceDogRendering::LightBase> ld, IceDogRendering::LightType ltp)
+{
+	// add to level
+	r_defaultLevel.RegistLightData(ld);
+	r_renderAdapter.RegisterLightData(ld, ltp);
+}
+
+void IceDogEngine::Engine::UnRegisterLightData(std::shared_ptr<class IceDogRendering::LightBase> ld, IceDogRendering::LightType ltp)
+{
+	// remove from level
+	r_defaultLevel.UnRegistLightData(ld);
+	r_renderAdapter.UnRegisterLightData(ld, ltp);
+}
+
 void Engine::RegistLogicData(IceDogLogic::LogicData* ld)
 {
 	// add data to level

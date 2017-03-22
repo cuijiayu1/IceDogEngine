@@ -37,6 +37,12 @@ namespace IceDogRendering
 		/* register the pipe view */
 		void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv) override;
 
+		/* register the Light data */
+		void RegistLightData(std::shared_ptr<IceDogRendering::LightBase> ld, LightType ltp) override;
+
+		/* unregister the light data */
+		void UnRegistLightData(std::shared_ptr<IceDogRendering::LightBase> ld, LightType ltp) override;
+
 	private:
 		/* update the RenderData index buffer */
 		void UpdateRenderDataIndexBuffer(std::shared_ptr<IceDogRendering::RenderDataBase> rd);

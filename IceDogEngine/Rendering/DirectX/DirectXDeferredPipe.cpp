@@ -130,8 +130,6 @@ namespace IceDogRendering
 		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
 		// test code end
 
-		r_dl.UpdateShadowTexture(c_PDRR);
-
 		// build up the state for rendering
 		BuildUpStates();
 		CreateMarchingCubeLookupTable();
@@ -281,6 +279,16 @@ namespace IceDogRendering
 		ReleaseCOM(tx_2d);
 	}
 
+	void DirectXDeferredPipe::UpdateLightData()
+	{
+		// just test code
+
+		if (r_defaultLG.GetDirectionalLight()[0]->IsDirty())
+		{
+			r_defaultLG.GetDirectionalLight()[0]->UpdateShadowTexture(c_PDRR);
+		}
+	}
+
 	void DirectXDeferredPipe::ClearAllViews()
 	{
 		// clear the back buffer
@@ -304,8 +312,7 @@ namespace IceDogRendering
 		// update each light
 		if (r_defaultLG.HasDirectionalLightsSpace() != r_defaultLG.GetPerLightCount())
 		{	
-			r_effectFX->GetVariableByName("directionLight")->SetRawValue(r_dl.GetLightDef().get(), 0, sizeof(DirectionalLight));
-			//r_effectFX->GetVariableByName("directionLight")->SetRawValue(&(r_defaultLG.GetDirectionalLight()[0]), 0, sizeof(DirectionalLight));
+			r_effectFX->GetVariableByName("directionLight")->SetRawValue(r_defaultLG.GetDirectionalLight()[0].get()->GetLightDef().get(), 0, sizeof(DirectionalLight));
 			lightOn.x = 1;
 		}
 		if (r_defaultLG.HasSpotLightsSpace() != r_defaultLG.GetPerLightCount())
@@ -324,10 +331,10 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderShadowMap(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
-		float shadow_map_size = r_dl.GetShadowMapSize();
-		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&r_dl.GetViewport());
-		r_effectFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix(r_dl.GetProjectionMatrix().m);
-		r_effectFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix(r_dl.GetViewMatrix().m);
+		float shadow_map_size = r_defaultLG.GetDirectionalLight()[0]->GetShadowMapSize();
+		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&(r_defaultLG.GetDirectionalLight()[0]->GetViewport()));
+		r_effectFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix((r_defaultLG.GetDirectionalLight()[0]->GetProjectionMatrix()).m);
+		r_effectFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((r_defaultLG.GetDirectionalLight()[0]->GetViewMatrix()).m);
 		r_effectFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
 
 		// get the pass first
@@ -335,10 +342,10 @@ namespace IceDogRendering
 		auto pass_mesh = tech->GetPassByName("ShadowStage");
 		auto pass_voxel = tech->GetPassByName("VoxelShadowStage");
 
-		ID3D11RenderTargetView* renderTargets[] = { r_dl.GetShadowMapRTV().GetRenderTargetView() };
+		ID3D11RenderTargetView* renderTargets[] = { r_defaultLG.GetDirectionalLight()[0]->GetShadowMapRTV().GetRenderTargetView() };
 
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		c_PDRR.r_deviceContext->OMSetRenderTargets(1, renderTargets, r_dl.GetDepthStencilView().GetDepthStencilView());
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, renderTargets, r_defaultLG.GetDirectionalLight()[0]->GetDepthStencilView().GetDepthStencilView());
 
 		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
 		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
@@ -400,7 +407,7 @@ namespace IceDogRendering
 		}
 		// bind the shadow map texture to shader resource
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(r_dl.GetShadowMapSRV().GetResourceView());
+		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource( r_defaultLG.GetDirectionalLight()[0]->GetShadowMapSRV().GetResourceView());
 
 		// reset the view port
 		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
@@ -538,7 +545,6 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_depth")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(NULL);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
@@ -589,6 +595,7 @@ namespace IceDogRendering
 		if (r_mainPipeView == nullptr) { return; }
 
 		// render shadow map first
+		UpdateLightData();
 		RenderShadowMap(renderDatas);
 		ClearAllViews();
 		SetupConstBuffer();
@@ -597,7 +604,7 @@ namespace IceDogRendering
 		RenderGBuffer(renderDatas);
 		RenderLightBuffer();
 		MergeOutput();
-		r_dl.CleanBuffer(c_PDRR);
+		r_defaultLG.GetDirectionalLight()[0]->CleanBuffer(c_PDRR);
 		return;
 	}
 

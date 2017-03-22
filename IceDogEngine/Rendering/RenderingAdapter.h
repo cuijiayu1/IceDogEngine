@@ -25,6 +25,10 @@ namespace IceDogRendering
 		void RegisterMaterialData(IceDogRendering::MaterialData* matdata);
 		void UnRegisterMaterialData(IceDogRendering::MaterialData* matdata);
 
+		/* register/unregister light data, to the rendering pipe line */
+		void RegisterLightData(std::shared_ptr<LightBase> ld, LightType ltp);
+		void UnRegisterLightData(std::shared_ptr<LightBase> ld, LightType ltp);
+
 		/* register the pipe view */
 		void RegistMainPipeView(std::shared_ptr<PipeView> pv);
 

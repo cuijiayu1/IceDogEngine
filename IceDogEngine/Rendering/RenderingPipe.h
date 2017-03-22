@@ -16,13 +16,10 @@ namespace IceDogRendering
 	public:
 		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
 		{
-			DirectionalLight dl;
-			dl.direction = float4(0.4, -1, 1, 0);
 			SpotLight sl;
 			sl.position = float3(10, 10, 10);
 			PointLight pl;
 			pl.position = float3(0, 4, -4);
-			r_defaultLG.AddDirectionalLight(dl);
 			//r_defaultLG.AddSpotLight(sl);
 			r_defaultLG.AddPointLight(pl);
 			//bind the event processor
@@ -39,6 +36,10 @@ namespace IceDogRendering
 		virtual void InitPlatformDepedence(PlatformDependenceRenderResource pdrr) { c_PDRR = pdrr; };
 		/* register the main pipe view */
 		virtual void RegistMainPipeView(std::shared_ptr<PipeView> pv) { r_mainPipeView = pv; }
+		/* register the light data */
+		virtual void RegistLightData(std::shared_ptr<LightBase> ld, LightType ltp);
+		/* unregister the light data */
+		virtual void UnRegistLightData(std::shared_ptr<LightBase> ld, LightType ltp);
 	protected:
 		/* reset the render target size */
 		virtual void Resize(int newWidth, int newHeight) = 0;

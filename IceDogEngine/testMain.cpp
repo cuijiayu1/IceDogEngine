@@ -5,6 +5,7 @@
 #include "Source\Cha.h"
 #include "Source\PlaneActor.h"
 #include "Source\Sphere.h"
+#include "Source\MotherSun.h"
 
 using namespace std;
 
@@ -40,6 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	cout << "Hello Ice Dog Engine" << endl;
 
 	Cha cha;
+	MotherSun sun;
 
 	PlaneActor plan;
 	plan.SetActorLocation(IceDogUtils::float3(0, -0.5, 0));

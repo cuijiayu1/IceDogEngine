@@ -78,6 +78,9 @@ namespace IceDogRendering
 
 		/* create the marching cube look up table */
 		void CreateMarchingCubeLookupTable();
+
+		/* update the light data when the light is dirty */
+		void UpdateLightData();
 		
 
 	private:
@@ -141,9 +144,5 @@ namespace IceDogRendering
 
 		//Final color buffer (light stage out)
 		ID3D11Texture2D* r_gBufferFinalColor;
-
-
-		// test code a light
-		DirectionLightData r_dl;
 	};
 }

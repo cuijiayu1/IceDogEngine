@@ -12,6 +12,13 @@ namespace IceDogRendering
 	const float DEFAULT_NEARZ = 0.01;
 	const float DEFAULT_FARZ = 100;
 
+	enum class LightType
+	{
+		Directional,
+		Point,
+		Spot
+	};
+
 	struct float4x4
 	{
 		float m[16];
