@@ -64,6 +64,7 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 
 	r_vc->SetVoxelData(rd);
 	SetActorScale(IceDogUtils::float3(1/20.0,1/ 20.0,1/ 20.0));
+	SetActorRotation(IceDogUtils::float3(0, 0, 0));
 	SetEnable();
 }
 

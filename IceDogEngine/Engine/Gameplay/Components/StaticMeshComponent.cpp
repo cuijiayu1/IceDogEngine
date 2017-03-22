@@ -38,6 +38,6 @@ void IceDogGameplay::StaticMeshComponent::SetDisable()
 
 void IceDogGameplay::StaticMeshComponent::Update()
 {
-	IceDogRendering::float4x4& worldMat = IceDogRendering::float4x4::FromSRT(c_owner->GetActorScale(), c_owner->GetActorRotation(), c_owner->GetActorLocation());
+	IceDogRendering::float4x4& worldMat = IceDogRendering::float4x4::FromSRT(c_owner->GetActorScale(), c_owner->GetActorRotationRad(), c_owner->GetActorLocation());
 	r_renderData->SetWorldMatrix(worldMat);
 }

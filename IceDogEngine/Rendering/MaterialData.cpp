@@ -36,6 +36,13 @@ void IceDogRendering::MaterialData::SetParallaxMap(std::wstring url, float scale
 	c_parallaxCfg.z = abs(1 - quility) < 0.01 ? 1 : 0;
 }
 
+void IceDogRendering::MaterialData::SetSRMEMap(std::wstring url)
+{
+	c_srme_url = url;
+	c_loaded = false;
+	c_DifNorParEmi.w = 1;
+}
+
 bool IceDogRendering::MaterialData::LoadMaterial(IceDogRendering::PlatformDependenceRenderResource prr)
 {
 	c_loaded = true;
@@ -60,6 +67,13 @@ bool IceDogRendering::MaterialData::LoadMaterial(IceDogRendering::PlatformDepend
 		ReleaseCOM(texResource_1);
 		c_loaded = c_loaded&&result;
 	}
+	if (c_DifNorParEmi.w ==1)
+	{
+		ID3D11Resource* texResource_1 = nullptr;
+		bool result = !ISFAILED(DirectX::CreateDDSTextureFromFile(prr.r_device, c_srme_url.c_str(), &texResource_1, &r_srmeSRV));
+		ReleaseCOM(texResource_1);
+		c_loaded = c_loaded&&result;
+	}
 	
 	return c_loaded;
 }
@@ -80,6 +94,12 @@ ID3D11ShaderResourceView* IceDogRendering::MaterialData::GetParallaxSRV()
 {
 	if (!c_loaded) { return nullptr; }
 	return r_parallaxSRV;
+}
+
+ID3D11ShaderResourceView* IceDogRendering::MaterialData::GetSrmeSRV()
+{
+	if (!c_loaded) { return nullptr; }
+	return r_srmeSRV;
 }
 
 IceDogUtils::float4 IceDogRendering::MaterialData::GetParallaxCfg()

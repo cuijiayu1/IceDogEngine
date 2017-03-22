@@ -120,6 +120,11 @@ IceDogGameplay::float3 IceDogGameplay::Actor::GetActorRotation()
 	return r_defaultActorCoordinate->GetRotation();
 }
 
+IceDogGameplay::float3 IceDogGameplay::Actor::GetActorRotationRad()
+{
+	return r_defaultActorCoordinate->GetRotationRad();
+}
+
 void IceDogGameplay::Actor::SetActorRotation(const float3& newRotate)
 {
 	r_defaultActorCoordinate->SetRotation(newRotate);

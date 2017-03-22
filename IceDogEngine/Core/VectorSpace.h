@@ -46,6 +46,12 @@ namespace IceDogCore
 			return c_rotation*180.0f/ 3.14159265374f;
 		}
 
+		/* get the rotation in rads */ 
+		float3 GetRotationRad() override
+		{
+			return c_rotation;
+		}
+
 		/* set the location */
 		void SetLocation(const float3& location) override
 		{

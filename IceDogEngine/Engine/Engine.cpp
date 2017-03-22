@@ -147,6 +147,10 @@ IceDogRendering::MaterialData* IceDogEngine::Engine::LoadMaterialFromUrl(std::st
 		float quility = atof(doc.first_node()->first_node("parallax")->first_attribute("quility")->value());
 		matdata->SetParallaxMap(IceDogUtils::char2wchar(doc.first_node()->first_node("parallax")->first_node("url")->value()), scale, layers, quility);
 	}
+	if (doc.first_node()->first_node("srme")->first_attribute()->value()[0]=='1')
+	{
+		matdata->SetSRMEMap(IceDogUtils::char2wchar(doc.first_node()->first_node("srme")->first_node("url")->value()));
+	}
 	r_renderAdapter.RegisterMaterialData(matdata);
 	return matdata;
 }

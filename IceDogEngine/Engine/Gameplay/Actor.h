@@ -42,6 +42,9 @@ namespace IceDogGameplay
 		/* get the rotation of this actor */
 		float3 GetActorRotation();
 
+		/* get the rotation in rads */
+		float3 GetActorRotationRad();
+
 		/* set the rotation of this actor */
 		void SetActorRotation(const float3& newRotate);
 

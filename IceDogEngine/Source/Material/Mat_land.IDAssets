@@ -8,4 +8,7 @@
 	<parallax enable="1" scale='0.05' layer='20' quility='1'>
 		<url>Source/Textures/hi.dds</url>
 	</parallax>
+	<srme enable="0">
+		<url></url>
+	</srme>
 </root>

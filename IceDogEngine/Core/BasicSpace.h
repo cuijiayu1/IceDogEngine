@@ -37,6 +37,8 @@ namespace IceDogCore
 		virtual void SetRotation(const float3& rotate) = 0;
 		// get the rotation of the space
 		virtual float3 GetRotation() = 0;
+		// get the rotation in rads
+		virtual float3 GetRotationRad() = 0;
 		// get forward vector
 		virtual float3 GetForward() = 0;
 		// get right vector

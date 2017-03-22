@@ -16,7 +16,6 @@ PlaneActor::PlaneActor()
 	rd->SetMaterial(IceDogEngine::Engine::GetEngine()->LoadMaterialFromUrl("Source/Material/Mat_land.IDAssets"));
 
 	SetActorScale(IceDogUtils::float3(0.05, 0.05, 0.05));
-
 	st->SetStaticMesh(rd);
 	SetEnable();
 }

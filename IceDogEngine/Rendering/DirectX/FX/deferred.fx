@@ -243,6 +243,7 @@ SamplerState samAnisotropic
 Texture2D diffuseMap;
 Texture2D normalMap;
 Texture2D parallaxMap;
+Texture2D SepRogMetEmi;
 
 float2 parallaxMapping_low(float3 tant_eyeVec, float2 uv)
 {
@@ -337,8 +338,20 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	{
 		result.baseColor = pin.color;
 	}
+	//SepRogMetEmi
+	if (DifNorParEmi.w == 1)
+	{
+		float4 srme = SepRogMetEmi.Sample(samAnisotropic, pin.modelUV);
+		result.specularRoughnessMetallic.x = 0.5;
+		result.specularRoughnessMetallic.y = srme.y;
+		result.specularRoughnessMetallic.z = srme.z;
+	}
+	else
+	{
+		result.specularRoughnessMetallic = float4(0.5, 0.2, 0.2, 1);
+	}
+
 	float depth = pin.depth.x / pin.depth.y;
-	result.specularRoughnessMetallic = float4(0.5, 0.2, 0.2, 1);
 	result.specularRoughnessMetallic.a = depth;
 	// if use parallax mapping depth also need to be adjust
 	//if (DifNorParEmi.z == 1)
