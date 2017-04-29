@@ -1,6 +1,6 @@
 # A Voxel Game Engine Demo
 
-* use deferred shading.
+* deferred shading.
 * physic based shading.
 * Image based lighting.
 * GPU marching cube.
