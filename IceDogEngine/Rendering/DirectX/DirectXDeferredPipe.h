@@ -135,7 +135,7 @@ namespace IceDogRendering
 		ID3D11RenderTargetView* r_gBufferBaseColorRTV;
 		ID3D11RenderTargetView* r_gBufferSpecularRoughnessMetallicRTV;
 		ID3D11RenderTargetView* r_gBufferFinalColorRTV;
-
+		ID3D11RenderTargetView* r_finalColorQuarterRTV;
 		ID3D11RenderTargetView* r_lBufferDirectLightRTV;
 
 		ID3D11RenderTargetView* r_brdfLutRTV;
@@ -146,7 +146,7 @@ namespace IceDogRendering
 		ID3D11ShaderResourceView* r_gBufferBaseColorSRV;
 		ID3D11ShaderResourceView* r_gBufferSpecularRoughnessMetallicSRV;
 		ID3D11ShaderResourceView* r_gBufferFinalColorSRV;
-
+		ID3D11ShaderResourceView* r_finalColorQuarterSRV;
 		ID3D11ShaderResourceView* r_lBufferDirectLightSRV;
 
 		ID3D11ShaderResourceView* r_mcEdgeSRV;
@@ -165,10 +165,13 @@ namespace IceDogRendering
 		//Light-Buffer 
 		ID3D11Texture2D* r_lBufferDirectLightBuffer;
 
+		//Final color buffer (combine direct lighting with ambient lighting)
+		ID3D11Texture2D* r_gBufferFinalColor;
+
+		//Post process scene buffer
+		ID3D11Texture2D* r_finalColorQuarter;
+
 		//BRDF LUT (BRDF GGX LUT out)
 		ID3D11Texture2D* r_brdfLutBuffer;
-
-		//Final color buffer (light stage out)
-		ID3D11Texture2D* r_gBufferFinalColor;
 	};
 }

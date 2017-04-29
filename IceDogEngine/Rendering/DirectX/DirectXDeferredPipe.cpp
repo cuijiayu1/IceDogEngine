@@ -25,6 +25,7 @@ namespace IceDogRendering
 		r_gBufferNormal = nullptr;
 		r_gBufferSpecularRoughnessMetallic = nullptr;
 		r_gBufferFinalColor = nullptr;
+		r_finalColorQuarter = nullptr;
 		r_gBufferBaseColor = nullptr;
 		
 		r_lBufferDirectLightBuffer = nullptr;
@@ -33,11 +34,13 @@ namespace IceDogRendering
 		r_gBufferBaseColorRTV = nullptr;
 		r_gBufferSpecularRoughnessMetallicRTV = nullptr;
 		r_gBufferFinalColorRTV = nullptr;
+		r_finalColorQuarterRTV = nullptr;
 	
 		r_lBufferDirectLightRTV = nullptr;
 
 		r_gBufferBaseColorSRV = nullptr;
 		r_gBufferFinalColorSRV = nullptr;
+		r_finalColorQuarterSRV = nullptr;
 		r_gBufferNormalSRV = nullptr;
 		r_gBufferSpecularRoughnessMetallicSRV = nullptr;
 
@@ -303,6 +306,7 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_lBufferDirectLightRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferBaseColorRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferFinalColorRTV, IceDogRendering::Color::Black);
+		c_PDRR.r_deviceContext->ClearRenderTargetView(r_finalColorQuarterRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferNormalRTV, IceDogRendering::Color::Black);
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRoughnessMetallicRTV, IceDogRendering::Color::NONECOLOR);
 	}
@@ -330,7 +334,7 @@ namespace IceDogRendering
 		// set input layout
 		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
 		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_backBufferRenderTargetView, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_gBufferFinalColorRTV, r_backBufferDepthStencilView);
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -356,6 +360,7 @@ namespace IceDogRendering
 		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(NULL);
 
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
 		pass->Apply(0, c_PDRR.r_deviceContext);
 	}
 
@@ -650,6 +655,46 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::MergeOutput()
 	{
+		// get tech
+		auto tech = r_effectFX->GetTechniqueByName("Deferred");
+		auto pass = tech->GetPassByName("MergeoutputStage");
+
+		// clear depth stencil view
+		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
+		UINT offset = 0;
+		// set input layout
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_backBufferRenderTargetView, r_backBufferDepthStencilView);
+		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		// set g buffer as shader resource			
+		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
+		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
+		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(r_lBufferDirectLightSRV);
+		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(r_gBufferFinalColorSRV);
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+
+		DisableDepthTest();
+		// loop for light drawing
+		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+		EnableDepthTest();
+
+		// unbind g buffer shader resource
+		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(NULL);
+		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(NULL);
+
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+		pass->Apply(0, c_PDRR.r_deviceContext);
+
 		r_mainSwapChain->Present(0, 0);
 	}
 
@@ -682,6 +727,7 @@ namespace IceDogRendering
 		ReleaseCOM(r_backBufferDepthStencilBuffer);
 		ReleaseCOM(r_gBufferBaseColor);
 		ReleaseCOM(r_gBufferFinalColor);
+		ReleaseCOM(r_finalColorQuarter);
 		ReleaseCOM(r_gBufferNormal);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallic);
 
@@ -691,11 +737,13 @@ namespace IceDogRendering
 		ReleaseCOM(r_gBufferBaseColorRTV);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallicRTV);
 		ReleaseCOM(r_gBufferFinalColorRTV);
+		ReleaseCOM(r_finalColorQuarterRTV);
 
 		ReleaseCOM(r_lBufferDirectLightRTV);
 
 		ReleaseCOM(r_gBufferBaseColorSRV);
 		ReleaseCOM(r_gBufferFinalColorSRV);
+		ReleaseCOM(r_finalColorQuarterSRV);
 		ReleaseCOM(r_gBufferNormalSRV);
 		ReleaseCOM(r_gBufferSpecularRoughnessMetallicSRV);
 
@@ -801,6 +849,7 @@ namespace IceDogRendering
 		
 		CreateRenderTargetTexture2D(r_gBufferBaseColor, r_gBufferBaseColorRTV, r_gBufferBaseColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		CreateRenderTargetTexture2D(c_backBufferWidth/4.0f, c_backBufferHeight/4.0f,r_finalColorQuarter, r_finalColorQuarterRTV, r_finalColorQuarterSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferNormal, r_gBufferNormalRTV, r_gBufferNormalSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferSpecularRoughnessMetallic, r_gBufferSpecularRoughnessMetallicRTV, r_gBufferSpecularRoughnessMetallicSRV,DXGI_FORMAT_R32G32B32A32_FLOAT);
 	}

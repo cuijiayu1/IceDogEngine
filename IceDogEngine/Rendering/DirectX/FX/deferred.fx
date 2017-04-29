@@ -348,7 +348,7 @@ PSOut GBufferPS(VSOut pin) : SV_Target{
 	}
 	else
 	{
-		result.specularRoughnessMetallic = float4(0.5, 0.2, 0.2, 1);
+		result.specularRoughnessMetallic = float4(0.5, 0.3, 0.05, 1);
 	}
 
 	float depth = pin.depth.x / pin.depth.y;
@@ -673,6 +673,12 @@ float3 ApproximateSpecularIBL(float3 SpecularColor, float Roughness, float3 N, f
 	return PrefilteredColor * (SpecularColor * EnvBRDF.x + saturate(50.0 * SpecularColor.g)*EnvBRDF.y);
 }
 
+float Lum(float3 color)
+{
+	//0.27R+0.67G+0.06B
+	return color.r*0.27 + color.g*0.67 + color.b*0.06;
+}
+
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
 	LightPSOut result;
 	if (vout.uv.y > 0.75)
@@ -724,7 +730,8 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(SpecularColor, Roughness, wNormal, v);
 		float3 Lenv_diff = DiffuseColor * (all(ndcDepth))*difenvE;
 
-		float3 combine = lBuffer_direct.Sample(samAnisotropic, vout.uv) + Lenv + Lenv_spec + Lenv_diff ;
+		float3 combine = Lenv + Lenv_spec + Lenv_diff + lBuffer_direct.Sample(samAnisotropic, vout.uv);
+
 		result.finalColor = float4(combine, 1);
 	}
 	return result;
@@ -733,6 +740,36 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										Lighting Pass End																//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Tonemap Pass Start																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Tonemap Pass End																//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Merge output Pass Start															//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Texture2D lightColorOut;
+
+struct MergeOut
+{
+	float4 finalColor : COLOR;
+};
+
+LightPSOut MergeOutputPS(LightGSOut vout) : SV_Target{
+	MergeOut result;
+	result.finalColor = lightColorOut.Sample(samAnisotropic, vout.uv);
+	return result;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//										Merge output Pass End															//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 technique11 Deferred
@@ -755,6 +792,18 @@ technique11 Deferred
 		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
 		SetPixelShader(CompileShader(ps_5_0, LightPS()));
 	}
+	pass MergeoutputStage
+	{
+		SetVertexShader(CompileShader(vs_5_0, LightVS()));
+		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
+		SetPixelShader(CompileShader(ps_5_0, MergeOutputPS()));
+	}
+	/*pass TonemapStage
+	{
+		SetVertexShader(CompileShader(vs_5_0, LightVS()));
+		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
+
+	}*/
 	pass BRDFLutStage
 	{
 		SetVertexShader(CompileShader(vs_5_0, LightVS()));
