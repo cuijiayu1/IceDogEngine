@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1F2282DD-6C68-433C-83CD-91D0D45C86F4}</ProjectGuid>
+    <RootNamespace>IceDogEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;Effects11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine\Gameplay\Components\DirectionalLightComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\LightComponent.cpp" />
+    <ClCompile Include="Rendering\RenderingManager.cpp" />
+    <ClCompile Include="Source\FakePhysicBall.cpp" />
+    <ClCompile Include="Source\Plane.cpp" />
+    <ClCompile Include="Source\MotherSun.cpp" />
+    <ClCompile Include="Rendering\LightData\DirectionLightData.cpp" />
+    <ClCompile Include="Rendering\LightData\LightBase.cpp" />
+    <ClCompile Include="Rendering\CubeMapSource.cpp" />
+    <ClCompile Include="Rendering\PlatformDependenceRenderResource.cpp" />
+    <ClCompile Include="Rendering\RenderingPipe.cpp" />
+    <ClCompile Include="Source\LoadTestAct.cpp" />
+    <ClCompile Include="Utils\Loader\ObjMeshLoader.cpp" />
+    <ClCompile Include="Rendering\RenderData\DynamicVoxelData.cpp" />
+    <ClCompile Include="Rendering\RenderData\RenderDataBase.cpp" />
+    <ClCompile Include="Rendering\MaterialData.cpp" />
+    <ClCompile Include="Rendering\RenderData\VoxelData.cpp" />
+    <ClCompile Include="Source\PlaneActor.cpp" />
+    <ClCompile Include="Rendering\DirectX\DirectXDeferredPipe.cpp" />
+    <ClCompile Include="Source\Cha.cpp" />
+    <ClCompile Include="Engine\Gameplay\Camera.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\Component.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\DynamicMeshComponent.cpp" />
+    <ClCompile Include="Engine\Gameplay\Actor.cpp" />
+    <ClCompile Include="Core\EngineCore.cpp" />
+    <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Gameplay\Level.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\EventComponent.cpp" />
+    <ClCompile Include="Logic\LogicData.cpp" />
+    <ClCompile Include="Logic\LogicAdapter.cpp" />
+    <ClCompile Include="Engine\Gameplay\Planet.cpp" />
+    <ClCompile Include="Core\MessageProc.cpp" />
+    <ClCompile Include="Source\MyActor.cpp" />
+    <ClCompile Include="Rendering\RenderData\DynamicMeshData.cpp" />
+    <ClCompile Include="Resources\Geometry\GeometryGenerator.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\StaticMeshComponent.cpp" />
+    <ClCompile Include="Source\Sphere.cpp" />
+    <ClCompile Include="Utils\Common\DDSTextureLoader.cpp" />
+    <ClCompile Include="Utils\Common\UtilBasic.cpp" />
+    <ClCompile Include="Utils\Math\MathDef.cpp" />
+    <ClCompile Include="Utils\Math\MathHelper.cpp" />
+    <ClCompile Include="Rendering\PipeView.cpp" />
+    <ClCompile Include="Rendering\RenderData\MeshData.cpp" />
+    <ClCompile Include="Rendering\DirectX\DirectXRenderingManager.cpp" />
+    <ClCompile Include="Platform\Platform.cpp" />
+    <ClCompile Include="Rendering\RenderingAdapter.cpp" />
+    <ClCompile Include="testMain.cpp" />
+    <ClCompile Include="Core\Timer.cpp" />
+    <ClCompile Include="Platform\Windows\WindowsMessageHandle.cpp" />
+    <ClCompile Include="Platform\Windows\WindowsWindowHandle.cpp" />
+    <ClCompile Include="Utils\Noise\OtherNoise.cpp" />
+    <ClCompile Include="Utils\Noise\PerlinNoise.cpp" />
+    <ClCompile Include="Utils\Voxel\MarchingCubeLT.cpp" />
+    <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine\Gameplay\Components\DirectionalLightComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\LightComponent.h" />
+    <ClInclude Include="Source\FakePhysicBall.h" />
+    <ClInclude Include="Source\Plane.h" />
+    <ClInclude Include="Source\MotherSun.h" />
+    <ClInclude Include="Rendering\LightData\DirectionLightData.h" />
+    <ClInclude Include="Rendering\LightData\LightBase.h" />
+    <ClInclude Include="Rendering\CubeMapSource.h" />
+    <ClInclude Include="Source\LoadTestAct.h" />
+    <ClInclude Include="Utils\Loader\ObjMeshLoader.h" />
+    <ClInclude Include="Rendering\RenderData\DynamicVoxelData.h" />
+    <ClInclude Include="Rendering\RenderData\RenderDataBase.h" />
+    <ClInclude Include="Rendering\MaterialData.h" />
+    <ClInclude Include="Rendering\RenderData\VoxelData.h" />
+    <ClInclude Include="Source\PlaneActor.h" />
+    <ClInclude Include="Rendering\DirectX\DirectXDeferredPipe.h" />
+    <ClInclude Include="Resources\Geometry\Geometry.h" />
+    <ClInclude Include="Resources\Geometry\VertexTypes.h" />
+    <ClInclude Include="Source\Cha.h" />
+    <ClInclude Include="Core\MessagePriority.h" />
+    <ClInclude Include="Engine\Gameplay\Camera.h" />
+    <ClInclude Include="Core\BasicSpace.h" />
+    <ClInclude Include="Core\SphereSpace.h" />
+    <ClInclude Include="Core\VectorSpace.h" />
+    <ClInclude Include="Engine\Gameplay\Components\ActorComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\CameraComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Components\Component.h" />
+    <ClInclude Include="Engine\Gameplay\Components\DynamicMeshComponent.h" />
+    <ClInclude Include="Engine\Gameplay\Actor.h" />
+    <ClInclude Include="Core\EngineCore.h" />
+    <ClInclude Include="Core\Timer.h" />
+    <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\Gameplay\Level.h" />
+    <ClInclude Include="Engine\Gameplay\Components\EventComponent.h" />
+    <ClInclude Include="Logic\LogicData.h" />
+    <ClInclude Include="Logic\LogicAdapter.h" />
+    <ClInclude Include="Engine\Gameplay\Planet.h" />
+    <ClInclude Include="Core\MessageProc.h" />
+    <ClInclude Include="Rendering\RenderPipeType.h" />
+    <ClInclude Include="Source\MyActor.h" />
+    <ClInclude Include="Rendering\LightingGroup.h" />
+    <ClInclude Include="Rendering\RenderData\DynamicMeshData.h" />
+    <ClInclude Include="Resources\Geometry\GeometryGenerator.h" />
+    <ClInclude Include="Engine\Gameplay\Components\StaticMeshComponent.h" />
+    <ClInclude Include="Source\Sphere.h" />
+    <ClInclude Include="ThirdParty\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="ThirdParty\rapidxml\rapidxml_iterators.hpp" />
+    <ClInclude Include="ThirdParty\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="ThirdParty\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Utils\Common\DDSTextureLoader.h" />
+    <ClInclude Include="Utils\Common\DirectXTex.h" />
+    <ClInclude Include="Utils\Noise\OtherNoise.h" />
+    <ClInclude Include="Utils\Noise\PerlinNoise.h" />
+    <ClInclude Include="Utils\Voxel\MarchingCubeLT.h" />
+    <ClInclude Include="Utils\Math\MathDef.h" />
+    <ClInclude Include="Utils\Math\MathHelper.h" />
+    <ClInclude Include="Rendering\PipeView.h" />
+    <ClInclude Include="Rendering\RenderData\MeshData.h" />
+    <ClInclude Include="Rendering\DirectX\DirectXRenderingManager.h" />
+    <ClInclude Include="Platform\Message.h" />
+    <ClInclude Include="Platform\Platform.h" />
+    <ClInclude Include="Platform\PlatformConfig.h" />
+    <ClInclude Include="Platform\PlatformMessage.h" />
+    <ClInclude Include="Platform\PlatformMsgHandle.h" />
+    <ClInclude Include="Platform\PlatformWindow.h" />
+    <ClInclude Include="Platform\PlatformWindowHandle.h" />
+    <ClInclude Include="Rendering\DirectX\FXHelper.h" />
+    <ClInclude Include="Rendering\DirectX\RenderingDef.h" />
+    <ClInclude Include="Rendering\PDRenderingDef.h" />
+    <ClInclude Include="Rendering\PlatformDependenceRenderResource.h" />
+    <ClInclude Include="Rendering\RenderingManager.h" />
+    <ClInclude Include="Rendering\RenderingAdapter.h" />
+    <ClInclude Include="Rendering\RenderingPipe.h" />
+    <ClInclude Include="Utils\Common\d3dx11effect.h" />
+    <ClInclude Include="Utils\Common\UtilBasic.h" />
+    <ClInclude Include="Platform\Windows\WindowsMessageHandle.h" />
+    <ClInclude Include="Platform\Windows\WindowsWindowHandle.h" />
+    <ClInclude Include="Engine\Gameplay\Components\VoxelComponent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Rendering\DirectX\FX\deferred.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="DirectXTex.lib" />
+    <Library Include="DirectXTK.lib" />
+    <Library Include="Effects11.lib" />
+    <Library Include="Effects11d.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Geometry\TeapotData.inc" />
+    <None Include="Utils\Common\DirectXTex.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Rendering\DirectX\FX\basic.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Rendering\DirectX\FX\directLighting.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
