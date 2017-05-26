@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	MotherSun* sun = eg.ConstructActor<MotherSun>(new MotherSun());
 
 	PlaneActor* plan = eg.ConstructActor<PlaneActor>(new PlaneActor());
-	plan->SetActorLocation(IceDogUtils::float3(0, -0.5, 0));
+	plan->SetActorLocation(IceDogUtils::float3(0, -1.05, 0));
 	MyActor* actor = eg.ConstructActor<MyActor>(new MyActor());
 	actor->SetActorLocation(IceDogUtils::float3(0, 0, 0));
 
@@ -64,6 +64,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		}
 	}
 	LoadTestAct Lt;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<double> dis(-1, 1);
+	for (int i = 0; i < 12; ++i)
+	{
+		FakePhysicBall* fpb = eg.ConstructActor<FakePhysicBall>(new FakePhysicBall());
+		fpb->SetInitSpeed(IceDogUtils::float3(dis(gen), dis(gen), dis(gen)) * 30);
+	}
 
 	eg.Run();
 
