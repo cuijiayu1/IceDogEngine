@@ -21,8 +21,14 @@ namespace IceDogEngine
 		/* init the engine */
 		void Init();
 
+		/* close the engine */
+		void Close();
+
 		/* run the engine */
 		void Run();
+
+		/* amazing text */
+		void AmazingText(std::ostream& os, std::string);
 
 		/* register/unregister the render data */
 		void RegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd, IceDogRendering::RenderPipeType rpt);
@@ -33,12 +39,12 @@ namespace IceDogEngine
 		void UnRegisterLightData(std::shared_ptr<class IceDogRendering::LightBase> ld, IceDogRendering::LightType ltp);
 
 		/* register/unregister the logic data */
-		void RegistLogicData(IceDogLogic::LogicData* ld);
-		void UnRegistLogicData(IceDogLogic::LogicData* ld);
+		void RegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld);
+		void UnRegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld);
 
 		/* register/unregister the actor */
-		void RegistActor(IceDogGameplay::Actor* ac);
-		void UnRegistActor(IceDogGameplay::Actor* ac);
+		void RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
+		void UnRegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
 
 		/* register the main pipe view */
 		void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv);
@@ -54,6 +60,14 @@ namespace IceDogEngine
 
 		/* load material data from file */
 		IceDogRendering::MaterialData* LoadMaterialFromUrl(std::string url);
+
+		/* construct actor function */
+		template<class T> T* ConstructActor(IceDogGameplay::Actor* actor)
+		{
+			std::shared_ptr<IceDogGameplay::Actor> act_ptr(actor);
+			RegistActor(act_ptr);
+			return (T*)(act_ptr.get());
+		}
 
 	private:
 		// the total aspect ratio of this platform

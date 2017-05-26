@@ -31,6 +31,17 @@ void RenderingAdapter::RegistRenderData(std::shared_ptr<RenderDataBase> rd, Rend
 	}
 }
 
+void IceDogRendering::RenderingAdapter::Close()
+{
+	r_renderingManager->Close();
+	for (auto i:r_materialDatas)
+	{
+		i->Close();
+		delete i;
+	}
+	std::cout << "RenderAdapter Closed" << std::endl;
+}
+
 void IceDogRendering::RenderingAdapter::UnRegistRenderData(std::shared_ptr<RenderDataBase> rd, RenderPipeType rpt)
 {
 	switch (rpt)

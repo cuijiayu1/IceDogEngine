@@ -20,6 +20,9 @@ namespace IceDogRendering
 		RenderDataBase();
 		virtual ~RenderDataBase();
 
+		/* close the renderData */
+		virtual void Close();
+
 		/* create vertex buffer */
 		virtual bool CreateBuffer(ID3D11Device* d3dDevice)=0;
 		/* set the world matrix */
@@ -50,7 +53,7 @@ namespace IceDogRendering
 		int GetVertexCount();
 
 	protected:
-		// the material info
+		// the material info, just hold it ,has no authority to delete it
 		MaterialData* c_materilaData;
 		// this mark whether the data should bu update from the resource that this render data holds. this is quite different from the data clean
 		DataMapDirtyFlag c_dataMapFlag = DataMapDirtyFlag::None;

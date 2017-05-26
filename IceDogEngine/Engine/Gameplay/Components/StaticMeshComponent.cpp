@@ -11,6 +11,12 @@ IceDogGameplay::StaticMeshComponent::StaticMeshComponent(class Actor* owner):Com
 {
 }
 
+void IceDogGameplay::StaticMeshComponent::Close()
+{
+	r_renderData->Close();
+	Component::Close();
+}
+
 void IceDogGameplay::StaticMeshComponent::SetStaticMesh(std::shared_ptr<IceDogRendering::MeshData> rd)
 {
 	if (rd == nullptr)

@@ -18,6 +18,9 @@ namespace IceDogPlatform
 		/* init the window, setup message loop */
 		virtual bool InitWindow(PlatformWindow pfWindow) = 0;
 
+		/* call close to release the resource */
+		virtual void Close() = 0;
+
 		/* bind the message handle to receive the window message */
 		virtual void RegistMessageHandle(std::shared_ptr<class PlatformMsgHandle> msgHandle) = 0;
 

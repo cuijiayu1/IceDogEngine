@@ -13,6 +13,9 @@ namespace IceDogRendering
 		/* init the render manager */
 		bool InitRenderManager(IceDogPlatform::PlatformWindow pfWindow) override;
 
+		/* call close to release the resource */
+		virtual void Close() override;
+
 		/* set the driver type */
 		void SetDriverType(RenderDriverType type) override;
 

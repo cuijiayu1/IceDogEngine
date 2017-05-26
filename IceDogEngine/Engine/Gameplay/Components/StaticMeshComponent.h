@@ -10,11 +10,15 @@ namespace IceDogGameplay
 		StaticMeshComponent(class Actor* owner);
 		~StaticMeshComponent();
 
+		/* call to release this resource */
+		virtual void Close() override;
+
 		/* set the render data */
 		void SetStaticMesh(std::shared_ptr<IceDogRendering::MeshData> rd);
 
 		/* set enable */
 		virtual void SetEnable() override;
+
 		/* set disable */
 		virtual void SetDisable() override;
 

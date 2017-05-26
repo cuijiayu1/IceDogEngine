@@ -13,6 +13,11 @@ IceDogGameplay::DirectionalLightComponent::~DirectionalLightComponent()
 
 }
 
+void IceDogGameplay::DirectionalLightComponent::Close()
+{
+	LightComponent::Close();
+}
+
 void IceDogGameplay::DirectionalLightComponent::SetEnable()
 {
 	Component::SetDisable();

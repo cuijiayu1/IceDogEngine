@@ -9,10 +9,14 @@ namespace IceDogPlatform
 	public:
 		WindowsMessageHandle();
 		
-		// check the message from windows platform
+		/* check the message from windows platform */ 
 		void CheckMessage() override;
-		// process the message from windows platform
+
+		/* process the message from windows platform */ 
 		MessageResult ProcessMessage(MessageParam params) override;
+
+		/* call close to release the resource */
+		void Close() override;
 	};
 }
 

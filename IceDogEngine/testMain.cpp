@@ -6,6 +6,10 @@
 #include "Source\PlaneActor.h"
 #include "Source\Sphere.h"
 #include "Source\MotherSun.h"
+#include "Source\Plane.h"
+#include "Source\FakePhysicBall.h"
+
+#include <random>
 
 using namespace std;
 
@@ -38,14 +42,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	
 	IceDogEngine::Engine eg(std::cout, pfwindow);
 	eg.Init();
-	cout << "Hello Ice Dog Engine" << endl;
+	eg.AmazingText(std::cout, "Hello IceDogEngine");
 
-	Cha cha;
-	MotherSun sun;
+	Cha* cha = eg.ConstructActor<Cha>(new Cha());
+	MotherSun* sun = eg.ConstructActor<MotherSun>(new MotherSun());
 
-	PlaneActor plan;
-	plan.SetActorLocation(IceDogUtils::float3(0, -0.5, 0));
-	MyActor actor;
+	PlaneActor* plan = eg.ConstructActor<PlaneActor>(new PlaneActor());
+	plan->SetActorLocation(IceDogUtils::float3(0, -0.5, 0));
+	MyActor* actor = eg.ConstructActor<MyActor>(new MyActor());
+	actor->SetActorLocation(IceDogUtils::float3(0, 0, 0));
 
 	for (int i=0;i<2;++i)
 	{
@@ -53,16 +58,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		{
 			for (int k=0;k<2;++k)
 			{
-				Sphere* sps = new Sphere();
+				Sphere* sps = eg.ConstructActor<Sphere>(new Sphere());
 				sps->SetActorLocation(IceDogUtils::float3(i, j, k));
 			}
 		}
 	}
-
 	LoadTestAct Lt;
 
 	eg.Run();
-
 
 	EndConsole();
 }

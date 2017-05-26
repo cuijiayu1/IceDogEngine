@@ -10,6 +10,17 @@ IceDogRendering::MaterialData::MaterialData():c_loaded(false),c_DifNorParEmi(0,0
 IceDogRendering::MaterialData::~MaterialData()
 {
 	ReleaseCOM(r_diffuseSRV);
+	ReleaseCOM(r_normalSRV);
+	ReleaseCOM(r_parallaxSRV);
+	ReleaseCOM(r_srmeSRV);
+}
+
+void IceDogRendering::MaterialData::Close()
+{
+	ReleaseCOM(r_diffuseSRV);
+	ReleaseCOM(r_normalSRV);
+	ReleaseCOM(r_parallaxSRV);
+	ReleaseCOM(r_srmeSRV);
 }
 
 void IceDogRendering::MaterialData::SetDiffuseMap(std::wstring url)

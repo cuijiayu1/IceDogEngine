@@ -12,19 +12,22 @@ namespace IceDogLogic
 	public:
 		/* the construct function */
 		LogicAdapter(std::ostream& errOs);
+		~LogicAdapter();
 		/* init the logic adapter */
 		void Init();
-		/* tick the logic adapter, than tick all registed logic data */
+		/* call close to release the resource */
+		void Close();
+		/* tick the logic adapter, than tick all registered logic data */
 		void TickLogic(float deltaTime);
-		/* regist/unRegist the logic data */
-		void RegistLogicData(LogicData* ld);
-		void UnRegistLogicData(LogicData* ld);
+		/* register/unRegister the logic data */
+		void RegistLogicData(std::shared_ptr<LogicData> ld);
+		void UnRegistLogicData(std::shared_ptr<LogicData> ld);
 
 	private:
 		// the log output port
 		std::ostream& s_errorlogOutStream;
 		// the logic data that this adapter holds
-		std::vector<LogicData*> r_logicDatas;
+		std::vector<std::shared_ptr<LogicData>> r_logicDatas;
 	};
 }
 

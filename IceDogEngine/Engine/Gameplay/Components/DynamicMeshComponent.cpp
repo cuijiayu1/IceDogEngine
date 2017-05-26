@@ -10,3 +10,9 @@ DynamicMeshComponent::DynamicMeshComponent(class Actor* owner):Component::Compon
 DynamicMeshComponent::~DynamicMeshComponent()
 {
 }
+
+void IceDogGameplay::DynamicMeshComponent::Close()
+{
+	r_renderData->Close();
+	Component::Close();
+}

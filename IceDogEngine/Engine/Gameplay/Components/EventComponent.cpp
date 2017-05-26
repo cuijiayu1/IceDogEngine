@@ -5,25 +5,32 @@ namespace IceDogGameplay
 {
 	EventComponent::EventComponent(class Actor* owner):Component::Component(owner)
 	{
-
+		r_messageProcessor = std::make_shared<IceDogCore::MessageProc>();
+		r_messageProcessor->BindProcessor(std::bind(&EventComponent::ProcessFunc, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
 
 	EventComponent::~EventComponent()
 	{
 	}
 
+	void EventComponent::Close()
+	{
+		r_messageProcessor->Close();
+		Component::Close();
+	}
+
 	void EventComponent::SetEnable()
 	{
-		Init();
+		r_messageProcessor->Init();
 	}
 
 	void EventComponent::SetDisable()
 	{
-		IceDogEngine::Engine::GetEngine()->GetEngineCore().UnRegistMessageProc(this);
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().UnRegistMessageProc(r_messageProcessor.get());
 	}
 
 	// 1 means handled
-	int EventComponent::Process(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)
+	int EventComponent::ProcessFunc(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)
 	{
 		if (!c_componentEnable) { return 0; }
 		using IceDogPlatform::MessageType;

@@ -1,6 +1,6 @@
 #include "DirectionLightData.h"
 
-IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(5),c_shadowWidth(5),c_shadowDistance(5)
+IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(10),c_shadowWidth(10),c_shadowDistance(5)
 {
 	r_lightDef = std::make_shared<DirectionalLight>();
 	r_viewport.c_height = c_shadowMapSize;
@@ -14,6 +14,11 @@ IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(5),c_sh
 	((DirectionalLight*)r_lightDef.get())->direction = float4(float3(((DirectionalLight*)r_lightDef.get())->direction).Normilize(), 0);
 
 	UpdateMatrixs();
+}
+
+void IceDogRendering::DirectionLightData::Close()
+{
+	LightBase::Close();
 }
 
 void IceDogRendering::DirectionLightData::SetIntensity(float intensity)

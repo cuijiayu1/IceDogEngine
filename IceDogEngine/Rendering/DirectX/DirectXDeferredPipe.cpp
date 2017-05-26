@@ -364,6 +364,41 @@ namespace IceDogRendering
 		pass->Apply(0, c_PDRR.r_deviceContext);
 	}
 
+	void DirectXDeferredPipe::RenderToQuarter()
+	{
+		// get tech
+		auto tech = r_effectFX->GetTechniqueByName("Deferred");
+		auto pass = tech->GetPassByName("TonemapHQStage");
+
+		// clear depth stencil view
+		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
+		UINT offset = 0;
+		// set input layout
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &r_finalColorQuarterRTV, NULL);
+		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		// set g buffer as shader resource
+		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(r_gBufferFinalColorSRV);
+
+		pass->Apply(0, c_PDRR.r_deviceContext);
+
+		DisableDepthTest();
+		// loop for light drawing
+		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+		EnableDepthTest();
+
+		// unbind g buffer shader resource
+		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(NULL);
+
+		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
+		pass->Apply(0, c_PDRR.r_deviceContext);
+	}
+
 	void DirectXDeferredPipe::UpdateAllLights()
 	{
 		for (int i=0;i<r_lightGroups.size();++i)
@@ -672,10 +707,6 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		// set g buffer as shader resource			
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
-		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(r_lBufferDirectLightSRV);
 		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(r_gBufferFinalColorSRV);
 
 		pass->Apply(0, c_PDRR.r_deviceContext);
@@ -686,10 +717,6 @@ namespace IceDogRendering
 		EnableDepthTest();
 
 		// unbind g buffer shader resource
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(NULL);
 		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(NULL);
 
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
@@ -715,6 +742,7 @@ namespace IceDogRendering
 		if (!r_cubeMapSource.IsDirty())
 			r_effectFX->GetVariableByName("cubeMap")->AsShaderResource()->SetResource(r_cubeMapSource.GetCubeMapSRV().GetResourceView());
 		RenderEnvWithDirLight();
+		RenderToQuarter();
 		MergeOutput();
 		return;
 	}
@@ -845,11 +873,11 @@ namespace IceDogRendering
 			return;
 		}
 
-		CreateRenderTargetTexture2D(r_lBufferDirectLightBuffer,r_lBufferDirectLightRTV , r_lBufferDirectLightSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		CreateRenderTargetTexture2D(r_lBufferDirectLightBuffer,r_lBufferDirectLightRTV , r_lBufferDirectLightSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		
 		CreateRenderTargetTexture2D(r_gBufferBaseColor, r_gBufferBaseColorRTV, r_gBufferBaseColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
-		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
-		CreateRenderTargetTexture2D(c_backBufferWidth/4.0f, c_backBufferHeight/4.0f,r_finalColorQuarter, r_finalColorQuarterRTV, r_finalColorQuarterSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
+		CreateRenderTargetTexture2D(r_gBufferFinalColor, r_gBufferFinalColorRTV, r_gBufferFinalColorSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		CreateRenderTargetTexture2D(c_backBufferWidth/4.0f, c_backBufferHeight/4.0f,r_finalColorQuarter, r_finalColorQuarterRTV, r_finalColorQuarterSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		CreateRenderTargetTexture2D(r_gBufferNormal, r_gBufferNormalRTV, r_gBufferNormalSRV, DXGI_FORMAT_R16G16B16A16_UNORM);
 		CreateRenderTargetTexture2D(r_gBufferSpecularRoughnessMetallic, r_gBufferSpecularRoughnessMetallicRTV, r_gBufferSpecularRoughnessMetallicSRV,DXGI_FORMAT_R32G32B32A32_FLOAT);
 	}
@@ -872,5 +900,87 @@ namespace IceDogRendering
 		r_viewPort.MaxDepth = 1;
 
 		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
+	}
+
+	void DirectXDeferredPipe::Close()
+	{
+		ReleaseCOM(r_mainSwapChain);
+		// g pass
+		ReleaseCOM(r_meshInputLayout);
+		ReleaseCOM(r_voxelInputLayout);
+		ReleaseCOM(r_deferredLightLayout);
+		// g pass
+
+		// l pass
+		ReleaseCOM(r_lvoxelInputLayout);
+		ReleaseCOM(r_lvertexShadowInputLayout);
+		ReleaseCOM(r_lvertexLightInputLayout);
+		// l pass
+
+		ReleaseCOM(r_effectFX);
+		ReleaseCOM(r_lightFX);
+
+		ReleaseCOM(r_singleVertexBuffer);
+		ReleaseCOM(r_singleIndexBuffer);
+		delete r_dflVertex;
+		delete r_dflIndex;
+
+		//states
+		ReleaseCOM(r_lightBlendEnableState);
+		ReleaseCOM(r_LightBlendDisableState);
+
+		ReleaseCOM(r_depthTestEnableState);
+		ReleaseCOM(r_depthTestDisableState);
+
+		//views
+
+		// RTV
+
+		ReleaseCOM(r_backBufferRenderTargetView);
+		ReleaseCOM(r_backBufferDepthStencilView);
+
+		ReleaseCOM(r_gBufferNormalRTV);
+		ReleaseCOM(r_gBufferBaseColorRTV);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallicRTV);
+		ReleaseCOM(r_gBufferFinalColorRTV);
+		ReleaseCOM(r_finalColorQuarterRTV);
+		ReleaseCOM(r_lBufferDirectLightRTV);
+
+		ReleaseCOM(r_brdfLutRTV);
+
+		// SRV
+
+		ReleaseCOM(r_gBufferNormalSRV);
+		ReleaseCOM(r_gBufferBaseColorSRV);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallicSRV);
+		ReleaseCOM(r_gBufferFinalColorSRV);
+		ReleaseCOM(r_finalColorQuarterSRV);
+		ReleaseCOM(r_lBufferDirectLightSRV);
+
+		ReleaseCOM(r_mcEdgeSRV);
+		ReleaseCOM(r_mcTriangleSRV);
+
+		ReleaseCOM(r_brdfLutSRV);
+
+		//other buffer
+		ReleaseCOM(r_backBufferDepthStencilBuffer);
+
+		//G-Buffer (Geometry stage out)
+		ReleaseCOM(r_gBufferNormal);
+		ReleaseCOM(r_gBufferBaseColor);
+		ReleaseCOM(r_gBufferSpecularRoughnessMetallic);
+
+		//Light-Buffer 
+		ReleaseCOM(r_lBufferDirectLightBuffer);
+
+		//Final color buffer (combine direct lighting with ambient lighting)
+		ReleaseCOM(r_gBufferFinalColor);
+
+		//Post process scene buffer
+		ReleaseCOM(r_finalColorQuarter);
+
+		//BRDF LUT (BRDF GGX LUT out)
+		ReleaseCOM(r_brdfLutBuffer);
+		RenderingPipe::Close();
 	}
 }

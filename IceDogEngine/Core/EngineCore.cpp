@@ -1,4 +1,5 @@
 #include "EngineCore.h"
+#include "../Engine/Engine.h"
 
 using namespace IceDogCore;
 
@@ -14,6 +15,13 @@ void EngineCore::Init()
 
 void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 {
+	if (msg.c_messageType == IceDogPlatform::MessageType::closeEngine)
+	{
+		IceDogEngine::Engine::GetEngine()->Close();
+		return;
+	}
+
+
 	// if dirty sort the queue
 	if (c_messageChainDirty)
 	{
@@ -44,7 +52,7 @@ void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 			if (i->Process(msg.c_messageType, msg.c_param0, msg.c_param1)) { return; }
 		}
 	}
-	
+
 	// handle the message
 	//std::cout << (int)msg.c_messageType << " " << msg.c_param0 << " " << msg.c_param1 << std::endl;
 }
@@ -57,6 +65,24 @@ void EngineCore::RegistPlatformTick(std::function<void()> pfTick)
 void EngineCore::RegistRenderingTick(std::function<void()> redTick)
 {
 	c_renderingTickPort = redTick;
+}
+
+IceDogCore::EngineCore::~EngineCore()
+{
+
+}
+
+void IceDogCore::EngineCore::Close()
+{
+	for (auto i : r_messageProcs)
+		i->Close();
+	r_messageProcs.clear();
+	std::cout << "EngineCore Closed" << std::endl;
+}
+
+void IceDogCore::EngineCore::Shutdown()
+{
+	c_runEngine = false;
 }
 
 void IceDogCore::EngineCore::RegistLogicTick(std::function<void(float)> logicTick)
@@ -96,15 +122,18 @@ void IceDogCore::EngineCore::MarkMessageChainClean()
 
 void EngineCore::Run()
 {
+	// config to run the engine
+	c_runEngine = true;
+
 	// tick the timer first
 	r_coreTimer.Tick();
 
-	while (true)
+	while (c_runEngine)
 	{
 		// tick platform and update the message
-		if (c_platformTickPort) { c_platformTickPort(); }
 		if (c_renderingTickPort) { c_renderingTickPort(); }
 		if (c_logicTickPort) { c_logicTickPort(r_coreTimer.GetDeltaTime()); }
+		if (c_platformTickPort) { c_platformTickPort(); }
 		if (testTick) { testTick(); }
 		BoardCastFPSMessage();
 		// tick the timer

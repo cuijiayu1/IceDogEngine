@@ -19,12 +19,16 @@ namespace IceDogPlatform
 	{
 	public:
 		Platform(PlatformWindow pfWindow,std::ostream& errorLog);
+		~Platform();
 
 		/* init the platform both setup the message and window event */
 		void InitPlatform();
 
 		/* tick platform, update the information update the message loop */
 		void TickPlatform();
+
+		/* call close to release the platform resource */
+		void Close();
 
 		/* register message process chain */
 		void RegistMessageProcessChain(std::function<void(Message)> msProcChain);

@@ -9,7 +9,10 @@ namespace IceDogGameplay
 	{
 	public:
 		VoxelComponent(class Actor* owner);
-		~VoxelComponent();
+		virtual ~VoxelComponent();
+
+		/* call to close this resource */
+		virtual void Close() override;
 
 		/* set the render data */
 		void SetVoxelData(std::shared_ptr<IceDogRendering::VoxelData> rd);

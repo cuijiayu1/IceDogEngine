@@ -730,8 +730,7 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(SpecularColor, Roughness, wNormal, v);
 		float3 Lenv_diff = DiffuseColor * (all(ndcDepth))*difenvE;
 
-		float3 combine = Lenv + Lenv_spec + Lenv_diff + lBuffer_direct.Sample(samAnisotropic, vout.uv);
-
+		float3 combine = lBuffer_direct.Sample(samAnisotropic, vout.uv) + Lenv + Lenv_spec + Lenv_diff;
 		result.finalColor = float4(combine, 1);
 	}
 	return result;
@@ -744,7 +743,12 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										Tonemap Pass Start																//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+Texture2D lightColorOut;
+LightPSOut QuarterOutput(LightGSOut vout) : SV_Target{
+	LightPSOut result;
+	result.finalColor = lightColorOut.Sample(samAnisotropic, vout.uv*4);
+	return result;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										Tonemap Pass End																//
@@ -753,16 +757,47 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										Merge output Pass Start															//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Texture2D lightColorOut;
 
-struct MergeOut
+float3 Uncharted2Tonemap(float3 x)
 {
-	float4 finalColor : COLOR;
-};
+	const float A = 0.15;
+	const float B = 0.50;
+	const float C = 0.10;
+	const float D = 0.20;
+	const float E = 0.02;
+	const float F = 0.30;
+	return ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
+}
+
+float4 Tonemap(float3 texColor)
+{
+	texColor *= 16;  // Hardcoded Exposure Adjustment
+
+	float ExposureBias = 2.0f;
+	float3 curr = Uncharted2Tonemap(ExposureBias*texColor);
+
+	float3 whiteScale = 1.0f / Uncharted2Tonemap(11.2);
+	float3 color = curr*whiteScale;
+
+	float3 retColor = pow(color, 1 / 2.2);
+	return float4(retColor, 1);
+}
 
 LightPSOut MergeOutputPS(LightGSOut vout) : SV_Target{
-	MergeOut result;
+	LightPSOut result;
 	result.finalColor = lightColorOut.Sample(samAnisotropic, vout.uv);
+	/*if (vout.uv.y <= 0.75)
+	{
+		if (result.finalColor.r > 1 || result.finalColor.g > 1 || result.finalColor.b > 1)
+		{
+			result.finalColor = float4(1, 0, 0, 1);
+		}
+	}
+	else
+	{
+		result.finalColor = result.finalColor;
+	}
+	*/
 	return result;
 }
 
@@ -798,12 +833,12 @@ technique11 Deferred
 		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
 		SetPixelShader(CompileShader(ps_5_0, MergeOutputPS()));
 	}
-	/*pass TonemapStage
+	pass TonemapHQStage
 	{
 		SetVertexShader(CompileShader(vs_5_0, LightVS()));
 		SetGeometryShader(CompileShader(gs_5_0, LightGS()));
-
-	}*/
+		SetPixelShader(CompileShader(ps_5_0, QuarterOutput()));
+	}
 	pass BRDFLutStage
 	{
 		SetVertexShader(CompileShader(vs_5_0, LightVS()));

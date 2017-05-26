@@ -13,7 +13,10 @@ namespace IceDogGameplay
 	{
 	public:
 		Actor();
-		~Actor();
+		virtual ~Actor();
+
+		/* close the actor */
+		virtual void Close();
 
 		/* move the actor forward */
 		void MoveForward(float distance);
@@ -72,15 +75,19 @@ namespace IceDogGameplay
 		void BeforTick(float deltaTime);
 		void AfterTick(float deltaTime);
 
+
+	/*
+	The component reference hold by your class should only use raw ptr, for the engine will manage the memory it self. So don`t use other ptr to annoy it!
+	*/
 	protected:
 		// the event handle component that bridge useful event here
-		EventComponent r_defaultEventComponent;
+		EventComponent* r_defaultEventComponent;
 
 	private:
 		// the vector coordinate of this obj
-		IceDogCore::BasicSpace* r_defaultActorCoordinate;
+		std::unique_ptr<IceDogCore::BasicSpace> r_defaultActorCoordinate;
 		// the actor component that every actor have one. just the default one
-		ActorComponent r_defaultActorComponent;
+		ActorComponent* r_defaultActorComponent;
 		// hold the components
 		std::vector<std::shared_ptr<Component>> r_holdComponents;
 	};

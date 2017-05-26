@@ -18,6 +18,8 @@ namespace IceDogRendering
 	public:
 		/* the construct function */
 		RenderingManager(std::ostream& logOs) :s_errorlogOutStream(logOs) {}
+		/* call close to release the resource */
+		virtual void Close();
 		/* set the driver type */
 		virtual void SetDriverType(RenderDriverType type) = 0;
 		/* init the render manager */

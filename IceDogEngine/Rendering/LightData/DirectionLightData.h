@@ -8,6 +8,9 @@ namespace IceDogRendering
 	public:
 		DirectionLightData();
 
+		/* call close to release the resource */
+		virtual void Close() override;
+
 		/* set the intensity of this light */
 		virtual void SetIntensity(float intensity) override;
 

@@ -42,3 +42,13 @@ void IceDogRendering::RenderingPipe::AddDirectionalLightToLightGroup(std::shared
 		}
 	}
 }
+
+void IceDogRendering::RenderingPipe::Close()
+{
+	for (auto& i:r_lightGroups)
+		i.Close();
+	r_lightGroups.clear();
+	r_pipeViewList.clear();
+	r_cubeMapSource.Close();
+	r_messageProc.Close();
+}

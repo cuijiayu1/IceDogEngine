@@ -24,6 +24,11 @@ bool IceDogRendering::CubeMapSource::IsDirty()
 	return c_isDirty;
 }
 
+void IceDogRendering::CubeMapSource::Close()
+{
+	r_cubemapSRV.Release();
+}
+
 IceDogRendering::PIDShaderResourceView IceDogRendering::CubeMapSource::GetCubeMapSRV()
 {
 	return r_cubemapSRV;

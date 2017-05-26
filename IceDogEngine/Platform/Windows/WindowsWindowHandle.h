@@ -18,6 +18,9 @@ namespace IceDogPlatform
 
 		/* Set Window Title */
 		void SetWindowTitle(std::string title) override;
+
+		/* call close to release the resource */
+		void Close() override;
 	};
 }
 

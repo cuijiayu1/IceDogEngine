@@ -116,6 +116,9 @@
   <ItemGroup>
     <ClCompile Include="Engine\Gameplay\Components\DirectionalLightComponent.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\LightComponent.cpp" />
+    <ClCompile Include="Rendering\RenderingManager.cpp" />
+    <ClCompile Include="Source\FakePhysicBall.cpp" />
+    <ClCompile Include="Source\Plane.cpp" />
     <ClCompile Include="Source\MotherSun.cpp" />
     <ClCompile Include="Rendering\LightData\DirectionLightData.cpp" />
     <ClCompile Include="Rendering\LightData\LightBase.cpp" />
@@ -171,6 +174,8 @@
   <ItemGroup>
     <ClInclude Include="Engine\Gameplay\Components\DirectionalLightComponent.h" />
     <ClInclude Include="Engine\Gameplay\Components\LightComponent.h" />
+    <ClInclude Include="Source\FakePhysicBall.h" />
+    <ClInclude Include="Source\Plane.h" />
     <ClInclude Include="Source\MotherSun.h" />
     <ClInclude Include="Rendering\LightData\DirectionLightData.h" />
     <ClInclude Include="Rendering\LightData\LightBase.h" />

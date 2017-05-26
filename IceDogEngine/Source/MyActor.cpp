@@ -18,7 +18,7 @@ MyActor::MyActor() :sourceLocation(1, 1, 1)
 	rd = std::make_shared<IceDogRendering::DynamicVoxelData>();
 	//IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 2, false, rd);
 
-	r_defaultEventComponent.BindOnLeftDown(std::bind(&MyActor::OnLeftClick, this, std::placeholders::_1, std::placeholders::_2));
+	r_defaultEventComponent->BindOnLeftDown(std::bind(&MyActor::OnLeftClick, this, std::placeholders::_1, std::placeholders::_2));
 
 	vl = new IceDogRendering::VoxelVertex[8000];
 	SetActorRotation(float3(0, 0, 0));

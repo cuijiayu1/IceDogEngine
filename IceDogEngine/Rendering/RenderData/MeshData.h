@@ -9,6 +9,8 @@ namespace IceDogRendering
 	public:
 		MeshData();
 		virtual ~MeshData();
+		/* close the mesh data */
+		virtual void Close() override;
 		/* set the vertex data */
 		void SetVertexData(Vertex* buffer, int count);
 		/* set the index data */

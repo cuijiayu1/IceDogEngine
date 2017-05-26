@@ -34,6 +34,8 @@ void Engine::Init()
 	// init the message processor
 	r_msgProc.BindProcessor(std::bind(&Engine::EventProcessor, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	r_msgProc.Init();
+	// init the level
+	r_defaultLevel.Init();
 }
 
 void Engine::RegistRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd,IceDogRendering::RenderPipeType rpt)
@@ -65,14 +67,14 @@ void IceDogEngine::Engine::UnRegisterLightData(std::shared_ptr<class IceDogRende
 	r_renderAdapter.UnRegisterLightData(ld, ltp);
 }
 
-void Engine::RegistLogicData(IceDogLogic::LogicData* ld)
+void Engine::RegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld)
 {
 	// add data to level
 	r_defaultLevel.RegistLogicData(ld);
 	r_logicAdapter.RegistLogicData(ld);
 }
 
-void Engine::UnRegistLogicData(IceDogLogic::LogicData* ld)
+void Engine::UnRegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld)
 {
 	// remove 
 	r_defaultLevel.UnRegistLogicData(ld);
@@ -80,12 +82,12 @@ void Engine::UnRegistLogicData(IceDogLogic::LogicData* ld)
 }
 
 
-void Engine::RegistActor(IceDogGameplay::Actor* ac)
+void Engine::RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
 {
 	r_defaultLevel.RegistActor(ac);
 }
 
-void IceDogEngine::Engine::UnRegistActor(IceDogGameplay::Actor* ac)
+void IceDogEngine::Engine::UnRegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
 {
 	r_defaultLevel.UnRegistActor(ac);
 }
@@ -160,8 +162,35 @@ IceDogEngine::Engine* IceDogEngine::Engine::GetEngine()
 	return r_egPtr;
 }
 
+void IceDogEngine::Engine::Close()
+{
+	AmazingText(std::cout, "Stop rendering");
+	r_engineCore.Shutdown();
+
+	AmazingText(std::cout, "Close level");
+	r_defaultLevel.Close();
+	AmazingText(std::cout, "Close engine core");
+	r_engineCore.Close();
+	AmazingText(std::cout, "Close render adapter");
+	r_renderAdapter.Close();
+	AmazingText(std::cout, "Close logic adapter");
+	r_logicAdapter.Close();
+	AmazingText(std::cout, "Close message chain");
+	r_msgProc.Close();
+	AmazingText(std::cout, "Close platform");
+	r_enginePlatform.Close();
+	AmazingText(std::cout, "Engine shutdown");
+}
+
 void IceDogEngine::Engine::Run()
 {
 	// call the engine core to run. update the tick
 	r_engineCore.Run();
+}
+
+void IceDogEngine::Engine::AmazingText(std::ostream& os, std::string str)
+{
+	std::cout << "----------------------------------------------------------------------" << std::endl;
+	std::cout << "\t\t\t" << str << std::endl;
+	std::cout << "----------------------------------------------------------------------" << std::endl;
 }

@@ -9,7 +9,11 @@ namespace IceDogGameplay
 	{
 	public:
 		Component(class Actor* owner);
+		virtual ~Component();
 	public:
+		/* call to close component */
+		virtual void Close();
+
 		/* enable or disable this component */
 		virtual void SetEnable();
 		virtual void SetDisable();

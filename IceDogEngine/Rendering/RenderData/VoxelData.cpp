@@ -58,6 +58,12 @@ void VoxelData::UpdateVertexBufferDesc()
 	r_vertexBuffer = nullptr;
 }
 
+void IceDogRendering::VoxelData::Close()
+{
+	ReleaseCOM(r_vertexBuffer);
+	IceDogRendering::RenderDataBase::Close();
+}
+
 ID3D11Buffer* IceDogRendering::VoxelData::GetVertexBuffer()
 {
 	return r_vertexBuffer;

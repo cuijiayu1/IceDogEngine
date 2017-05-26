@@ -1,0 +1,6 @@
+Debug/
+Release/
+obj/
+.vs/
+IceDogEngine.VC.db
+IceDogEngine/Debug/

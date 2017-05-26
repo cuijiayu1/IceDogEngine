@@ -9,7 +9,12 @@ IceDogRendering::RenderDataBase::RenderDataBase()
 
 IceDogRendering::RenderDataBase::~RenderDataBase()
 {
+	std::cout << "RenderData Released" << std::endl;
+}
 
+void IceDogRendering::RenderDataBase::Close()
+{
+	std::cout << "RenderData Closed" << std::endl;
 }
 
 void IceDogRendering::RenderDataBase::SetWorldMatrix(const float4x4& worldMatrix)

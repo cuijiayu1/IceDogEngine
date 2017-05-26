@@ -5,11 +5,14 @@
 
 namespace IceDogGameplay
 {
-	class CameraComponent:public Component,public IceDogRendering::PipeView
+	class CameraComponent:public Component
 	{
 	public:
 		CameraComponent(class Actor* owner);
 		~CameraComponent();
+
+		/* call to close this resource */
+		virtual void Close() override;
 
 		/* update the view matrix */
 		void Update();
@@ -18,7 +21,7 @@ namespace IceDogGameplay
 		int ProcessMessage(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
 
 	protected:
-		// the basic coordinate
-		IceDogCore::VectorSpace c_basicSpace;
+		// the pipe view
+		std::shared_ptr<IceDogRendering::PipeView> r_pipeView;
 	};
 }

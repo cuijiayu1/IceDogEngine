@@ -17,6 +17,9 @@ namespace IceDogRendering
 		/* get whether the shader resource is valid or not */
 		bool IsDirty();
 
+		/* call close to release the resource */
+		void Close();
+
 		/* get resource view */
 		PIDShaderResourceView GetCubeMapSRV();
 

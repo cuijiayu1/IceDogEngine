@@ -13,6 +13,9 @@ namespace IceDogRendering
 		MaterialData();
 		~MaterialData();
 
+		/* call close to release the resource */
+		void Close();
+
 		/* set the diffuse map location */
 		void SetDiffuseMap(std::wstring url);
 

@@ -10,6 +10,9 @@ namespace IceDogGameplay
 		DirectionalLightComponent(class Actor* owner);
 		~DirectionalLightComponent();
 
+		/* call to close this resource */
+		virtual void Close() override;
+
 		/* set enable */
 		virtual void SetEnable() override;
 		/* set disable */

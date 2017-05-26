@@ -11,6 +11,9 @@ namespace IceDogGameplay
 		LightComponent(class Actor* owner);
 		~LightComponent();
 
+		/* call to close this resource */
+		virtual void Close() override;
+
 	protected:
 		std::shared_ptr<IceDogRendering::LightBase> r_holdLight;
 	};

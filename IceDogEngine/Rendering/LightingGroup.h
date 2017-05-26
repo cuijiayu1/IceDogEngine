@@ -111,6 +111,13 @@ namespace IceDogRendering
 			return true;
 		}
 
+		// call this to release the resource
+		void Close()
+		{
+			for (int i=0;i<perLightCount;++i)
+				r_directionalLights[i]->Close();
+		}
+
 	private:
 		// indicate which one is used
 		bool c_holdDirectionalLights[perLightCount];

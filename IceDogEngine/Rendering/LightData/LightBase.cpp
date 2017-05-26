@@ -13,6 +13,15 @@ IceDogRendering::LightBase::~LightBase()
 	r_depthStencilTexture2d.Release();
 }
 
+void IceDogRendering::LightBase::Close()
+{
+	r_shadowMapRTV.Release();
+	r_shadowMapSRV.Release();
+	r_shadowTexture2d.Release();
+	r_depthStencilView.Release();
+	r_depthStencilTexture2d.Release();
+}
+
 void IceDogRendering::LightBase::SetLightDef(std::shared_ptr<LightDef> lightDef)
 {
 	r_lightDef = lightDef;

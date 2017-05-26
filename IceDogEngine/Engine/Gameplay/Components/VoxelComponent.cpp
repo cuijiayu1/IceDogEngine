@@ -11,6 +11,12 @@ IceDogGameplay::VoxelComponent::~VoxelComponent()
 
 }
 
+void IceDogGameplay::VoxelComponent::Close()
+{
+	r_renderData->Close();
+	Component::Close();
+}
+
 void IceDogGameplay::VoxelComponent::SetVoxelData(std::shared_ptr<IceDogRendering::VoxelData> rd)
 {
 	if (rd == nullptr)

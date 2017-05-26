@@ -121,9 +121,21 @@ MessageResult WindowsMessageHandle::ProcessMessage(MessageParam params)
 		msg.c_param1 = HIWORD(params.c_lparam);
 		if (c_messageProcessChain) { c_messageProcessChain(msg); }
 		break;
+	case WM_CLOSE:
+		msg.c_messageAuthority = MessageAuthority::SYSTEM;
+		msg.c_messageType = MessageType::closeEngine;
+		msg.c_param0 = LOWORD(params.c_lparam);
+		msg.c_param1 = HIWORD(params.c_lparam);
+		if (c_messageProcessChain) { c_messageProcessChain(msg); }
+		break;
 	default:
 		res.c_result = DefWindowProc(params.c_windowInstance, params.c_message, params.c_wparam, params.c_lparam);
 		break;
 	}
 	return res;
+}
+
+void IceDogPlatform::WindowsMessageHandle::Close()
+{
+
 }

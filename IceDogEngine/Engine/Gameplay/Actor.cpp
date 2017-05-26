@@ -4,11 +4,13 @@
 using namespace IceDogGameplay;
 using namespace IceDogEngine;
 
-Actor::Actor():r_defaultActorComponent(this),r_defaultEventComponent(this)
+Actor::Actor()
 {
-	r_defaultActorCoordinate = new IceDogCore::VectorSpace();
+	r_defaultActorComponent = new ActorComponent(this);
+	r_defaultEventComponent = new EventComponent(this);
+	r_defaultActorCoordinate = std::make_unique<IceDogCore::VectorSpace>();
 	// enable the default actor component 
-	r_defaultActorComponent.RegistOwningActorTick(std::bind(&IceDogGameplay::Actor::LayerTick, this, std::placeholders::_1));
+	r_defaultActorComponent->RegistOwningActorTick(std::bind(&IceDogGameplay::Actor::LayerTick, this, std::placeholders::_1));
 }
 
 void IceDogGameplay::Actor::Tick(float deltaTime)
@@ -18,28 +20,24 @@ void IceDogGameplay::Actor::Tick(float deltaTime)
 
 void IceDogGameplay::Actor::SetEnable()
 {
-	r_defaultActorComponent.SetEnable();
-	r_defaultEventComponent.SetEnable();
+	r_defaultActorComponent->SetEnable();
+	r_defaultEventComponent->SetEnable();
 	// enable all component
 	for (auto& i:r_holdComponents)
 	{
 		i->SetEnable();
 	}
-	// regist the actor to engine
-	Engine::GetEngine()->RegistActor(this);
 }
 
 void IceDogGameplay::Actor::SetDisable()
 {
-	r_defaultActorComponent.SetDisable();
-	r_defaultEventComponent.SetDisable();
+	r_defaultActorComponent->SetDisable();
+	r_defaultEventComponent->SetDisable();
 	// disable all component
 	for (auto& i:r_holdComponents)
 	{
 		i->SetDisable();
 	}
-	// unregist the actor to engine
-	Engine::GetEngine()->UnRegistActor(this);
 }
 
 void IceDogGameplay::Actor::RegistComponentToActor(std::shared_ptr<Component> comp)
@@ -49,7 +47,7 @@ void IceDogGameplay::Actor::RegistComponentToActor(std::shared_ptr<Component> co
 
 void IceDogGameplay::Actor::LayerTick(float deltaTime)
 {
-	// befor the tick will have a befor tick for pre process
+	// before the tick will have a before tick for pr process
 	BeforTick(deltaTime);
 
 	Tick(deltaTime);
@@ -130,7 +128,15 @@ void IceDogGameplay::Actor::SetActorRotation(const float3& newRotate)
 	r_defaultActorCoordinate->SetRotation(newRotate);
 }
 
+void IceDogGameplay::Actor::Close()
+{
+	for (auto i:r_holdComponents)
+		i->Close();
+	r_holdComponents.clear();
+	std::cout << "Actor Closed" << std::endl;
+}
+
 Actor::~Actor()
 {
-	r_defaultActorComponent.SetDisable();
+	std::cout << "Actor Released" << std::endl;
 }

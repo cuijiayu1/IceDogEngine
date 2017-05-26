@@ -16,6 +16,9 @@ namespace IceDogRendering
 		/* call the pipe to render */
 		void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) override;
 
+		/* call close to release the resource */
+		virtual void Close() override;
+
 	protected:
 		/* reset the render target size */
 		void Resize(int newWidth, int newHeight) override;
@@ -54,6 +57,9 @@ namespace IceDogRendering
 
 		/* render environment with direct lighting */
 		void RenderEnvWithDirLight();
+
+		/* render the lighting result to quarter size for post process */
+		void RenderToQuarter();
 
 		/* update all lights */
 		void UpdateAllLights();

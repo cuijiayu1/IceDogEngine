@@ -14,6 +14,12 @@ namespace IceDogCore
 		MessageProc(const MessagePriority& priority);
 		~MessageProc();
 
+		/* unregister the proc */
+		void CloseProc();
+
+		/* call close to release the resource */
+		void Close();
+
 		/* register the proc */
 		void Init();
 
@@ -24,17 +30,10 @@ namespace IceDogCore
 		MessagePriority GetPriority();
 
 		/* bind the function to the processor */
-		void BindProcessor(std::function<int(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)> proc)
-		{
-			c_procFunc = proc;
-		}
+		void BindProcessor(std::function<int(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1)> proc);
 
 		/* process the message */
-		virtual int Process(const IceDogPlatform::MessageType& msgType,const float& pm0,const float& pm1) 
-		{
-			if (c_procFunc) { return c_procFunc(msgType, pm0, pm1); }
-			return 0; 
-		}
+		virtual int Process(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
 
 	private:
 		// the process function bind to this process

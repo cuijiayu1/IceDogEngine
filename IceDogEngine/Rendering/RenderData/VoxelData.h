@@ -10,6 +10,9 @@ namespace IceDogRendering
 		VoxelData();
 		virtual ~VoxelData();
 
+		/* called to close this data */
+		virtual void Close();
+
 #if defined __DIRECTX__
 		/* create buffer */
 		virtual bool CreateBuffer(ID3D11Device* d3dDevice) override;

@@ -4,17 +4,20 @@
 
 namespace IceDogGameplay
 {
-	class EventComponent:public Component,public IceDogCore::MessageProc
+	class EventComponent:public Component
 	{
 	public:
 		EventComponent(class Actor* owner);
-		~EventComponent();
+		virtual ~EventComponent();
+
+		/* call to release this resource */
+		virtual void Close() override;
 
 		void SetEnable() override;
 
 		void SetDisable() override;
 
-		int Process(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1) override;
+		int ProcessFunc(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
 
 		void BindOnLeftDoubleClick(std::function<int(float, float)> func) { onLeftDoubleClick = func; }
 		void BindOnLeftDown(std::function<int(float, float)> func) { onLeftDown = func; }
@@ -46,6 +49,8 @@ namespace IceDogGameplay
 		std::function<int(int)>			 onKeyDown;
 		std::function<int(int)>			 onKeyUp;
 		std::function<int(float)>		 onAspectRatioChange;
+
+		std::shared_ptr<IceDogCore::MessageProc> r_messageProcessor;
 	};
 }
 

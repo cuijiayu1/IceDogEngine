@@ -8,7 +8,11 @@ namespace IceDogGameplay
 	{
 	public:
 		DynamicMeshComponent(class Actor* owner);
-		~DynamicMeshComponent();
+		virtual ~DynamicMeshComponent();
+
+		/* call to close this resource */
+		virtual void Close() override;
+
 	private:
 		std::shared_ptr<IceDogRendering::DynamicMeshData> r_renderData;
 	};

@@ -9,3 +9,8 @@ IceDogGameplay::LightComponent::~LightComponent()
 {
 
 }
+
+void IceDogGameplay::LightComponent::Close()
+{
+	r_holdLight->Close();
+}

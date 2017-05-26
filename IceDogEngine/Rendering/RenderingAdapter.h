@@ -14,6 +14,9 @@ namespace IceDogRendering
 		/* init the adapter */
 		void Init(IceDogPlatform::PlatformWindow pfWindow);
 
+		/* call close to release the data */
+		void Close();
+
 		/* rendering tick */
 		void TickRendering();
 

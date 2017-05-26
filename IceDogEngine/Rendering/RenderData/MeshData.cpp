@@ -40,6 +40,14 @@ void MeshData::SetIndexData(unsigned int* indexBuffer, int triangleCount)
 }
 
 #if defined __DIRECTX__
+
+void IceDogRendering::MeshData::Close()
+{
+	ReleaseCOM(r_vertexBuffer);
+	ReleaseCOM(r_indexBuffer);
+	IceDogRendering::RenderDataBase::Close();
+}
+
 bool IceDogRendering::MeshData::CreateBuffer(ID3D11Device* d3dDevice)
 {
 	ReleaseCOM(r_vertexBuffer);

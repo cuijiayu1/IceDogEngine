@@ -20,6 +20,8 @@ namespace IceDogRendering
 			r_messageProc.BindProcessor(std::bind(&RenderingPipe::EventProcessor, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3));
 			r_messageProc.Init();
 		}
+		/* call close to release the resource */
+		virtual void Close();
 		/* set msaa config not enable immediately*/
 		virtual void SetMsaaConfig(bool msaaEnable) { c_enableMsaa = msaaEnable;};
 		/* init the pipe line */

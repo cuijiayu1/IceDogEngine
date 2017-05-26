@@ -174,6 +174,13 @@ void DirectXRenderingManager::RegistSceneRenderData(std::shared_ptr<IceDogRender
 	r_sceneRenderData.push_back(rd);
 }
 
+void IceDogRendering::DirectXRenderingManager::Close()
+{
+	ReleaseCOM(r_device);
+	ReleaseCOM(r_deviceContext);
+	RenderingManager::Close();
+}
+
 void IceDogRendering::DirectXRenderingManager::UnRegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd)
 {
 	r_uiRenderData.erase(std::find(r_uiRenderData.begin(), r_uiRenderData.end(), rd));

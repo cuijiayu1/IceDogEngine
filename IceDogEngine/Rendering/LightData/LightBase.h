@@ -12,6 +12,9 @@ namespace IceDogRendering
 		LightBase();
 		virtual ~LightBase();
 
+		/* call to close this resource */
+		virtual void Close();
+
 		/* set the light definition of this light, for example, direction, intensity, etc.. */
 		void SetLightDef(std::shared_ptr<LightDef> lightDef);
 
@@ -56,7 +59,7 @@ namespace IceDogRendering
 		bool c_lightTextureDirty = true;
 
 		// the size of the shadow map
-		float c_shadowMapSize = 1024;
+		float c_shadowMapSize = 2048;
 
 		// the projection matrix
 		IceDogRendering::float4x4 c_projectionMatrix;

@@ -14,6 +14,17 @@ namespace IceDogGameplay
 		r_msgProc.Init();
 	}
 
+	Component::~Component()
+	{
+		std::cout << "Component Released" << std::endl;
+	}
+
+	void Component::Close()
+	{
+		r_msgProc.Close();
+		std::cout << "Component Closed" << std::endl;
+	}
+
 	void Component::SetEnable()
 	{
 		c_componentEnable = true;

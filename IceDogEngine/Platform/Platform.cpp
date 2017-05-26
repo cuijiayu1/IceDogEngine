@@ -46,3 +46,15 @@ void IceDogPlatform::Platform::SetWindowTitle(std::string title)
 {
 	r_platformWindowHandle->SetWindowTitle(title);
 }
+
+void IceDogPlatform::Platform::Close()
+{
+	r_platformMsgHandle->Close();
+	r_platformWindowHandle->Close();
+	std::cout << "Platform Closed" << std::endl;
+}
+
+IceDogPlatform::Platform::~Platform()
+{
+	std::cout << "Platform Released" << std::endl;
+}

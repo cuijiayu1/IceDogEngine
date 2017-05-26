@@ -12,10 +12,16 @@ namespace IceDogCore
 	public:
 		/* the construct function */
 		EngineCore();
+		/* deconstruct engine */
+		~EngineCore();
+		/* call close to release the resource */
+		void Close();
 		/* init the engine */
 		void Init();
 		/* call the engine run */
 		void Run();
+		/* call the core to shutdown */
+		void Shutdown();
 		/* register the platform tick function */
 		void RegistPlatformTick(std::function<void()> pfTick);
 		/* register the rendering tick function */
@@ -42,6 +48,8 @@ namespace IceDogCore
 	private:
 		// the timer of this core
 		Timer r_coreTimer;
+		// engine run flag
+		bool c_runEngine;
 
 	private:
 		// is message line dirty

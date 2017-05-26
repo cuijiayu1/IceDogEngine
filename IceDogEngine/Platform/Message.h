@@ -27,7 +27,8 @@ namespace IceDogPlatform
 		mouseWheel,
 		keyDown,
 		keyUp,
-		aspectRatioChange
+		aspectRatioChange,
+		closeEngine
 	};
 
 	struct Message

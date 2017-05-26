@@ -11,7 +11,6 @@ namespace IceDogGameplay
 
 	Camera::~Camera()
 	{
-		delete r_cameraComponent;
 	}
 
 }

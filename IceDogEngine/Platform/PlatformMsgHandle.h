@@ -14,10 +14,13 @@ namespace IceDogPlatform
 		/* check the message from specially platform */
 		virtual void CheckMessage()=0;
 
+		/* call close function to release the resource */
+		virtual void Close() = 0;
+
 		/* process the platform independence message, the message usually comes from window */
 		virtual MessageResult ProcessMessage(MessageParam params)=0;
 
-		/* regist message process chain */
+		/* register message process chain */
 		virtual void RegistMessageProcessChain(std::function<void(Message)> msProcChain) { c_messageProcessChain = msProcChain; }
 
 	protected:
