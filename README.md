@@ -12,6 +12,9 @@
 
 # What`s new?
 
+## Add Memory Management
+### Right! I haven`t done this until now. Oooops...
+
 ## Add PCSS Like Shadow
 This is not the origin pcss shadow of NVIDIA.
 ![alt tag](pcssLike.png)
