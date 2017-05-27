@@ -10,7 +10,7 @@
 
 ![alt tag](current.png)
 
-# What`s new!
+# What`s new?
 
 ## Add PCSS Like Shadow
 This is not the origin pcss shadow of NVIDIA.
