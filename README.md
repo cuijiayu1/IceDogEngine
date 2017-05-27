@@ -12,8 +12,8 @@
 
 ## Add PCF Shadow
 
-### Old
-![alt tag](old.png)
+* old
+![alt tag](old.PNG)
 
-### Now
-![alt tag](new.png)
+* now
+![alt tag](new.PNG)
