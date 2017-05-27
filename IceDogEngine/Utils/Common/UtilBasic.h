@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include "d3dx11effect.h"
 #include "DirectXTex.h"
+#include "Model.h"
 using namespace DirectX;
 #endif
 

@@ -112,9 +112,9 @@ void GeometryGenerator::CreateSphere(float radius, unsigned int sliceCount, unsi
 	Vertex* vd = new Vertex[Vertices.size()];
 	unsigned int* inds = new unsigned int[Indices.size()];
 
-	for (int i = 0; i < Vertices.size(); i++)
+	for (size_t i = 0; i < Vertices.size(); i++)
 		vd[i] = Vertices[i];
-	for (int i = 0; i < Indices.size(); i++)
+	for (size_t i = 0; i < Indices.size(); i++)
 		inds[i] = Indices[i];
 	rd->SetVertexData(vd, Vertices.size());
 	rd->SetIndexData(inds, Indices.size() / 3);
@@ -208,13 +208,13 @@ void GeometryGenerator::Subdivide(std::shared_ptr<IceDogRendering::MeshData> rd)
 	}
 
 	unsigned int* newIndexs = new unsigned int[IndicesCopy.size()];
-	for (int i = 0; i < IndicesCopy.size(); ++i)
+	for (size_t i = 0; i < IndicesCopy.size(); ++i)
 	{
 		newIndexs[i] = IndicesCopy[i];
 	}
 
 	Vertex* newVertexs = new Vertex[VertexsCopy.size()];
-	for (int i = 0; i < VertexsCopy.size(); i++)
+	for (size_t i = 0; i < VertexsCopy.size(); i++)
 	{
 		newVertexs[i] = VertexsCopy[i];
 	}
@@ -230,14 +230,14 @@ void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, 
 	using IceDogRendering::Vertex;
 	Vertex* vxs = new Vertex[vc.size()];
 	unsigned int* ixs = new unsigned int[ic.size()];
-	for (int i = 0; i < vc.size(); ++i)
+	for (size_t i = 0; i < vc.size(); ++i)
 	{
 		vxs[i].color = IceDogUtils::float4(IceDogRendering::Color::Silver);
 		vxs[i].normal = IceDogUtils::float3(vc[i].normal.x, vc[i].normal.y, vc[i].normal.z);
 		vxs[i].position = IceDogUtils::float3(vc[i].position.x, vc[i].position.y, vc[i].position.z);
 		vxs[i].tex0 = IceDogUtils::float2(vc[i].textureCoordinate.x, vc[i].textureCoordinate.y);
 	}
-	for (int i=0;i<ic.size();i++)
+	for (size_t i=0;i<ic.size();i++)
 	{
 		ixs[i] = ic[i];
 	}

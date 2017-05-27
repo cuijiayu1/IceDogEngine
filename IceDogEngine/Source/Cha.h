@@ -22,5 +22,6 @@ private:
 	bool enableMove;
 	int forward;
 	int right;
+	float speed;
 };
 

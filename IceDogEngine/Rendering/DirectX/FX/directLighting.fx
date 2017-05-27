@@ -392,11 +392,30 @@ float PCFFilter(float2 smpUV, float cmpDepth, float smpDx, float filterRadius)
 	float sum = 0.0;
 	for (int i = 0; i < 16; ++i)
 	{
-		float2 offset = poissonDisk[i] * filterRadius*smpDx;
+		float2 offset = poissonDisk[i] * filterRadius * cmpDepth *smpDx;
 		float depth = directionalShadowMap.Sample(shadowSample, smpUV + offset);
 		sum += depth >= cmpDepth;
 	}
 	return sum / 16.0;
+}
+
+float PCSS(float2 smpUV, float cmpDepth, float smpDx, float lightSize)
+{
+	// block search
+	float cmpDepth_r = 1 - cmpDepth;
+	float blocker = 0.0;
+	int count = 0;
+	for (int i = 0; i < 16; ++i)
+	{
+		float2 offset = poissonDisk[i] * 4 * lightSize * cmpDepth * smpDx;
+		float depth = 1 - directionalShadowMap.Sample(shadowSample, smpUV + offset);
+		float tmp = depth <= cmpDepth_r;
+		blocker += tmp*depth;
+		count += tmp;
+	}
+	blocker /= count;
+	float rad = (cmpDepth_r - blocker) * lightSize / blocker;
+	return PCFFilter(smpUV, cmpDepth, smpDx, rad);
 }
 
 float NormalLinear(float2 smpUV, float cmpDepth, float smpDx)
@@ -426,10 +445,11 @@ float ShadowLightFract(float4 wPos)
 	// convert to UV
 	float2 ShadowTexC = 0.5 * tempLoc.xy + float2(0.5, 0.5);
 	ShadowTexC.y = 1.0f - ShadowTexC.y;
-	float cmpDepth = -0.002 + tempLoc.z / tempLoc.w;
+	float cmpDepth = -0.0005 + tempLoc.z / tempLoc.w;
 	float smpDx = 1/ shadow_sample_size;
 	
-	return PCFFilter(ShadowTexC, cmpDepth, smpDx, 4);
+	//return PCSS(ShadowTexC, cmpDepth, smpDx, 300);
+	return PCFFilter(ShadowTexC, cmpDepth, smpDx, 8);
 	//return NormalLinear(ShadowTexC, cmpDepth, smpDx);
 }
 

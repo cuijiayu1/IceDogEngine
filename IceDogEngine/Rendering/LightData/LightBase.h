@@ -59,7 +59,7 @@ namespace IceDogRendering
 		bool c_lightTextureDirty = true;
 
 		// the size of the shadow map
-		float c_shadowMapSize = 2048;
+		float c_shadowMapSize = 1024;
 
 		// the projection matrix
 		IceDogRendering::float4x4 c_projectionMatrix;

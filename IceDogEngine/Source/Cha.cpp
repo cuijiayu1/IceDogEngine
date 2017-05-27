@@ -1,6 +1,6 @@
 #include "Cha.h"
 
-Cha::Cha()
+Cha::Cha() :speed(2)
 {
 	SetActorRotation(IceDogUtils::float3(40, 0, 0));
 	SetActorLocation(IceDogUtils::float3(0, 2, -4));
@@ -78,10 +78,10 @@ void Cha::Tick(float deltaTime)
 {
 	if (forward!=0)
 	{
-		MoveForward(forward*deltaTime);
+		MoveForward(speed*forward*deltaTime);
 	}
 	if (right!=0)
 	{
-		MoveRight(right*deltaTime);
+		MoveRight(speed*right*deltaTime);
 	}
 }

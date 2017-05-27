@@ -183,6 +183,9 @@
     <ClCompile Include="Rendering\RenderingManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Loader\FbxMeshLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -417,6 +420,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\FakePhysicBall.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Loader\FbxMeshLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Common\Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

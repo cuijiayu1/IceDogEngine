@@ -401,7 +401,7 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::UpdateAllLights()
 	{
-		for (int i=0;i<r_lightGroups.size();++i)
+		for (size_t i=0;i<r_lightGroups.size();++i)
 		{
 			if (r_lightGroups[i].GetDirectionalLight()[0]->IsDirty())
 			{
@@ -505,7 +505,7 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
-		for (int i=0;i<r_lightGroups.size();++i)
+		for (size_t i=0;i<r_lightGroups.size();++i)
 		{
 			float3 lightOn = float3(0, 0, 0);
 			// update each light

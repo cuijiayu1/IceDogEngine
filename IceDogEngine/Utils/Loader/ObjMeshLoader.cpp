@@ -71,7 +71,7 @@ bool IceDogUtils::ObjMeshLoader::LoadObj2Mesh(std::string url, std::shared_ptr<I
 	// create the indices data buffer
 	unsigned int* indsbf = new unsigned int[faces.size()];
 
-	for (int i = 0; i < faces.size(); ++i)
+	for (size_t i = 0; i < faces.size(); ++i)
 	{
 		int vInd, tInd = 0, nInd = 0;
 		char dummy;			//there is whitespace after the data.

@@ -45,7 +45,7 @@ namespace IceDogRendering
 		{
 			if (msgType==IceDogPlatform::MessageType::systemResize)
 			{
-				Resize(pm0, pm1);
+				Resize(static_cast<int>(pm0), static_cast<int>(pm1));
 			}
 			return 0;
 		}

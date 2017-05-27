@@ -46,9 +46,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	Cha* cha = eg.ConstructActor<Cha>(new Cha());
 	MotherSun* sun = eg.ConstructActor<MotherSun>(new MotherSun());
+	sun->SetDirection(IceDogUtils::float3(1, -1, 1));
 
-	PlaneActor* plan = eg.ConstructActor<PlaneActor>(new PlaneActor());
-	plan->SetActorLocation(IceDogUtils::float3(0, -1.05, 0));
+	for (int i=-1; i<2; ++i)
+	{
+		for (int j=-1; j<2; ++j)
+		{
+			PlaneActor* plan = eg.ConstructActor<PlaneActor>(new PlaneActor());
+			plan->SetActorLocation(IceDogUtils::float3(i * 2, -1.05, -j*2));
+		}
+	}
 	MyActor* actor = eg.ConstructActor<MyActor>(new MyActor());
 	actor->SetActorLocation(IceDogUtils::float3(0, 0, 0));
 
@@ -67,11 +74,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<double> dis(-1, 1);
+	std::uniform_real_distribution<float> dis(-1, 1);
 	for (int i = 0; i < 12; ++i)
 	{
 		FakePhysicBall* fpb = eg.ConstructActor<FakePhysicBall>(new FakePhysicBall());
-		fpb->SetInitSpeed(IceDogUtils::float3(dis(gen), dis(gen), dis(gen)) * 30);
+		IceDogUtils::float3 spd = IceDogUtils::float3(dis(gen), dis(gen), dis(gen)) * 30;
+		std::cout << spd<<std::endl;
+		fpb->SetInitSpeed(spd);
 	}
 
 	eg.Run();

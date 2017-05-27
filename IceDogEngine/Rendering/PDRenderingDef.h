@@ -9,7 +9,7 @@ namespace IceDogRendering
 	using IceDogUtils::float4;
 	using IceDogUtils::Vector;
 
-	const float DEFAULT_NEARZ = 0.01;
+	const float DEFAULT_NEARZ = 0.01f;
 	const float DEFAULT_FARZ = 100;
 
 	enum class LightType
@@ -122,7 +122,7 @@ namespace IceDogRendering
 			float nx, float ny, float nz,
 			float u, float v)
 			: position(px, py, pz), normal(nx, ny, nz),
-			tex0(u, v),color(0.2,0.2,0.2,1) {}
+			tex0(u, v),color(0.2f,0.2f,0.2f,1.0f) {}
 	};
 
 	struct VoxelVertex
@@ -143,7 +143,7 @@ namespace IceDogRendering
 	{
 		DirectionalLight()
 		{
-			direction = float4(1, -1, 1, 0);
+			direction = float4(0.0f, -1.0f, 0.01f, 0.0f);
 			diffuse = float3(1, 1, 1);
 			intensity = 2;
 		}
@@ -157,12 +157,12 @@ namespace IceDogRendering
 	{
 		PointLight()
 		{
-			ambient = float4(0.3f, 0.3f, 0.3f, 1);
-			diffuse = float4(0.7f, 0.7f, 0.7f, 1);
-			specular = float4(0.7f, 0.7f, 0.7f, 1);
-			att = float3(0, 0.4, 0);
-			range = 25;
-			position = float3(0, 0, 0);
+			ambient = float4(0.3f, 0.3f, 0.3f, 1.0f);
+			diffuse = float4(0.7f, 0.7f, 0.7f, 1.0f);
+			specular = float4(0.7f, 0.7f, 0.7f, 1.0f);
+			att = float3(0.0f, 0.4f, 0.0f);
+			range = 25.0f;
+			position = float3(0.0f, 0.0f, 0.0f);
 		}
 
 		float4 ambient;

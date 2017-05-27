@@ -28,10 +28,11 @@ namespace IceDogUtils
 		}
 		float3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
 		float3() :x(0), y(0), z(0) {}
-		float3(const class float4& data);
+		float3(const struct float4& data);
 		explicit float3(const float* data) :x(data[0]), y(data[1]), z(data[2]) {}
 		float3& operator= (const float3& Float3) { x = Float3.x; y = Float3.y; z = Float3.z; return *this; }
 	};
+	inline std::ostream& operator<<(std::ostream& inStream, const float3& fd) { inStream << "(" << fd.x << "," << fd.y << "," << fd.z << ")"; return inStream; }
 	inline float3 operator*(const float3& pos, double dist) { return float3(pos.x*dist, pos.y*dist, pos.z*dist); }
 	inline float3 operator*(double dist, const float3& pos) { return float3(pos.x*dist, pos.y*dist, pos.z*dist); }
 	inline float3 operator+(const float3& f1, const float3& f2) { return float3(f1.x + f2.x, f1.y + f2.y, f1.z + f2.z); }

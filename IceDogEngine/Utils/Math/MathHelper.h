@@ -2,7 +2,7 @@
 #include "../Common/UtilBasic.h"
 #include "../../Rendering/PDRenderingDef.h"
 
-#define Pi 3.141592653
+#define Pi 3.141592653f
 
 namespace IceDogUtils
 {

@@ -87,13 +87,13 @@ int IceDogAlgorithm::PolygoniseArray(std::vector<std::vector<std::vector<float>>
 		}
 	}
 	IceDogRendering::Vertex* vtsOut = new IceDogRendering::Vertex[vts.size()];
-	for (int i = 0; i < vts.size(); ++i)
+	for (size_t i = 0; i < vts.size(); ++i)
 	{
 		vtsOut[i] = vts[i];
 	}
 	rd->SetVertexData(vtsOut, vts.size());
 	unsigned int* idsOut = new unsigned int[vts.size()];
-	for (int i = 0; i < vts.size(); ++i)
+	for (size_t i = 0; i < vts.size(); ++i)
 	{
 		idsOut[i] = i;
 	}
@@ -114,9 +114,9 @@ IceDogUtils::float3 IceDogAlgorithm::VertexInterp(double isolevel, float3 p1, fl
 	if (abs(valp1 - valp2) < 0.00001)
 		return(p1);
 	mu = (isolevel - valp1) / (valp2 - valp1);
-	p.x = p1.x + mu * (p2.x - p1.x);
-	p.y = p1.y + mu * (p2.y - p1.y);
-	p.z = p1.z + mu * (p2.z - p1.z);
+	p.x = p1.x + static_cast<float>(mu) * (p2.x - p1.x);
+	p.y = p1.y + static_cast<float>(mu) * (p2.y - p1.y);
+	p.z = p1.z + static_cast<float>(mu) * (p2.z - p1.z);
 
 	return(p);
 }
