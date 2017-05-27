@@ -368,6 +368,50 @@ float3 Diffuse(float3 DiffuseColor, float Roughness, float NoV, float NoL, float
 //		Diffuse brdf end			//
 //////////////////////////////////////
 
+const float2 poissonDisk[16] = {
+	float2(-0.94201624, -0.39906216),
+	float2(0.94558609, -0.76890725),
+	float2(-0.094184101, -0.92938870),
+	float2(0.34495938, 0.29387760),
+	float2(-0.91588581, 0.45771432),
+	float2(-0.81544232, -0.87912464),
+	float2(-0.38277543, 0.27676845),
+	float2(0.97484398, 0.75648379),
+	float2(0.44323325, -0.97511554),
+	float2(0.53742981, -0.47373420),
+	float2(-0.26496911, -0.41893023),
+	float2(0.79197514, 0.19090188),
+	float2(-0.24188840, 0.99706507),
+	float2(-0.81409955, 0.91437590),
+	float2(0.19984126, 0.78641367),
+	float2(0.14383161, -0.14100790)
+};
+
+float PCFFilter(float2 smpUV, float cmpDepth, float smpDx, float filterRadius)
+{
+	float sum = 0.0;
+	for (int i = 0; i < 16; ++i)
+	{
+		float2 offset = poissonDisk[i] * filterRadius*smpDx;
+		float depth = directionalShadowMap.Sample(shadowSample, smpUV + offset);
+		sum += depth >= cmpDepth;
+	}
+	return sum / 16.0;
+}
+
+float NormalLinear(float2 smpUV, float cmpDepth, float smpDx)
+{
+	float r_0 = directionalShadowMap.Sample(shadowSample, smpUV).x >= cmpDepth;
+	float r_1 = directionalShadowMap.Sample(shadowSample, smpUV + float2(smpDx, 0)).x >= cmpDepth;
+	float r_2 = directionalShadowMap.Sample(shadowSample, smpUV + float2(0, smpDx)).x >= cmpDepth;
+	float r_3 = directionalShadowMap.Sample(shadowSample, smpUV + float2(smpDx, smpDx)).x >= cmpDepth;
+
+	float2 texelPos = shadow_sample_size*smpUV;
+	float2 t = frac(texelPos);
+
+	return lerp(lerp(r_0, r_1, t.x), lerp(r_2, r_3, t.x), t.y);
+}
+
 float ShadowLightFract(float4 wPos)
 {
 	float fract = 0;
@@ -382,18 +426,11 @@ float ShadowLightFract(float4 wPos)
 	// convert to UV
 	float2 ShadowTexC = 0.5 * tempLoc.xy + float2(0.5, 0.5);
 	ShadowTexC.y = 1.0f - ShadowTexC.y;
-	float cmpDepth = -0.0002 + tempLoc.z / tempLoc.w;
+	float cmpDepth = -0.002 + tempLoc.z / tempLoc.w;
 	float smpDx = 1/ shadow_sample_size;
-
-	float r_0 = directionalShadowMap.Sample(shadowSample, ShadowTexC).x >= cmpDepth;
-	float r_1 = directionalShadowMap.Sample(shadowSample, ShadowTexC + float2(smpDx, 0)).x >= cmpDepth;
-	float r_2 = directionalShadowMap.Sample(shadowSample, ShadowTexC + float2(0, smpDx)).x >= cmpDepth;
-	float r_3 = directionalShadowMap.Sample(shadowSample, ShadowTexC + float2(smpDx, smpDx)).x >= cmpDepth;
-
-	float2 texelPos = shadow_sample_size*ShadowTexC;
-	float2 t = frac(texelPos);
-
-	return lerp(lerp(r_0,r_1,t.x),lerp(r_2, r_3, t.x),t.y);
+	
+	return PCFFilter(ShadowTexC, cmpDepth, smpDx, 4);
+	//return NormalLinear(ShadowTexC, cmpDepth, smpDx);
 }
 
 LightPSOut LightPS(LightGSOut vout) : SV_Target{
