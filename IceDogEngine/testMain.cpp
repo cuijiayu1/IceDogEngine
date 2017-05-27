@@ -79,7 +79,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	{
 		FakePhysicBall* fpb = eg.ConstructActor<FakePhysicBall>(new FakePhysicBall());
 		IceDogUtils::float3 spd = IceDogUtils::float3(dis(gen), dis(gen), dis(gen)) * 30;
-		std::cout << spd<<std::endl;
 		fpb->SetInitSpeed(spd);
 	}
 

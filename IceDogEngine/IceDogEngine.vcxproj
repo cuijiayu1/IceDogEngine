@@ -266,6 +266,7 @@
   <ItemGroup>
     <Library Include="DirectXTex.lib" />
     <Library Include="DirectXTK.lib" />
+    <Library Include="DirectXTKd.lib" />
     <Library Include="Effects11.lib" />
     <Library Include="Effects11d.lib" />
   </ItemGroup>

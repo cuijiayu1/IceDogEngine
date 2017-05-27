@@ -166,7 +166,7 @@ ShadowMapVSOut ShadowMapVS(LightVSIn vin)
 
 ShadowMapPSOut ShadowMapPS(ShadowMapVSOut pin) : SV_Target{
 	ShadowMapPSOut result;
-	result.depth =pin.depth.x / pin.depth.y;
+	result.depth = pin.depth.x / pin.depth.y;
 	return result;
 }
 
@@ -394,7 +394,7 @@ float PCFFilter(float2 smpUV, float cmpDepth, float smpDx, float filterRadius)
 	{
 		float2 offset = poissonDisk[i] * filterRadius * cmpDepth *smpDx;
 		float depth = directionalShadowMap.Sample(shadowSample, smpUV + offset);
-		sum += depth >= cmpDepth;
+		sum += depth > cmpDepth;
 	}
 	return sum / 16.0;
 }
@@ -402,20 +402,30 @@ float PCFFilter(float2 smpUV, float cmpDepth, float smpDx, float filterRadius)
 float PCSS(float2 smpUV, float cmpDepth, float smpDx, float lightSize)
 {
 	// block search
-	float cmpDepth_r = 1 - cmpDepth;
 	float blocker = 0.0;
 	int count = 0;
+	float viewLength = (zNearFar.y - zNearFar.x);
 	for (int i = 0; i < 16; ++i)
 	{
-		float2 offset = poissonDisk[i] * 4 * lightSize * cmpDepth * smpDx;
-		float depth = 1 - directionalShadowMap.Sample(shadowSample, smpUV + offset);
-		float tmp = depth <= cmpDepth_r;
-		blocker += tmp*depth;
-		count += tmp;
+		//poissonDisk[i] * smpDx to correct uv step
+		//cmpDepth is [0-1], multiply viewLength to get step count
+		//lightSize is [0-1] to control the search width
+		float2 offset = poissonDisk[i] * smpDx * cmpDepth * viewLength * lightSize;
+		float depth = directionalShadowMap.Sample(shadowSample, smpUV + offset);
+		if (depth < cmpDepth)
+		{
+			blocker += depth;
+			count++;
+		}
 	}
+	if (count == 0)
+		return 1;
 	blocker /= count;
-	float rad = (cmpDepth_r - blocker) * lightSize / blocker;
-	return PCFFilter(smpUV, cmpDepth, smpDx, rad);
+	//(cmpDepth - blocker) / blocker is (0-1), multiply viewLength to get correct width
+	//again lightSize is used to control the rad.
+	float rad = (cmpDepth - blocker) * viewLength * lightSize / blocker;
+	
+	return PCFFilter(smpUV, cmpDepth, smpDx, 4*(rad + 1));
 }
 
 float NormalLinear(float2 smpUV, float cmpDepth, float smpDx)
@@ -437,7 +447,7 @@ float ShadowLightFract(float4 wPos)
 	float4 tempLoc = mul(mul(wPos, dl_view), dl_proj);
 	// convert to NDC
 	tempLoc = tempLoc / tempLoc.w;
-	if (tempLoc.x < -1 || tempLoc.x>1 || tempLoc.y < -1 || tempLoc.y>1||tempLoc.z>1||tempLoc.z<0)
+	if (abs(tempLoc.x)>1 || abs(tempLoc.y) >1|| tempLoc.z>1 || tempLoc.z<0)
 	{
 		fract = 1;
 		return fract;
@@ -445,11 +455,11 @@ float ShadowLightFract(float4 wPos)
 	// convert to UV
 	float2 ShadowTexC = 0.5 * tempLoc.xy + float2(0.5, 0.5);
 	ShadowTexC.y = 1.0f - ShadowTexC.y;
-	float cmpDepth = -0.0005 + tempLoc.z / tempLoc.w;
+	float cmpDepth = -0.0005 + tempLoc.z;
 	float smpDx = 1/ shadow_sample_size;
 	
-	//return PCSS(ShadowTexC, cmpDepth, smpDx, 300);
-	return PCFFilter(ShadowTexC, cmpDepth, smpDx, 8);
+	return PCSS(ShadowTexC, cmpDepth, smpDx, 0.4);
+	//return PCFFilter(ShadowTexC, cmpDepth, smpDx, 8);
 	//return NormalLinear(ShadowTexC, cmpDepth, smpDx);
 }
 

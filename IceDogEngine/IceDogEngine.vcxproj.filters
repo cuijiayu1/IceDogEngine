@@ -439,6 +439,7 @@
     <Library Include="DirectXTK.lib" />
     <Library Include="Effects11.lib" />
     <Library Include="Effects11d.lib" />
+    <Library Include="DirectXTKd.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\Common\DirectXTex.inl">
