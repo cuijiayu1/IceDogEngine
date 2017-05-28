@@ -16,7 +16,7 @@ LoadTestAct::LoadTestAct()
 
 	SetActorRotation(IceDogUtils::float3(0,90, 0));
 	SetActorScale(IceDogUtils::float3(0.005, 0.005, 0.005));
-	SetActorLocation(IceDogUtils::float3(-1, -1, -1.5));
+	SetActorLocation(IceDogUtils::float3(-1, -1.05, -1.5));
 	SetEnable();
 }
 

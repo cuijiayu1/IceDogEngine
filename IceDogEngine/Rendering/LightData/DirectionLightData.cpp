@@ -1,6 +1,6 @@
 #include "DirectionLightData.h"
 
-IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(10),c_shadowWidth(10),c_shadowDistance(20)
+IceDogRendering::DirectionLightData::DirectionLightData():c_shadowHeight(10),c_shadowWidth(10),c_shadowDistance(10)
 {
 	r_lightDef = std::make_shared<DirectionalLight>();
 	r_viewport.c_height = c_shadowMapSize;

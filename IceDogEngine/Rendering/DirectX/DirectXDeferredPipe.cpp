@@ -584,6 +584,8 @@ namespace IceDogRendering
 		r_lightFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((light->GetViewMatrix()).m);
 		r_lightFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
 
+		c_PDRR.r_deviceContext->ClearRenderTargetView(light->GetShadowMapRTV().GetRenderTargetView(), IceDogRendering::Color::White);
+
 		// get the pass first
 		auto tech = r_lightFX->GetTechniqueByName("Lighting");
 		auto pass_mesh = tech->GetPassByName("ShadowStage");

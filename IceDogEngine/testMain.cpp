@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		}
 	}
 	MyActor* actor = eg.ConstructActor<MyActor>(new MyActor());
-	actor->SetActorLocation(IceDogUtils::float3(0, 0, 0));
+	actor->SetActorLocation(IceDogUtils::float3(0, -0.2, 0));
 
 	for (int i=0;i<2;++i)
 	{
@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 			for (int k=0;k<2;++k)
 			{
 				Sphere* sps = eg.ConstructActor<Sphere>(new Sphere());
-				sps->SetActorLocation(IceDogUtils::float3(i, j, k));
+				sps->SetActorLocation(IceDogUtils::float3(i, j - 0.2, k));
 			}
 		}
 	}
