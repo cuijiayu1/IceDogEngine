@@ -20,17 +20,12 @@ namespace IceDogCore
 
 	void MessageProc::CloseProc()
 	{
-		IceDogEngine::Engine::GetEngine()->GetEngineCore().UnRegistMessageProc(this);
+		SetPriority(MessagePriority::EXIT_N1);
 	}
 
 	void MessageProc::Close()
 	{
-
-	}
-
-	void MessageProc::Init()
-	{
-		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(this);
+		SetPriority(MessagePriority::EXIT_N1);
 	}
 
 	void MessageProc::SetPriority(const MessagePriority& priority)
@@ -52,6 +47,20 @@ namespace IceDogCore
 	{
 		if (c_procFunc) { return c_procFunc(msgType, pm0, pm1); }
 		return 0;
+	}
+
+	std::shared_ptr<IceDogCore::MessageProc> MessageProc::Create(MessagePriority pri)
+	{
+		std::shared_ptr<IceDogCore::MessageProc> ret = std::make_shared<IceDogCore::MessageProc>(pri);
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(ret);
+		return ret;
+	}
+
+	std::shared_ptr<IceDogCore::MessageProc> MessageProc::Create()
+	{
+		std::shared_ptr<IceDogCore::MessageProc> ret = std::make_shared<IceDogCore::MessageProc>();
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(ret);
+		return ret;
 	}
 
 }

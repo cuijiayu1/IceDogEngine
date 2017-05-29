@@ -30,6 +30,7 @@ namespace IceDogGameplay
 		/* register the actor */
 		void RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
 		void UnRegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
+		void UnRegistActorByAddress(IceDogGameplay::Actor* ac);
 
 		/* register the light data */
 		void RegistLightData(std::shared_ptr<class IceDogRendering::LightBase> ld);

@@ -14,11 +14,11 @@ namespace IceDogRendering
 	class RenderingPipe
 	{
 	public:
-		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS),r_messageProc(IceDogCore::MessagePriority::SYSTEM_3)
+		RenderingPipe(std::ostream& errOS) :s_errorlogOutStream(errOS)
 		{
+			r_messageProc = IceDogCore::MessageProc::Create(IceDogCore::MessagePriority::SYSTEM_3);
 			//bind the event processor
-			r_messageProc.BindProcessor(std::bind(&RenderingPipe::EventProcessor, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3));
-			r_messageProc.Init();
+			r_messageProc->BindProcessor(std::bind(&RenderingPipe::EventProcessor, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3));
 		}
 		/* call close to release the resource */
 		virtual void Close();
@@ -79,6 +79,6 @@ namespace IceDogRendering
 		std::ostream& s_errorlogOutStream;
 	private:
 		// default event processor
-		IceDogCore::MessageProc r_messageProc;
+		std::shared_ptr<IceDogCore::MessageProc> r_messageProc;
 	};
 }

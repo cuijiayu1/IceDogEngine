@@ -57,6 +57,9 @@ namespace IceDogGameplay
 		/* set the actor to disable, so the actor will have nearly no runtime cost */
 		void SetDisable();
 
+		/* call to destroy this actor, the actor and the components he has will be fully remove from the memory */
+		void Destroy();
+
 		/*
 			after component creation, the component should regist to the actor so that the 
 			actor could have the authority to control his components. But this function should
@@ -67,7 +70,7 @@ namespace IceDogGameplay
 
 	protected:
 		/* the heart of this actor */
-		virtual void Tick(float deltaTime);
+		virtual void Tick(float deltaTime) {};
 
 
 	private:

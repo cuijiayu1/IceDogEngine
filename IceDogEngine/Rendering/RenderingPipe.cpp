@@ -50,5 +50,5 @@ void IceDogRendering::RenderingPipe::Close()
 	r_lightGroups.clear();
 	r_pipeViewList.clear();
 	r_cubeMapSource.Close();
-	r_messageProc.Close();
+	r_messageProc->Close();
 }

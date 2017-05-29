@@ -10,7 +10,7 @@ namespace IceDogGameplay
 		IceDogEngine::Engine::GetEngine()->RegistMainPipeView(r_pipeView);
 
 		// bind the message process function
-		r_msgProc.BindProcessor(std::bind(&CameraComponent::ProcessMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		r_msgProc->BindProcessor(std::bind(&CameraComponent::ProcessMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
 
 	CameraComponent::~CameraComponent()

@@ -28,7 +28,7 @@ namespace IceDogGameplay
 		Actor* c_owner;
 
 		// the event processor which use this to receive and process event
-		IceDogCore::MessageProc r_msgProc;
+		std::shared_ptr<IceDogCore::MessageProc> r_msgProc;
 		
 	};
 }

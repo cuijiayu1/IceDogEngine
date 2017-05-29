@@ -42,9 +42,8 @@ namespace IceDogEngine
 		void RegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld);
 		void UnRegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld);
 
-		/* register/unregister the actor */
-		void RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
-		void UnRegistActor(std::shared_ptr<IceDogGameplay::Actor> ac);
+		/* remove the actor */
+		void RemoveActor(IceDogGameplay::Actor* ac);
 
 		/* register the main pipe view */
 		void RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv);
@@ -65,7 +64,7 @@ namespace IceDogEngine
 		template<class T> T* ConstructActor(IceDogGameplay::Actor* actor)
 		{
 			std::shared_ptr<IceDogGameplay::Actor> act_ptr(actor);
-			RegistActor(act_ptr);
+			r_defaultLevel.RegistActor(act_ptr);
 			return (T*)(act_ptr.get());
 		}
 
@@ -89,7 +88,7 @@ namespace IceDogEngine
 		IceDogLogic::LogicAdapter r_logicAdapter;
 
 		// the message processor
-		IceDogCore::MessageProc r_msgProc;
+		std::shared_ptr<IceDogCore::MessageProc> r_msgProc;
 
 		// the log output port
 		std::ostream& s_errorlogOutStream;

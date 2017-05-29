@@ -21,12 +21,13 @@ namespace IceDogGameplay
 
 	void EventComponent::SetEnable()
 	{
-		r_messageProcessor->Init();
+		IceDogEngine::Engine::GetEngine()->GetEngineCore().RegistMessageProc(r_messageProcessor);
 	}
 
 	void EventComponent::SetDisable()
 	{
-		IceDogEngine::Engine::GetEngine()->GetEngineCore().UnRegistMessageProc(r_messageProcessor.get());
+		// if want to exit just set the flag to exit
+		r_messageProcessor->CloseProc();
 	}
 
 	// 1 means handled

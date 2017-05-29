@@ -12,6 +12,9 @@ namespace IceDogCore
 		// for user
 		LOGIC_2 = 2,
 		INPUT_1 = 1,
-		USER_0 = 0
+		USER_0 = 0,
+
+		// for functional
+		EXIT_N1 = -1
 	};
 }

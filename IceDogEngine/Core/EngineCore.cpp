@@ -1,4 +1,4 @@
-#include "EngineCore.h"
+﻿#include "EngineCore.h"
 #include "../Engine/Engine.h"
 
 using namespace IceDogCore;
@@ -15,23 +15,31 @@ void EngineCore::Init()
 
 void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 {
+	
 	if (msg.c_messageType == IceDogPlatform::MessageType::closeEngine)
 	{
 		IceDogEngine::Engine::GetEngine()->Close();
 		return;
 	}
 
-
+	for (std::vector<std::shared_ptr<IceDogCore::MessageProc>>::iterator it = r_messageProcs.begin();it!=r_messageProcs.end();)
+	{
+		if ((*it)->GetPriority() == MessagePriority::EXIT_N1)
+			it = r_messageProcs.erase(it);
+		else
+			++it;
+	}
+	
 	// if dirty sort the queue
 	if (c_messageChainDirty)
 	{
-		std::sort(r_messageProcs.begin(), r_messageProcs.end(), [](MessageProc* m0, MessageProc* m1)->bool
+		std::sort(r_messageProcs.begin(), r_messageProcs.end(), [](std::shared_ptr<IceDogCore::MessageProc> m0, std::shared_ptr<IceDogCore::MessageProc> m1)->bool
 		{
 			return m0->GetPriority() > m1->GetPriority();
 		});
 		MarkMessageChainClean();
 	}
-
+	
 	// for priority and authority separation
 	using IceDogPlatform::MessageAuthority;
 	if (msg.c_messageAuthority==MessageAuthority::SYSTEM)
@@ -49,12 +57,13 @@ void EngineCore::ProcessMessageChain(IceDogPlatform::Message msg)
 		for (auto& i : r_messageProcs)
 		{
 			// if someone processed success just exit
-			if (i->Process(msg.c_messageType, msg.c_param0, msg.c_param1)) { return; }
+			if (i->GetPriority()!= MessagePriority::EXIT_N1&&i->Process(msg.c_messageType, msg.c_param0, msg.c_param1)) { return; }
 		}
 	}
 
 	// handle the message
 	//std::cout << (int)msg.c_messageType << " " << msg.c_param0 << " " << msg.c_param1 << std::endl;
+	
 }
 
 void EngineCore::RegistPlatformTick(std::function<void()> pfTick)
@@ -90,15 +99,14 @@ void IceDogCore::EngineCore::RegistLogicTick(std::function<void(float)> logicTic
 	c_logicTickPort = logicTick;
 }
 
-void IceDogCore::EngineCore::RegistMessageProc(MessageProc* msprc)
+void IceDogCore::EngineCore::RegistMessageProc(std::shared_ptr<MessageProc> msprc)
 {
+	// if already registered just return
+	for (auto i:r_messageProcs)
+		if (i == msprc)
+			return;
 	r_messageProcs.push_back(msprc);
 	MarkMessageChainDirty();
-}
-
-void IceDogCore::EngineCore::UnRegistMessageProc(MessageProc* msprc)
-{
-	r_messageProcs.erase(std::find(r_messageProcs.begin(), r_messageProcs.end(), msprc));
 }
 
 void IceDogCore::EngineCore::MarkMessageChainDirty()

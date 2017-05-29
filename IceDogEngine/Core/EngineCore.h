@@ -31,9 +31,7 @@ namespace IceDogCore
 		/* process the message in a message chain chain, let the message flow in a chain that any registered processor can have ability to receive it*/
 		void ProcessMessageChain(IceDogPlatform::Message msg);
 		/* register the message processor */
-		void RegistMessageProc(MessageProc* msprc);
-		/* unregister the message processor */
-		void UnRegistMessageProc(MessageProc* msprc);
+		void RegistMessageProc(std::shared_ptr<MessageProc> msprc);
 		/* mark message line dirty */
 		void MarkMessageChainDirty();
 		/* board cast fps message */
@@ -55,7 +53,7 @@ namespace IceDogCore
 		// is message line dirty
 		bool c_messageChainDirty=true;
 		// the message process units
-		std::vector<MessageProc*> r_messageProcs;
+		std::vector<std::shared_ptr<MessageProc>> r_messageProcs;
 		// the platform tick port, call this to call platform tick
 		std::function<void()> c_platformTickPort;
 		// the rendering tick port,call this to call the rendering tick

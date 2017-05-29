@@ -3,7 +3,7 @@
 
 namespace IceDogGameplay
 {
-	Component::Component(Actor* owner):r_msgProc(IceDogCore::MessagePriority::SYSTEM_3)
+	Component::Component(Actor* owner)
 	{
 		c_owner = owner;
 		if (c_owner != nullptr)
@@ -11,7 +11,7 @@ namespace IceDogGameplay
 			c_owner->RegistComponentToActor(std::shared_ptr<Component>(this));
 		}
 		c_componentEnable = true;
-		r_msgProc.Init();
+		r_msgProc = IceDogCore::MessageProc::Create(IceDogCore::MessagePriority::SYSTEM_3);
 	}
 
 	Component::~Component()
@@ -21,7 +21,7 @@ namespace IceDogGameplay
 
 	void Component::Close()
 	{
-		r_msgProc.Close();
+		r_msgProc->Close();
 		std::cout << "Component Closed" << std::endl;
 	}
 

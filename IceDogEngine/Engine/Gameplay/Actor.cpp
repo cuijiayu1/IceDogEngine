@@ -13,11 +13,6 @@ Actor::Actor()
 	r_defaultActorComponent->RegistOwningActorTick(std::bind(&IceDogGameplay::Actor::LayerTick, this, std::placeholders::_1));
 }
 
-void IceDogGameplay::Actor::Tick(float deltaTime)
-{
-	
-}
-
 void IceDogGameplay::Actor::SetEnable()
 {
 	r_defaultActorComponent->SetEnable();
@@ -38,6 +33,13 @@ void IceDogGameplay::Actor::SetDisable()
 	{
 		i->SetDisable();
 	}
+}
+
+void IceDogGameplay::Actor::Destroy()
+{
+	SetDisable();
+	Close();
+	IceDogEngine::Engine::GetEngine()->RemoveActor(this);
 }
 
 void IceDogGameplay::Actor::RegistComponentToActor(std::shared_ptr<Component> comp)

@@ -53,6 +53,18 @@ void IceDogGameplay::Level::UnRegistActor(std::shared_ptr<IceDogGameplay::Actor>
 	r_actors.erase(std::find(r_actors.begin(), r_actors.end(), ac));
 }
 
+void IceDogGameplay::Level::UnRegistActorByAddress(IceDogGameplay::Actor* ac)
+{
+	for (std::vector<std::shared_ptr<IceDogGameplay::Actor>>::iterator iter=r_actors.begin();iter!=r_actors.end();++iter)
+	{
+		if ((*iter).get() == ac)
+		{
+			r_actors.erase(iter);
+			break;
+		}
+	}
+}
+
 void IceDogGameplay::Level::RegistLightData(std::shared_ptr<class IceDogRendering::LightBase> ld)
 {
 	r_lightDatas.push_back(ld);

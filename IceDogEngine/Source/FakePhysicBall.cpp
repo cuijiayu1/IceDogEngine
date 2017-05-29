@@ -43,7 +43,9 @@ int FakePhysicBall::KeyDown(int id)
 	switch (id)
 	{
 	case 18:
-		vc->SetStaticMesh(tp);
+		//vc->SetStaticMesh(tp);
+		//std::cout << "Down" << std::endl;
+		Destroy();
 		break;
 	case 16:
 		vc->SetStaticMesh(rd);

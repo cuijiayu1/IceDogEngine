@@ -20,9 +20,6 @@ namespace IceDogCore
 		/* call close to release the resource */
 		void Close();
 
-		/* register the proc */
-		void Init();
-
 		/* set the priority of this processor */
 		void SetPriority(const MessagePriority& priority);
 
@@ -34,6 +31,10 @@ namespace IceDogCore
 
 		/* process the message */
 		virtual int Process(const IceDogPlatform::MessageType& msgType, const float& pm0, const float& pm1);
+
+		/* the static init function */
+		static std::shared_ptr<MessageProc> Create(MessagePriority);
+		static std::shared_ptr<MessageProc> Create();
 
 	private:
 		// the process function bind to this process

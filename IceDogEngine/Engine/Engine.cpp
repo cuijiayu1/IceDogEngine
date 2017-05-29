@@ -9,8 +9,7 @@ Engine::Engine(std::ostream& errorLog, IceDogPlatform::PlatformWindow plfWindow)
 	r_enginePlatform(plfWindow,errorLog),
 	r_renderAdapter(errorLog),
 	r_logicAdapter(errorLog),
-	r_aspectRatio(static_cast<float>(plfWindow.width)/static_cast<float>(plfWindow.height)),
-	r_msgProc(IceDogCore::MessagePriority::EM_5)
+	r_aspectRatio(static_cast<float>(plfWindow.width)/static_cast<float>(plfWindow.height))
 {
 	r_egPtr = this;
 	// the platform window will be further construct, we will not hold it.
@@ -32,8 +31,8 @@ void Engine::Init()
 	r_logicAdapter.Init();
 	r_engineCore.RegistLogicTick(std::bind(&IceDogLogic::LogicAdapter::TickLogic, &r_logicAdapter, std::placeholders::_1));
 	// init the message processor
-	r_msgProc.BindProcessor(std::bind(&Engine::EventProcessor, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	r_msgProc.Init();
+	r_msgProc = IceDogCore::MessageProc::Create(IceDogCore::MessagePriority::EM_5);
+	r_msgProc->BindProcessor(std::bind(&Engine::EventProcessor, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	// init the level
 	r_defaultLevel.Init();
 }
@@ -81,15 +80,9 @@ void Engine::UnRegistLogicData(std::shared_ptr<IceDogLogic::LogicData> ld)
 	r_logicAdapter.UnRegistLogicData(ld);
 }
 
-
-void Engine::RegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
+void IceDogEngine::Engine::RemoveActor(IceDogGameplay::Actor* ac)
 {
-	r_defaultLevel.RegistActor(ac);
-}
-
-void IceDogEngine::Engine::UnRegistActor(std::shared_ptr<IceDogGameplay::Actor> ac)
-{
-	r_defaultLevel.UnRegistActor(ac);
+	r_defaultLevel.UnRegistActorByAddress(ac);
 }
 
 void IceDogEngine::Engine::RegistMainPipeView(std::shared_ptr<IceDogRendering::PipeView> pv)
@@ -176,7 +169,7 @@ void IceDogEngine::Engine::Close()
 	AmazingText(std::cout, "Close logic adapter");
 	r_logicAdapter.Close();
 	AmazingText(std::cout, "Close message chain");
-	r_msgProc.Close();
+	r_msgProc->Close();
 	AmazingText(std::cout, "Close platform");
 	r_enginePlatform.Close();
 	AmazingText(std::cout, "Engine shutdown");
