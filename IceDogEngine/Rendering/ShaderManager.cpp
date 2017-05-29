@@ -1,6 +1,7 @@
 #include "ShaderManager.h"
 #include "ShaderInstance.h"
 #include "DirectX/DirectXShaderInstance.h"
+#include "../Engine/Engine.h"
 
 using namespace IceDogRendering;
 
@@ -12,10 +13,16 @@ void ShaderManager::Init(PlatformDependenceRenderResource pdrr)
 
 	r_pdrr = pdrr;
 
-	auto engine_shader = doc.first_node()->first_node("engine_shader");
+	auto rootNode = doc.first_node();
+#ifdef __DIRECTX__
+	rootNode = rootNode->first_node("DirectX");
+#endif
+	auto engine_shader = rootNode->first_node("engine_shader");
+
+	IceDogEngine::Engine::GetEngine()->AmazingText(std::cout, "Begin Compile Shader");
 	while (engine_shader->first_node("shader"))
 	{
-		CreateShaderFromNode(engine_shader->first_node("shader"), doc.first_node()->first_node("compiler_x86")->value(), doc.first_node()->first_node("compiler_x64")->value());
+		CreateShaderFromNode(engine_shader->first_node("shader"), rootNode->first_node("compiler_x86")->value(), rootNode->first_node("compiler_x64")->value());
 		engine_shader->remove_first_node();
 	}
 }

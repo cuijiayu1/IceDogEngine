@@ -468,7 +468,4 @@
     </None>
     <None Include="Config\ShaderManager.cfg" />
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\testVS.hlsl" />
-  </ItemGroup>
 </Project>
