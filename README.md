@@ -8,7 +8,7 @@
 
 ## Developing
 
-![alt tag](current.png)
+![alt tag](Readme/current.png)
 
 # What`s new?
 
@@ -17,13 +17,13 @@
 
 ## Add PCSS Like Shadow
 This is not the origin pcss shadow of NVIDIA.
-![alt tag](pcssLike.png)
+![alt tag](Readme/pcssLike.png)
 
 ## Add PCF Shadow
 
 ### Old
-![alt tag](old.PNG)
+![alt tag](Readme/old.PNG)
 
 ### Now
-![alt tag](now.PNG)
+![alt tag](Readme/now.PNG)
 
