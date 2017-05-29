@@ -11,15 +11,19 @@ using IceDogUtils::float4;
 FakePhysicBall::FakePhysicBall()
 {
 	// test code
-	IceDogGameplay::StaticMeshComponent* vc = new IceDogGameplay::StaticMeshComponent(this);
-	std::shared_ptr<IceDogRendering::MeshData> rd = std::make_shared<IceDogRendering::MeshData>();
+	vc = new IceDogGameplay::StaticMeshComponent(this);
+	rd = std::make_shared<IceDogRendering::MeshData>();
+	tp = std::make_shared<IceDogRendering::MeshData>();
 	IceDogResources::IceDogGeometry::GeometryGenerator::CreateSphere(0.05, 20, 20, rd);
-	//IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 2, false, rd);
+	IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(10, 0.2, false, tp);
 
 	_currentSpeed = float3(0, 0, 0);
 
 	vc->SetStaticMesh(rd);
 	SetActorScale(IceDogUtils::float3(1, 1, 1));
+
+	r_defaultEventComponent->BindOnKeyDown(std::bind(&FakePhysicBall::KeyDown, this, std::placeholders::_1));
+
 	SetEnable();
 }
 
@@ -32,6 +36,20 @@ FakePhysicBall::~FakePhysicBall()
 void FakePhysicBall::SetInitSpeed(IceDogUtils::float3 spd)
 {
 	_currentSpeed = spd;
+}
+
+int FakePhysicBall::KeyDown(int id)
+{
+	switch (id)
+	{
+	case 18:
+		vc->SetStaticMesh(tp);
+		break;
+	case 16:
+		vc->SetStaticMesh(rd);
+		break;
+	}
+	return 0;
 }
 
 void FakePhysicBall::PhyCheck(float deltaTime)

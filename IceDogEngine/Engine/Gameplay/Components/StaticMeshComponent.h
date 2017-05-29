@@ -27,6 +27,9 @@ namespace IceDogGameplay
 
 	private:
 		std::shared_ptr<IceDogRendering::MeshData> r_renderData;
+
+		// whether the renderdata has registered
+		bool c_renderDataRegistered;
 	};
 }
 

@@ -243,6 +243,7 @@ void IceDogResources::IceDogGeometry::GeometryGenerator::CreateTeapot(int tess, 
 	}
 	rd->SetIndexData(ixs, ic.size() / 3);
 	rd->SetVertexData(vxs, vc.size());
+	rd->MarkDataStateDirty();
 }
 
 
@@ -312,6 +313,7 @@ void GeometryGenerator::CreateGeosphere(float radius, unsigned int numSubdivisio
 		rd->GetVertexData().get()[i].tex0.x = theta / XM_2PI;
 		rd->GetVertexData().get()[i].tex0.y = phi / XM_PI;
 	}
+	rd->MarkDataStateDirty();
 }
 
 void GeometryGenerator::CreateHill(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::MeshData> rd)
@@ -342,6 +344,7 @@ void GeometryGenerator::CreateHill(float width, float depth, unsigned int m, uns
 		VertexData.get()[i].position = p;
 		VertexData.get()[i].normal = GetNormal(p.x, p.z);
 	}
+	rd->MarkDataStateDirty();
 }
 
 void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, unsigned int n, std::shared_ptr<IceDogRendering::MeshData> rd)
@@ -405,6 +408,7 @@ void GeometryGenerator::CreateGrid(float width, float depth, unsigned int m, uns
 		}
 	}
 	rd->SetIndexData(Indices, faceCount);
+	rd->MarkDataStateDirty();
 }
 
 void GeometryGenerator::CreateBox(float width, float height, float depth, std::shared_ptr<IceDogRendering::MeshData> rd)
@@ -488,4 +492,5 @@ void GeometryGenerator::CreateBox(float width, float height, float depth, std::s
 	i[33] = 20; i[34] = 22; i[35] = 23;
 
 	rd->SetIndexData(i, 12);
+	rd->MarkDataStateDirty();
 }
