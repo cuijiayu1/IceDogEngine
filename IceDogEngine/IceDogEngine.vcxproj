@@ -115,8 +115,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Rendering\DirectX\DirectXShaderInstance.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\DirectionalLightComponent.cpp" />
     <ClCompile Include="Engine\Gameplay\Components\LightComponent.cpp" />
+    <ClCompile Include="Rendering\ShaderManager.cpp" />
+    <ClCompile Include="Rendering\ShaderInstance.cpp" />
     <ClCompile Include="Utils\Loader\FbxMeshLoader.cpp" />
     <ClCompile Include="Rendering\RenderingManager.cpp" />
     <ClCompile Include="Source\FakePhysicBall.cpp" />
@@ -174,8 +177,11 @@
     <ClCompile Include="Engine\Gameplay\Components\VoxelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Rendering\DirectX\DirectXShaderInstance.h" />
     <ClInclude Include="Engine\Gameplay\Components\DirectionalLightComponent.h" />
     <ClInclude Include="Engine\Gameplay\Components\LightComponent.h" />
+    <ClInclude Include="Rendering\ShaderManager.h" />
+    <ClInclude Include="Rendering\ShaderInstance.h" />
     <ClInclude Include="Utils\Common\Model.h" />
     <ClInclude Include="Utils\Loader\FbxMeshLoader.h" />
     <ClInclude Include="Source\FakePhysicBall.h" />
@@ -271,6 +277,7 @@
     <Library Include="Effects11d.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config\ShaderManager.cfg" />
     <None Include="Resources\Geometry\TeapotData.inc" />
     <None Include="Utils\Common\DirectXTex.inl" />
   </ItemGroup>
@@ -289,6 +296,12 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for release: %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\testVS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

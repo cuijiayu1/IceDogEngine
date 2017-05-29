@@ -71,7 +71,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		}
 	}
 	LoadTestAct Lt;
-
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dis(-1, 1);

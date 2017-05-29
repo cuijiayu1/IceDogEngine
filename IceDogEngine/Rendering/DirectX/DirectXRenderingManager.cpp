@@ -159,6 +159,10 @@ bool DirectXRenderingManager::InitRenderManager(IceDogPlatform::PlatformWindow p
 		s_errorlogOutStream << "FatalError: Current hardware support feature level is:" << featureLevel << " no supported" << std::flush;
 		return false;
 	}
+
+	// init the shader manager
+	r_shaderManager->Init(GetPDRR());
+
 	return true;
 }
 

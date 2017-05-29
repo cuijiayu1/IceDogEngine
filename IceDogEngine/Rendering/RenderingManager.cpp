@@ -1,5 +1,10 @@
 #include "RenderingManager.h"
 
+IceDogRendering::RenderingManager::RenderingManager(std::ostream& logOs) :s_errorlogOutStream(logOs)
+{
+	r_shaderManager = std::make_shared<ShaderManager>();
+}
+
 void IceDogRendering::RenderingManager::Close()
 {
 	if(r_scenePipe!=nullptr)
@@ -12,4 +17,5 @@ void IceDogRendering::RenderingManager::Close()
 	for (auto &i : r_uiRenderData)
 		i->Close();
 	r_uiRenderData.clear();
+	r_shaderManager->Close();
 }

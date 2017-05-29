@@ -4,6 +4,7 @@
 #include "RenderingPipe.h"
 #include "RenderData/RenderDataBase.h"
 #include "../Platform/PlatformWindow.h"
+#include "ShaderManager.h"
 
 namespace IceDogRendering
 {
@@ -17,7 +18,7 @@ namespace IceDogRendering
 	{
 	public:
 		/* the construct function */
-		RenderingManager(std::ostream& logOs) :s_errorlogOutStream(logOs) {}
+		RenderingManager(std::ostream& logOs);
 		/* call close to release the resource */
 		virtual void Close();
 		/* set the driver type */
@@ -52,6 +53,8 @@ namespace IceDogRendering
 		std::shared_ptr<RenderingPipe> r_scenePipe;
 		// the ui pipe
 		std::shared_ptr<RenderingPipe> r_uiPipe;
+		// the shader manager
+		std::shared_ptr<ShaderManager> r_shaderManager;
 		// the scenePipe render data
 		std::vector<std::shared_ptr<RenderDataBase>> r_sceneRenderData;
 		// the ui render data

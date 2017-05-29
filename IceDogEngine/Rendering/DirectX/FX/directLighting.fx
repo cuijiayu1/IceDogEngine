@@ -458,7 +458,7 @@ float ShadowLightFract(float4 wPos)
 	float cmpDepth = -0.0005 + tempLoc.z;
 	float smpDx = 1/ shadow_sample_size;
 	
-	return PCSS(ShadowTexC, cmpDepth, smpDx, 0.4);
+	return PCSS(ShadowTexC, cmpDepth, smpDx, 1);
 	//return PCFFilter(ShadowTexC, cmpDepth, smpDx, 8);
 	//return NormalLinear(ShadowTexC, cmpDepth, smpDx);
 }

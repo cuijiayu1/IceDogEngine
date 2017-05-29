@@ -186,6 +186,15 @@
     <ClCompile Include="Utils\Loader\FbxMeshLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\ShaderManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\ShaderInstance.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\DirectX\DirectXShaderInstance.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -428,6 +437,15 @@
     <ClInclude Include="Utils\Common\Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Rendering\ShaderManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ShaderInstance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\DirectX\DirectXShaderInstance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Rendering\DirectX\FX\deferred.fx" />
@@ -448,5 +466,9 @@
     <None Include="Resources\Geometry\TeapotData.inc">
       <Filter>头文件</Filter>
     </None>
+    <None Include="Config\ShaderManager.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\testVS.hlsl" />
   </ItemGroup>
 </Project>

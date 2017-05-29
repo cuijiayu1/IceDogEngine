@@ -15,6 +15,7 @@
 using namespace DirectX;
 #endif
 
+#include <unordered_map>
 #include <vector>
 #include <sstream>
 #include <fstream>

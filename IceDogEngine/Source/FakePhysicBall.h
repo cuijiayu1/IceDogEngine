@@ -31,6 +31,8 @@ private:
 
 	std::shared_ptr<IceDogRendering::MeshData> tp;
 
+	bool testFlag;
+
 	void PhyCheck(float deltaTime);
 
 protected:
