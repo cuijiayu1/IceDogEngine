@@ -169,7 +169,8 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::CreateInputLayout(ShaderInstance* shader, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout)
 	{
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(desc, descCount, shader->GetRawShaderPtr(), shader->GetShaderCodeSize(), &inputLayout)))
+		auto msg = c_PDRR.r_device->CreateInputLayout(desc, descCount, (ID3D11VertexShader*)shader->GetShaderCodePtr(), shader->GetShaderCodeSize(), &inputLayout);
+		if (ISFAILED(msg))
 		{
 			s_errorlogOutStream << "Create input layout failed" << std::endl;
 		}
@@ -191,8 +192,10 @@ namespace IceDogRendering
 		CreateInputLayout(r_effectFX, "Deferred", "LightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_deferredLightLayout);
 
 		// create l input layout
-		CreateInputLayout(r_lightFX, "Lighting", "VoxelShadowStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
-		CreateInputLayout(r_lightFX, "Lighting", "ShadowStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("SMMCVS"), std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
+		//CreateInputLayout(r_lightFX, "Lighting", "VoxelShadowStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("SMVS"), std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
+		//CreateInputLayout(r_lightFX, "Lighting", "ShadowStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
 		CreateInputLayout(r_lightFX, "Lighting", "DirectLightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexLightInputLayout);
 	}
 
@@ -591,6 +594,12 @@ namespace IceDogRendering
 	{
 		float shadow_map_size = light->GetShadowMapSize();
 		c_PDRR.r_deviceContext->RSSetViewports(1, (D3D11_VIEWPORT*)&(light->GetViewport()));
+
+		c_PDRR.r_deviceContext->PSSetShader((ID3D11PixelShader*)r_shaderManager->GetShaderByAlias("SMPS")->GetRawShaderPtr(), NULL, 0);
+
+		c_PDRR.r_deviceContext->IASetInputLayout(r_lvoxelInputLayout);
+		c_PDRR.r_deviceContext->VSSetShader((ID3D11VertexShader*)r_shaderManager->GetShaderByAlias("SMMCVS")->GetRawShaderPtr(), NULL, 0);
+		c_PDRR.r_deviceContext->GSSetShader((ID3D11GeometryShader*)r_shaderManager->GetShaderByAlias("SMMCGS")->GetRawShaderPtr(), NULL, 0);
 		r_lightFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix((light->GetProjectionMatrix()).m);
 		r_lightFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((light->GetViewMatrix()).m);
 		r_lightFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));

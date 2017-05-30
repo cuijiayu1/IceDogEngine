@@ -1,6 +1,5 @@
 #pragma once
 #include "../ShaderInstance.h"
-#include "../PlatformDependenceRenderResource.h"
 
 namespace IceDogRendering
 {
@@ -19,11 +18,23 @@ namespace IceDogRendering
 		/* get the raw shader ptr */
 		void* GetRawShaderPtr() override;
 
+		/* update the buffer from current definition, if buffer has not created create it */
+		void UpdateBuffer(ContinuousMode cm) override;
+
+	private:
+		/* create the buffer */
+		void CreateBuffer(ContinuousMode cm);
+
+		/* update the constant buffer */
+		void UpdateCB(ContinuousMode cm);
+
 	private:
 		// the ptr to the device shader
 		ID3D11DeviceChild* r_deviceShaderPtr;
-		// the platform dependence render resource
-		PlatformDependenceRenderResource r_pdrr;
+		// the constant buffer perFrame
+		ID3D11Buffer* r_cbPerFrame;
+		// the constant buffer perObject;
+		ID3D11Buffer* r_cbPerObject;
 	};
 }
 
