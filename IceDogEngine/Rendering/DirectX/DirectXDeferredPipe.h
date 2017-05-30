@@ -5,13 +5,15 @@
 
 namespace IceDogRendering
 {
+	class RenderingManager;
+
 	class DirectXDeferredPipe :public RenderingPipe
 	{
 	public:
 		DirectXDeferredPipe(std::ostream& errOs);
 
 		/* init the pipe line */
-		void InitPipe(IceDogPlatform::PlatformWindow pfWindow) override;
+		void InitPipe(IceDogPlatform::PlatformWindow pfWindow, ShaderManager* shaderManager) override;
 
 		/* call the pipe to render */
 		void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) override;

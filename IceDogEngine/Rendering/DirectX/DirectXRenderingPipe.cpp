@@ -157,9 +157,10 @@ void DirectXRenderingPipe::Render(std::vector<std::shared_ptr<RenderDataBase>>& 
 	
 }
 
-void DirectXRenderingPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
+void DirectXRenderingPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow, ShaderManager* sm)
 {
 	c_platformWindow = pfWindow;
+	r_shaderManager = sm;
 
 	// check if support 4x msaa
 	if (ISFAILED(c_PDRR.r_device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &c_msaaQuility)))

@@ -20,7 +20,7 @@ namespace IceDogRendering
 		}
 
 		/* init the pipe line */
-		void InitPipe(IceDogPlatform::PlatformWindow pfWindow) override;
+		void InitPipe(IceDogPlatform::PlatformWindow pfWindow, ShaderManager* sm) override;
 
 		/* call the pipe to render */
 		void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) override;

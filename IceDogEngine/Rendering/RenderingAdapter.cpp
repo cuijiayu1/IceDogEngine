@@ -97,16 +97,5 @@ void RenderingAdapter::Init(IceDogPlatform::PlatformWindow pfWindow)
 
 	assert(r_renderingManager != nullptr);
 	r_renderingManager->InitRenderManager(pfWindow);
-	auto pdrr= r_renderingManager->GetPDRR();
-
-	std::shared_ptr<RenderingPipe> scrp;
-#if defined __DIRECTX__
-	scrp = std::make_shared<DirectXDeferredPipe>(s_errorlogOutStream);
-#endif
-	assert(scrp != nullptr);
-	scrp->InitPlatformDepedence(pdrr);
-	scrp->InitPipe(pfWindow);
-
-	r_renderingManager->RegistScenePipe(scrp);
 }
 

@@ -48,8 +48,9 @@ namespace IceDogRendering
 
 	}
 
-	void DirectXDeferredPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow)
+	void DirectXDeferredPipe::InitPipe(IceDogPlatform::PlatformWindow pfWindow, ShaderManager* shaderManager)
 	{
+		r_shaderManager = shaderManager;
 		c_platformWindow = pfWindow;
 
 		// begin construct swap chain

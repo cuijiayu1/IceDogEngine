@@ -83,4 +83,7 @@ namespace IceDogUtils
 {
 	/* convert char* to wcahr_t* */
 	wchar_t* char2wchar(char* CStr);
+
+	/* read all bytes */
+	std::vector<char> ReadAllBytes(char const* filename);
 }

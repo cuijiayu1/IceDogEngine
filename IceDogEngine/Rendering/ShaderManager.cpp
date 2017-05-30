@@ -44,6 +44,11 @@ void IceDogRendering::ShaderManager::Close()
 	r_shaderInstances.clear();
 }
 
+ShaderInstance* IceDogRendering::ShaderManager::GetShaderByAlias(std::string alias)
+{
+	return r_shaderInstances[alias].get();
+}
+
 void ShaderManager::CreateShaderFromNode(rapidxml::xml_node<char>* node,std::string x86_compiler, std::string x64_compiler)
 {
 	std::string url = node->first_node("url")->value();

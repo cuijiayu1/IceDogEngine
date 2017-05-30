@@ -160,10 +160,7 @@ bool DirectXRenderingManager::InitRenderManager(IceDogPlatform::PlatformWindow p
 		return false;
 	}
 
-	// init the shader manager
-	r_shaderManager->Init(GetPDRR());
-
-	return true;
+	return RenderingManager::InitRenderManager(pfWindow);
 }
 
 /* register the ui pipe render data */

@@ -11,6 +11,8 @@
 
 namespace IceDogRendering
 {
+	class ShaderManager;
+
 	class RenderingPipe
 	{
 	public:
@@ -25,7 +27,7 @@ namespace IceDogRendering
 		/* set msaa config not enable immediately*/
 		virtual void SetMsaaConfig(bool msaaEnable) { c_enableMsaa = msaaEnable;};
 		/* init the pipe line */
-		virtual void InitPipe(IceDogPlatform::PlatformWindow pfWindow) = 0;
+		virtual void InitPipe(IceDogPlatform::PlatformWindow pfWindow, ShaderManager* shaderManager) = 0;
 		/* render */
 		virtual void Render(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas) = 0;
 		/* init the platform dependence data */
@@ -65,7 +67,7 @@ namespace IceDogRendering
 		PlatformDependenceRenderResource c_PDRR;
 		// the cube map resource
 		CubeMapSource r_cubeMapSource;
-		// whether enable the multi sample anti alain
+		// whether enable the multi sample anti alian
 		bool c_enableMsaa;
 		// msaa quality
 		unsigned int c_msaaQuility;
@@ -77,6 +79,8 @@ namespace IceDogRendering
 		unsigned int c_backBufferHeight;
 		// the error out put log port
 		std::ostream& s_errorlogOutStream;
+		// a shader manager, only a raw ptr, not willing this guy to have the authority to controls the memory destroy
+		ShaderManager* r_shaderManager;
 	private:
 		// default event processor
 		std::shared_ptr<IceDogCore::MessageProc> r_messageProc;

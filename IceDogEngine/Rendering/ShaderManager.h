@@ -19,6 +19,9 @@ namespace IceDogRendering
 		/* call this function to release the resource */
 		void Close();
 
+		/* get shader by alias name */
+		ShaderInstance* GetShaderByAlias(std::string alias);
+
 	private:
 		void CreateShaderFromNode(rapidxml::xml_node<char>* node, std::string x86_compiler, std::string x64_compiler);
 

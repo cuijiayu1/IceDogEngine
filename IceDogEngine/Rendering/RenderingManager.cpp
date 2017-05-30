@@ -1,4 +1,5 @@
 #include "RenderingManager.h"
+#include "DirectX/DirectXDeferredPipe.h"
 
 IceDogRendering::RenderingManager::RenderingManager(std::ostream& logOs) :s_errorlogOutStream(logOs)
 {
@@ -18,4 +19,18 @@ void IceDogRendering::RenderingManager::Close()
 		i->Close();
 	r_uiRenderData.clear();
 	r_shaderManager->Close();
+}
+
+bool IceDogRendering::RenderingManager::InitRenderManager(IceDogPlatform::PlatformWindow pfWindow)
+{
+	// init the shader manager
+	r_shaderManager->Init(GetPDRR());
+
+#if defined __DIRECTX__
+	r_scenePipe = std::make_shared<DirectXDeferredPipe>(s_errorlogOutStream);
+#endif
+	assert(r_scenePipe != nullptr);
+	r_scenePipe->InitPlatformDepedence(GetPDRR());
+	r_scenePipe->InitPipe(pfWindow, r_shaderManager.get());
+	return true;
 }

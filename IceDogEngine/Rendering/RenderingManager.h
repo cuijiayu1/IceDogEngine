@@ -24,13 +24,9 @@ namespace IceDogRendering
 		/* set the driver type */
 		virtual void SetDriverType(RenderDriverType type) = 0;
 		/* init the render manager */
-		virtual bool InitRenderManager(IceDogPlatform::PlatformWindow pfWindow) = 0;
+		virtual bool InitRenderManager(IceDogPlatform::PlatformWindow pfWindow);
 		/* get the platform dependence resource */
 		virtual PlatformDependenceRenderResource GetPDRR() = 0;
-		/* register the scene pipe */
-		virtual void RegistScenePipe(std::shared_ptr<RenderingPipe> sPip) { r_scenePipe = sPip; };
-		/* register the ui pipe */
-		virtual void RegistUIPipe(std::shared_ptr<RenderingPipe> uiPip) { r_uiPipe = uiPip; };
 		/* register the ui pipe render data */
 		virtual void RegistUIRenderData(std::shared_ptr<IceDogRendering::RenderDataBase> rd) = 0;
 		/* register the scene pipe render data */
