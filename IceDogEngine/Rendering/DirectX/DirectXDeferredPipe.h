@@ -98,7 +98,7 @@ namespace IceDogRendering
 
 		/* create the input layout of the pass */
 		void CreateInputLayout(ID3DX11Effect* effect, std::string technique, std::string stage, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout);
-		
+		void CreateInputLayout(class ShaderInstance* shader, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout);
 
 	private:
 		IDXGISwapChain* r_mainSwapChain;

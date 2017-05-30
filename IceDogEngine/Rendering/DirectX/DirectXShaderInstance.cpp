@@ -72,6 +72,7 @@ void DirectXShaderInstance::Init(PlatformDependenceRenderResource pdrr, std::str
 
 	// read the shader
 	std::vector<char> bytes = IceDogUtils::ReadAllBytes(compile_tag.c_str());
+	c_shaderCodeSize = bytes.size();
 
 	bool failed_flag = false;
 	// create the shader
@@ -132,4 +133,9 @@ void IceDogRendering::DirectXShaderInstance::Close()
 {
 	ReleaseCOM(r_deviceShaderPtr);
 	ShaderInstance::Close();
+}
+
+void* IceDogRendering::DirectXShaderInstance::GetRawShaderPtr()
+{
+	return r_deviceShaderPtr;
 }

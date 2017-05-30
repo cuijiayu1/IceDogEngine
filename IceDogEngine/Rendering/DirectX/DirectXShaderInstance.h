@@ -16,6 +16,9 @@ namespace IceDogRendering
 		/* initialize the shader and create shader */
 		void Init(PlatformDependenceRenderResource, std::string x86_compiler, std::string x64_compiler) override;
 
+		/* get the raw shader ptr */
+		void* GetRawShaderPtr() override;
+
 	private:
 		// the ptr to the device shader
 		ID3D11DeviceChild* r_deviceShaderPtr;

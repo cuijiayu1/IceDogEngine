@@ -2,6 +2,8 @@
 #include "../../Utils/Voxel/MarchingCubeLT.h"
 #include "DirectXDeferredPipe.h"
 #include "RenderingDef.h"
+#include "../ShaderManager.h"
+#include "../ShaderInstance.h"
 
 namespace IceDogRendering
 {
@@ -160,6 +162,14 @@ namespace IceDogRendering
 		auto tech = effect->GetTechniqueByName(technique.c_str());
 		tech->GetPassByName(stage.c_str())->GetDesc(&passDesc);
 		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(desc, descCount, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &inputLayout)))
+		{
+			s_errorlogOutStream << "Create input layout failed" << std::endl;
+		}
+	}
+
+	void DirectXDeferredPipe::CreateInputLayout(ShaderInstance* shader, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout)
+	{
+		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(desc, descCount, shader->GetRawShaderPtr(), shader->GetShaderCodeSize(), &inputLayout)))
 		{
 			s_errorlogOutStream << "Create input layout failed" << std::endl;
 		}
