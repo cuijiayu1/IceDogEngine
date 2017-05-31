@@ -15,6 +15,9 @@
 ## Add Memory Management
 ### Right! I haven`t done this until now. Oooops...
 
+## The Shader Now Is Compiled Offline
+### The effect framework will soon be removed.
+
 ## Add PCSS Like Shadow
 This is not the origin pcss shadow of NVIDIA.
 ![alt tag](Readme/pcssLike.png)
