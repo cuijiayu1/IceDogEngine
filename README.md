@@ -12,9 +12,6 @@
 
 # What`s new?
 
-## Add Memory Management
-### Right! I haven`t done this until now. Oooops...
-
 ## The Shader Now Is Compiled Offline
 ### The effect framework will soon be removed.
 
@@ -30,3 +27,5 @@ This is not the origin pcss shadow of NVIDIA.
 ### Now
 ![alt tag](Readme/now.PNG)
 
+## Add Memory Management
+### Right! I haven`t done this until now. Oooops...
