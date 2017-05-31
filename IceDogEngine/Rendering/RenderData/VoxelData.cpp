@@ -4,6 +4,7 @@ using namespace IceDogRendering;
 
 VoxelData::VoxelData():c_isoLevel(0.5)
 {
+	c_dataType = DataType::Voxel;
 	r_vertexBuffer = nullptr;
 }
 

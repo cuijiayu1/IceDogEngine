@@ -2,6 +2,7 @@
 
 IceDogRendering::RenderDataBase::RenderDataBase()
 {
+	c_dataType = DataType::None;
 	c_worldMatrix = float4x4::Identity();
 	c_worldInverseTransposeMatrix = float4x4::Identity();
 	c_materilaData = nullptr;

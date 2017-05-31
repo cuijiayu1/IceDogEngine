@@ -5,15 +5,15 @@ using namespace IceDogRendering;
 DirectXShaderInstance::DirectXShaderInstance(std::string url, ShaderType st):ShaderInstance(url, st)
 {
 	r_deviceShaderPtr = nullptr;
-	r_cbPerFrame = nullptr;
-	r_cbPerObject = nullptr;
+	r_constantBuffer[0] = nullptr;
+	r_constantBuffer[1] = nullptr;
 }
 
 DirectXShaderInstance::~DirectXShaderInstance()
 {
 	ReleaseCOM(r_deviceShaderPtr);
-	ReleaseCOM(r_cbPerFrame);
-	ReleaseCOM(r_cbPerObject);
+	ReleaseCOM(r_constantBuffer[0]);
+	ReleaseCOM(r_constantBuffer[1]);
 }
 
 void DirectXShaderInstance::Init(PlatformDependenceRenderResource pdrr, std::string x86_compiler, std::string x64_compiler)
@@ -39,6 +39,7 @@ void DirectXShaderInstance::Init(PlatformDependenceRenderResource pdrr, std::str
 #ifdef _DEBUG
 	compile_mode = "/Od /Zi ";
 #endif
+	compile_mode += "/Zpr ";
 	std::cout << "Using Compiler:" << compile_cmd << std::endl;
 	
 	switch (c_shaderType)
@@ -135,8 +136,8 @@ void DirectXShaderInstance::Init(PlatformDependenceRenderResource pdrr, std::str
 void IceDogRendering::DirectXShaderInstance::Close()
 {
 	ReleaseCOM(r_deviceShaderPtr);
-	ReleaseCOM(r_cbPerFrame);
-	ReleaseCOM(r_cbPerObject);
+	ReleaseCOM(r_constantBuffer[0]);
+	ReleaseCOM(r_constantBuffer[1]);
 	ShaderInstance::Close();
 }
 
@@ -145,50 +146,135 @@ void* IceDogRendering::DirectXShaderInstance::GetRawShaderPtr()
 	return r_deviceShaderPtr;
 }
 
-void IceDogRendering::DirectXShaderInstance::UpdateBuffer(ContinuousMode cm)
+void IceDogRendering::DirectXShaderInstance::UpdateApplyBuffer(int cm)
 {
-	switch (cm)
+	if (r_constantBuffer[cm])
+		UpdateCB(cm);
+	else
+		CreateBuffer(cm);
+	switch (c_shaderType)
 	{
-	case IceDogRendering::ContinuousMode::PerObject:
-		if (r_cbPerObject)
-			UpdateCB(cm);
-		else
-			CreateBuffer(cm);
+	case IceDogRendering::ShaderType::PS:
+		r_pdrr.r_deviceContext->PSSetConstantBuffers(cm, 1, &r_constantBuffer[cm]);
 		break;
-	case IceDogRendering::ContinuousMode::PerFrame:
-		if (r_cbPerFrame)
-			UpdateCB(cm);
-		else
-			CreateBuffer(cm);
+	case IceDogRendering::ShaderType::VS:
+		r_pdrr.r_deviceContext->VSSetConstantBuffers(cm, 1, &r_constantBuffer[cm]);
+		break;
+	case IceDogRendering::ShaderType::CS:
+		r_pdrr.r_deviceContext->CSSetConstantBuffers(cm, 1, &r_constantBuffer[cm]);
+		break;
+	case IceDogRendering::ShaderType::GS:
+		r_pdrr.r_deviceContext->GSSetConstantBuffers(cm, 1, &r_constantBuffer[cm]);
 		break;
 	}
 }
 
-void IceDogRendering::DirectXShaderInstance::CreateBuffer(ContinuousMode cm)
+void IceDogRendering::DirectXShaderInstance::ApplyShader()
 {
-	size_t bufferSize = 0;
-	switch (cm)
+	switch (c_shaderType)
 	{
-	case IceDogRendering::ContinuousMode::PerObject:
-		for (auto i : r_aliasSizeMap_po)
-			bufferSize += i.second;
+	case IceDogRendering::ShaderType::PS:
+		r_pdrr.r_deviceContext->PSSetShader((ID3D11PixelShader*)r_deviceShaderPtr, 0, 0);
 		break;
-	case IceDogRendering::ContinuousMode::PerFrame:
-		for (auto i : r_aliasSizeMap_pf)
-			bufferSize += i.second;
+	case IceDogRendering::ShaderType::VS:
+		r_pdrr.r_deviceContext->VSSetShader((ID3D11VertexShader*)r_deviceShaderPtr, 0, 0);
+		break;
+	case IceDogRendering::ShaderType::CS:
+		r_pdrr.r_deviceContext->CSSetShader((ID3D11ComputeShader*)r_deviceShaderPtr, 0, 0);
+		break;
+	case IceDogRendering::ShaderType::GS:
+		r_pdrr.r_deviceContext->GSSetShader((ID3D11GeometryShader*)r_deviceShaderPtr, 0, 0);
 		break;
 	}
+}
+
+void IceDogRendering::DirectXShaderInstance::UnloadShader()
+{
+	switch (c_shaderType)
+	{
+	case IceDogRendering::ShaderType::PS:
+		r_pdrr.r_deviceContext->PSSetShader(nullptr, 0, 0);
+		break;
+	case IceDogRendering::ShaderType::VS:
+		r_pdrr.r_deviceContext->VSSetShader(nullptr, 0, 0);
+		break;
+	case IceDogRendering::ShaderType::CS:
+		r_pdrr.r_deviceContext->CSSetShader(nullptr, 0, 0);
+		break;
+	case IceDogRendering::ShaderType::GS:
+		r_pdrr.r_deviceContext->GSSetShader(nullptr, 0, 0);
+		break;
+	}
+}
+
+void IceDogRendering::DirectXShaderInstance::SetViriable(const std::string& alias, void* ptr, const int cm)
+{
+	r_aliasPtrMap[cm][alias] = ptr;
+}
+
+bool IceDogRendering::DirectXShaderInstance::HasConstantBuffer()
+{
+	return r_orderAlias[0].size() + r_orderAlias[1].size();
+}
+
+void* IceDogRendering::DirectXShaderInstance::GetBufferRawPtr(int cm)
+{
+	return r_constantBuffer[cm];
+}
+
+void IceDogRendering::DirectXShaderInstance::CreateBuffer(int cm)
+{
+	HANDLE handle;
+	handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	size_t bufferSize = c_bufferSize[cm];
 
 	D3D11_BUFFER_DESC desc;
 	desc.ByteWidth = bufferSize;
-	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
+
+	void* datas= GetDataCope(cm);
+
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = datas;
+	InitData.SysMemPitch = 0;
+	InitData.SysMemSlicePitch = 0;
+	
+	if (ISFAILED(r_pdrr.r_device->CreateBuffer(&desc, &InitData, &r_constantBuffer[cm])))
+	{
+		SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY | FOREGROUND_RED);
+		std::cout << "Create Constant Buffer Failed!" << std::endl;
+		SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY);
+	}
+
+	delete[] datas;
 }
 
-void IceDogRendering::DirectXShaderInstance::UpdateCB(ContinuousMode cm)
+void IceDogRendering::DirectXShaderInstance::UpdateCB(int cm)
 {
+	void* datas = GetDataCope(cm);
 
+	r_pdrr.r_deviceContext->UpdateSubresource(r_constantBuffer[cm], 0, 0, datas, 0, 0);
+
+	delete[] datas;
+}
+
+void* IceDogRendering::DirectXShaderInstance::GetDataCope(int cm)
+{
+	byte* datas = reinterpret_cast<byte*>(malloc(c_bufferSize[cm]));
+	byte* tempPtr = datas;
+
+	size_t array_size = r_orderAlias[cm].size();
+	size_t size_inc = r_orderSize[cm][0];
+	for (size_t i=0;i<array_size;++i)
+	{
+		size_inc = r_orderSize[cm][i];
+		memcpy(tempPtr, r_aliasPtrMap[cm][r_orderAlias[cm][i]], size_inc);
+		tempPtr += size_inc;
+	}
+	return datas;
 }

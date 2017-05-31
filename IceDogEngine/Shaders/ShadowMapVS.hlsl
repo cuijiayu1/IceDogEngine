@@ -1,8 +1,12 @@
-cbuffer cbPerObject
+cbuffer cbPerFrame : register(b0)
+{
+	float4x4 dl_proj;
+	float4x4 dl_view;
+};
+
+cbuffer cvPerObject : register(b1)
 {
 	float4x4 m_world;
-	float4x4 dl_view;
-	float4x4 dl_proj;
 };
 
 struct LightVSIn

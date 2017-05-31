@@ -40,10 +40,12 @@ namespace IceDogRendering
 		PIDDepthStencilView GetDepthStencilView();
 
 		/* get the projection matrix */
-		IceDogRendering::float4x4 GetProjectionMatrix();
+		IceDogRendering::float4x4 GetProjectionMatrix() { return c_projectionMatrix; };
+		float* GetProjectionMatrixPtr() { return c_projectionMatrix.m; }
 
 		/* get the view matrix */
-		IceDogRendering::float4x4 GetViewMatrix();
+		IceDogRendering::float4x4 GetViewMatrix() { return c_viewMatrix; };
+		float* GetViewMatrixPtr() { return c_viewMatrix.m; }
 
 		/* get the view port */
 		PIDViewport& GetViewport();

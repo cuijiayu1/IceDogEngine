@@ -36,6 +36,15 @@ cbuffer cbPerFrameSM
 	float shadow_sample_size;
 };
 
+cbuffer cbPerObject
+{
+	float4x4 m_world;
+	float4x4 m_view;
+	float4x4 m_viewInv;
+	float4x4 m_proj;
+	float isolevel;
+};
+
 cbuffer cbPerFrame
 {
 	DirectionalLight directionLight;
@@ -44,15 +53,6 @@ cbuffer cbPerFrame
 	float3 lightOn;
 	float3 eyePos;
 	float2 zNearFar;
-};
-
-cbuffer cbPerObject
-{
-	float4x4 m_world;
-	float4x4 m_view;
-	float4x4 m_viewInv;
-	float4x4 m_proj;
-	float isolevel;
 };
 
 struct LightVSIn
@@ -497,7 +497,6 @@ LightPSOut LightPS(LightGSOut vout) : SV_Target{
 	float3 Ldir_diff_spec = (all(ndcDepth))*(brdf_diff + brdf_spec) * El*Cosi*ShadowLightFract(wPos);
 
 	result.finalColor = float4(Ldir_diff_spec, 1);
-
 	return result;
 }
 

@@ -4,6 +4,7 @@ using namespace IceDogRendering;
 
 MeshData::MeshData()
 {
+	c_dataType = DataType::Mesh;
 	r_indexBuffer = nullptr;
 	r_vertexBuffer = nullptr;
 }

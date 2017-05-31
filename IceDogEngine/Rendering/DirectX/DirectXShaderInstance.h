@@ -19,22 +19,37 @@ namespace IceDogRendering
 		void* GetRawShaderPtr() override;
 
 		/* update the buffer from current definition, if buffer has not created create it */
-		void UpdateBuffer(ContinuousMode cm) override;
+		void UpdateApplyBuffer(int cm) override;
+
+		/* apply the shader to the pipeline */
+		void ApplyShader() override;
+
+		/* unload the shader from the pipeline */
+		void UnloadShader() override;
+
+		/* set the data */
+		void SetViriable(const std::string& alias, void* ptr, const int cm) override;
+
+		/* check has constant buffer */
+		bool HasConstantBuffer() override;
+
+		/* get buffer raw ptr */
+		void* GetBufferRawPtr(int cm) override;
 
 	private:
 		/* create the buffer */
-		void CreateBuffer(ContinuousMode cm);
+		void CreateBuffer(int cm);
 
 		/* update the constant buffer */
-		void UpdateCB(ContinuousMode cm);
+		void UpdateCB(int cm);
+
+		void* GetDataCope(int cm);
 
 	private:
 		// the ptr to the device shader
 		ID3D11DeviceChild* r_deviceShaderPtr;
-		// the constant buffer perFrame
-		ID3D11Buffer* r_cbPerFrame;
-		// the constant buffer perObject;
-		ID3D11Buffer* r_cbPerObject;
+		// the constant buffer
+		ID3D11Buffer* r_constantBuffer[2];
 	};
 }
 

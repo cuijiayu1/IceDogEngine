@@ -47,16 +47,6 @@ IceDogRendering::PIDDepthStencilView IceDogRendering::LightBase::GetDepthStencil
 	return r_depthStencilView;
 }
 
-IceDogRendering::float4x4 IceDogRendering::LightBase::GetProjectionMatrix()
-{
-	return c_projectionMatrix;
-}
-
-IceDogRendering::float4x4 IceDogRendering::LightBase::GetViewMatrix()
-{
-	return c_viewMatrix;
-}
-
 IceDogRendering::PIDViewport& IceDogRendering::LightBase::GetViewport()
 {
 	return r_viewport;

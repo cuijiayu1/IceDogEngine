@@ -14,6 +14,13 @@ namespace IceDogRendering
 		Both
 	};
 
+	enum class DataType
+	{
+		None,
+		Mesh,
+		Voxel
+	};
+
 	class RenderDataBase
 	{
 	public:
@@ -51,6 +58,8 @@ namespace IceDogRendering
 		virtual bool GetIsDynamicBuffer();
 		/* get vertex count */
 		int GetVertexCount();
+		/* return the render data type of this object */
+		DataType GetDataType() { return c_dataType; }
 
 	protected:
 		// the material info, just hold it ,has no authority to delete it
@@ -65,6 +74,8 @@ namespace IceDogRendering
 		float4x4 c_worldInverseTransposeMatrix;
 		// the number of vertex
 		int c_vertexCount = 0;
+		// the data type that this guy is
+		DataType c_dataType;
 	};
 }
 

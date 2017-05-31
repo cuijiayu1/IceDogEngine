@@ -52,7 +52,7 @@ namespace IceDogRendering
 		void RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
 
 		/* render single direct light */
-		void RenderSingleDirectLight();
+		void RenderSingleDirectLight(std::shared_ptr<LightBase> light);
 
 		/* render single shadow map */
 		void RenderSingleShadowMap(std::shared_ptr<LightBase> light, std::vector<std::shared_ptr<RenderDataBase>>& renderDatas);
@@ -68,6 +68,9 @@ namespace IceDogRendering
 
 		/* BRDF LUT generate Pass */
 		void RenderBRDFLut();
+
+		/* set up the constant buffer */
+		void SetupConstantBuffer();
 
 		/* Pre Pass, the pass go when init */
 		void PrePass();
