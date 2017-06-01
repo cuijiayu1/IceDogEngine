@@ -26,9 +26,6 @@ namespace IceDogRendering
 		void Resize(int newWidth, int newHeight) override;
 
 	private:
-		/* setup the const buffer for cal */
-		void SetupConstBuffer();
-
 		/* resize the swap chain */
 		void ResizeSwapChain();
 
@@ -100,7 +97,6 @@ namespace IceDogRendering
 		void CreateMarchingCubeLookupTable();
 
 		/* create the input layout of the pass */
-		void CreateInputLayout(ID3DX11Effect* effect, std::string technique, std::string stage, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout);
 		void CreateInputLayout(class ShaderInstance* shader, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout);
 
 	private:
@@ -118,8 +114,6 @@ namespace IceDogRendering
 		// l pass
 
 		D3D11_VIEWPORT r_viewPort;
-		ID3DX11Effect* r_effectFX;
-		ID3DX11Effect* r_lightFX;
 
 		ID3D11Buffer* r_singleVertexBuffer;
 		ID3D11Buffer* r_singleIndexBuffer;

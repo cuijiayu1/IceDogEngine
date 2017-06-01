@@ -104,15 +104,6 @@ namespace IceDogRendering
 		// resize all the buffers
 		Resize(c_backBufferWidth, c_backBufferHeight);
 
-		if (!IceDogRendering::BuildFX("Rendering/DirectX/FX/deferred.fxo", c_PDRR.r_device, r_effectFX))
-		{
-			s_errorlogOutStream << "Create effect failed" << std::endl;
-		}
-		if (!IceDogRendering::BuildFX("Rendering/DirectX/FX/directLighting.fxo", c_PDRR.r_device, r_lightFX))
-		{
-			s_errorlogOutStream << "Create effect failed" << std::endl;
-		}
-
 		UpdateInputLayout();
 
 		// init single vertex buffer
@@ -158,17 +149,6 @@ namespace IceDogRendering
 		PrePass();
 	}
 
-	void DirectXDeferredPipe::CreateInputLayout(ID3DX11Effect* effect, std::string technique ,std::string stage, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout)
-	{
-		D3DX11_PASS_DESC passDesc;
-		auto tech = effect->GetTechniqueByName(technique.c_str());
-		tech->GetPassByName(stage.c_str())->GetDesc(&passDesc);
-		if (ISFAILED(c_PDRR.r_device->CreateInputLayout(desc, descCount, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &inputLayout)))
-		{
-			s_errorlogOutStream << "Create input layout failed" << std::endl;
-		}
-	}
-
 	void DirectXDeferredPipe::CreateInputLayout(ShaderInstance* shader, int descCount, const D3D11_INPUT_ELEMENT_DESC* desc, ID3D11InputLayout*& inputLayout)
 	{
 		auto msg = c_PDRR.r_device->CreateInputLayout(desc, descCount, (ID3D11VertexShader*)shader->GetShaderCodePtr(), shader->GetShaderCodeSize(), &inputLayout);
@@ -189,16 +169,14 @@ namespace IceDogRendering
 		ReleaseCOM(r_lvertexLightInputLayout);
 
 		// create g input layout
-		CreateInputLayout(r_effectFX, "Deferred", "GBufferStage", std::end(IceDogRendering::vertexDesc) - std::begin(IceDogRendering::vertexDesc), IceDogRendering::vertexDesc, r_meshInputLayout);
-		CreateInputLayout(r_effectFX, "Deferred", "VoxelStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_voxelInputLayout);
-		CreateInputLayout(r_effectFX, "Deferred", "LightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_deferredLightLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("GBVS"), std::end(IceDogRendering::vertexDesc) - std::begin(IceDogRendering::vertexDesc), IceDogRendering::vertexDesc, r_meshInputLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("GBMCVS"), std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_voxelInputLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("DVS"), std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_deferredLightLayout);
 
 		// create l input layout
 		CreateInputLayout(r_shaderManager->GetShaderByAlias("SMMCVS"), std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
-		//CreateInputLayout(r_lightFX, "Lighting", "VoxelShadowStage", std::end(IceDogRendering::voxelVertexDesc) - std::begin(IceDogRendering::voxelVertexDesc), IceDogRendering::voxelVertexDesc, r_lvoxelInputLayout);
 		CreateInputLayout(r_shaderManager->GetShaderByAlias("SMVS"), std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
-		//CreateInputLayout(r_lightFX, "Lighting", "ShadowStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexShadowInputLayout);
-		CreateInputLayout(r_lightFX, "Lighting", "DirectLightingStage", std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexLightInputLayout);
+		CreateInputLayout(r_shaderManager->GetShaderByAlias("DLVS"), std::end(IceDogRendering::deferredLightVertexDesc) - std::begin(IceDogRendering::deferredLightVertexDesc), IceDogRendering::deferredLightVertexDesc, r_lvertexLightInputLayout);
 	}
 
 	void DirectXDeferredPipe::BuildUpStates()
@@ -327,23 +305,19 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->ClearRenderTargetView(r_gBufferSpecularRoughnessMetallicRTV, IceDogRendering::Color::NONECOLOR);
 	}
 
-	void DirectXDeferredPipe::SetupConstBuffer()
-	{
-		// set const buffer per frame
-		r_effectFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
-		r_effectFX->GetVariableByName("zNearFar")->SetRawValue(&r_mainPipeView->GetNearFarPlane(), 0, sizeof(float2));
-		r_lightFX->GetVariableByName("eyePos")->SetRawValue(&r_mainPipeView->GetEyePosition(), 0, sizeof(float3));
-		r_lightFX->GetVariableByName("zNearFar")->SetRawValue(&r_mainPipeView->GetNearFarPlane(), 0, sizeof(float2));
-	}
-
 	void DirectXDeferredPipe::RenderEnvWithDirLight()
 	{
-		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-		r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
-		// get tech
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("LightingStage");
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("DGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("DIBLPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
+
+		pixelShader->SetViriable("m_viewInv", r_mainPipeView->GetViewInversePtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("m_proj", r_mainPipeView->GetProjectionMatrixPtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("eyePos", &r_mainPipeView->GetEyePosition(), ContinuousMode_PerFrame);
+		pixelShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
 
 		// clear depth stencil view
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -357,37 +331,38 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		// set g buffer as shader resource			
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
-		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(r_lBufferDirectLightSRV);
-
-		// set BRDF LUT
-		r_effectFX->GetVariableByName("brdfLut")->AsShaderResource()->SetResource(r_brdfLutSRV);
-
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		// set g buffer as shader resource
+		ID3D11ShaderResourceView* srvs[6];
+		srvs[0] = r_cubeMapSource.GetCubeMapSRV().GetResourceView();
+		srvs[1] = r_brdfLutSRV;
+		srvs[2] = r_gBufferNormalSRV;
+		srvs[3] = r_gBufferBaseColorSRV;
+		srvs[4] = r_gBufferSpecularRoughnessMetallicSRV;
+		srvs[5] = r_lBufferDirectLightSRV;
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 6, srvs);
 
 		DisableDepthTest();
 		// loop for light drawing
 		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
 		EnableDepthTest();
 
-		// unbind g buffer shader resource
-		r_effectFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
-		r_effectFX->GetVariableByName("lBuffer_direct")->AsShaderResource()->SetResource(NULL);
-
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
+		ID3D11ShaderResourceView* nullSrv[6];
+		for (int i=0;i<6;++i)
+			nullSrv[i] = NULL;
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 6, nullSrv);
 	}
 
 	void DirectXDeferredPipe::RenderToQuarter()
 	{
-		// get tech
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("TonemapHQStage");
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("DGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("QPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
 
 		// clear depth stencil view
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -402,20 +377,21 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		// set g buffer as shader resource
-		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(r_gBufferFinalColorSRV);
-
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, &r_gBufferFinalColorSRV);
 
 		DisableDepthTest();
 		// loop for light drawing
 		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
 		EnableDepthTest();
 
-		// unbind g buffer shader resource
-		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(NULL);
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
 
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		// unbind g buffer shader resource
+		ID3D11ShaderResourceView* emp[1];
+		emp[0] = NULL;
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, emp);
 	}
 
 	void DirectXDeferredPipe::UpdateAllLights()
@@ -710,7 +686,6 @@ namespace IceDogRendering
 		}
 		// bind the shadow map texture to shader resource
 		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		r_lightFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(light->GetShadowMapSRV().GetResourceView());
 
 		// reset the view port
 		c_PDRR.r_deviceContext->RSSetViewports(1, &r_viewPort);
@@ -778,6 +753,10 @@ namespace IceDogRendering
 		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("m_world", sizeof(float4x4), ContinuousMode_PerObject);
 		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("isolevel", sizeof(float), ContinuousMode_PerObject);
+
+		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("m_viewInv", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("eyePos", sizeof(float3), ContinuousMode_PerFrame);
 	}
 
 	void DirectXDeferredPipe::PrePass()
@@ -788,9 +767,12 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::MergeOutput()
 	{
-		// get tech
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("MergeoutputStage");
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("DGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("FPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
 
 		// clear depth stencil view
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -804,21 +786,17 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		// set g buffer as shader resource			
-		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(r_gBufferFinalColorSRV);
-
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		// set g buffer as shader resource
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, &r_gBufferFinalColorSRV);
 
 		DisableDepthTest();
 		// loop for light drawing
 		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
 		EnableDepthTest();
 
-		// unbind g buffer shader resource
-		r_effectFX->GetVariableByName("lightColorOut")->AsShaderResource()->SetResource(NULL);
-
-		c_PDRR.r_deviceContext->OMSetRenderTargets(0, 0, 0);
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		ID3D11ShaderResourceView* emp[1];
+		emp[0] = NULL;
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, emp);
 
 		r_mainSwapChain->Present(0, 0);
 	}
@@ -834,11 +812,8 @@ namespace IceDogRendering
 		// render shadow map first
 		UpdateAllLights();
 		ClearAllViews();
-		SetupConstBuffer();
 		RenderGBuffer(renderDatas);
 		RenderDirectLight(renderDatas);
-		if (!r_cubeMapSource.IsDirty())
-			r_effectFX->GetVariableByName("cubeMap")->AsShaderResource()->SetResource(r_cubeMapSource.GetCubeMapSRV().GetResourceView());
 		RenderEnvWithDirLight();
 		RenderToQuarter();
 		MergeOutput();
@@ -1014,9 +989,6 @@ namespace IceDogRendering
 		ReleaseCOM(r_lvertexShadowInputLayout);
 		ReleaseCOM(r_lvertexLightInputLayout);
 		// l pass
-
-		ReleaseCOM(r_effectFX);
-		ReleaseCOM(r_lightFX);
 
 		ReleaseCOM(r_singleVertexBuffer);
 		ReleaseCOM(r_singleIndexBuffer);

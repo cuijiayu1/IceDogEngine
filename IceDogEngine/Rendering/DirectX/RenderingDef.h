@@ -1,6 +1,5 @@
 #pragma once
 #include "../PDRenderingDef.h"
-#include "FXHelper.h"
 
 #if defined __DIRECTX__
 namespace IceDogRendering

@@ -2,7 +2,6 @@
 
 #if defined __DIRECTX__
 #include "DirectX\DirectXRenderingManager.h"
-#include "DirectX\DirectXRenderingPipe.h"
 #include "DirectX\DirectXDeferredPipe.h"
 #endif
 

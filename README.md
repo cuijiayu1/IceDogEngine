@@ -12,6 +12,11 @@
 
 # What`s new?
 
+## The Effect Framework Had Been Totlly Removed!
+### Replaced with a new shader framework, with higher release mode performance. There seems some problem, the performance on the debug mode is lower.
+### Now the shader can be compiled offline freely and join at any time. A real material framework is on the way now!
+### All shader in a single fx file has been separated into many hlsl file now.
+
 ## The Shader Now Is Compiled Offline
 ### The effect framework will soon be removed.
 
