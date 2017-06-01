@@ -39,11 +39,11 @@ static const float2 poissonDisk[16] = {
 	float2(0.14383161, -0.14100790)
 };
 
-Texture2D directionalShadowMap;
+Texture2D<float> directionalShadowMap;
 
-Texture2D gBuffer_normal;
-Texture2D gBuffer_baseColor;
-Texture2D gBuffer_specularRoughnessMetallic;
+Texture2D<float4> gBuffer_normal;
+Texture2D<float4> gBuffer_baseColor;
+Texture2D<float4> gBuffer_specularRoughnessMetallic;
 
 struct LightPSOut
 {
@@ -241,7 +241,7 @@ LightPSOut main(LightGSOut vout) : SV_Target
 	float3 DiffuseColor = BaseColor * (1 - Metallic);
 	float3 SpecularColor = lerp(0.08 * Specular.xxx, BaseColor, Metallic.xxx);
 
-	float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv)*2.0f - 1.0f;
+	float3 wNormal = gBuffer_normal.Sample(samAnisotropic, vout.uv).xyz*2.0f - 1.0f;
 	wNormal = normalize(wNormal);
 	float3 l = normalize(-directionLight.direction);
 	float3 v = normalize(eyePos - wPos.xyz);

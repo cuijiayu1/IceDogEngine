@@ -516,7 +516,6 @@ namespace IceDogRendering
 
 			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
 		}
-
 	}
 
 	void DirectXDeferredPipe::RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
