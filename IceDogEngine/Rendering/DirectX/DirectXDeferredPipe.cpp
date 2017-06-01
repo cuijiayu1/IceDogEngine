@@ -521,27 +521,29 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
+		auto pixelShader = r_shaderManager->GetShaderByAlias("DLPS");
 		for (size_t i=0;i<r_lightGroups.size();++i)
 		{
 			float3 lightOn = float3(0, 0, 0);
 			// update each light
 			if (r_lightGroups[i].HasDirectionalLightsSpace() != r_lightGroups[i].GetPerLightCount())
 			{
-				r_lightFX->GetVariableByName("directionLight")->SetRawValue(r_lightGroups[i].GetDirectionalLight()[0].get()->GetLightDef().get(), 0, sizeof(DirectionalLight));
+				//r_lightFX->GetVariableByName("directionLight")->SetRawValue(r_lightGroups[i].GetDirectionalLight()[0].get()->GetLightDef().get(), 0, sizeof(DirectionalLight));
 				lightOn.x = 1;
 			}
 			if (r_lightGroups[i].HasSpotLightsSpace() != r_lightGroups[i].GetPerLightCount())
 			{
-				r_lightFX->GetVariableByName("spotLight")->SetRawValue(&(r_lightGroups[i].GetSpotLight()[0]), 0, sizeof(SpotLight));
+				//r_lightFX->GetVariableByName("spotLight")->SetRawValue(&(r_lightGroups[i].GetSpotLight()[0]), 0, sizeof(SpotLight));
 				lightOn.y = 1;
 			}
 			if (r_lightGroups[i].HasPointLightsSpace() != r_lightGroups[i].GetPerLightCount())
 			{
-				r_lightFX->GetVariableByName("pointLight")->SetRawValue(&(r_lightGroups[i].GetPointLight()[0]), 0, sizeof(PointLight));
+				//r_lightFX->GetVariableByName("pointLight")->SetRawValue(&(r_lightGroups[i].GetPointLight()[0]), 0, sizeof(PointLight));
 				lightOn.z = 1;
 			}
 			// update light on state
-			r_lightFX->GetVariableByName("lightOn")->SetRawValue(&lightOn, 0, sizeof(float3));
+			pixelShader->SetViriable("lightOn", &lightOn, ContinuousMode_PerObject);
+			pixelShader->UpdateApplyBuffer(ContinuousMode_PerObject);
 
 			RenderSingleShadowMap(r_lightGroups[i].GetDirectionalLight()[0], renderDatas);
 			RenderSingleDirectLight(r_lightGroups[i].GetDirectionalLight()[0]);
@@ -553,17 +555,33 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderSingleDirectLight(std::shared_ptr<LightBase> light)
 	{
-		float shadow_map_size = light->GetShadowMapSize();
-		r_lightFX->GetVariableByName("shadow_sample_size")->SetRawValue(&shadow_map_size, 0, sizeof(float));
-		r_lightFX->GetVariableByName("dl_proj")->AsMatrix()->SetMatrix((light->GetProjectionMatrix()).m);
-		r_lightFX->GetVariableByName("dl_view")->AsMatrix()->SetMatrix((light->GetViewMatrix()).m);
-		r_lightFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-		r_lightFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-		r_lightFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
+		// get the shader from shader manager
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DLVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("DLGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("DLPS");
 
-		// get tech
-		auto tech = r_lightFX->GetTechniqueByName("Lighting");
-		auto pass = tech->GetPassByName("DirectLightingStage");
+		// apply the shader
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
+
+		// set the virable of shader
+		float shadow_map_size = light->GetShadowMapSize();
+		pixelShader->SetViriable("directionLight", light->GetLightDef().get(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("dl_proj", light->GetProjectionMatrixPtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("dl_view", light->GetViewMatrixPtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("m_viewInv", r_mainPipeView->GetViewInversePtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("m_proj", r_mainPipeView->GetProjectionMatrixPtr(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("eyePos", &r_mainPipeView->GetEyePosition(), ContinuousMode_PerFrame);
+		pixelShader->SetViriable("shadow_sample_size", &shadow_map_size, ContinuousMode_PerFrame);
+		pixelShader->SetViriable("zNearFar", &r_mainPipeView->GetNearFarPlane(), ContinuousMode_PerFrame);
+		pixelShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
+
+		// bind the shader resource
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, &light->GetShadowMapSRV().GetResourceView());
+		c_PDRR.r_deviceContext->PSSetShaderResources(1, 1, &r_gBufferNormalSRV);
+		c_PDRR.r_deviceContext->PSSetShaderResources(2, 1, &r_gBufferBaseColorSRV);
+		c_PDRR.r_deviceContext->PSSetShaderResources(3, 1, &r_gBufferSpecularRoughnessMetallicSRV);
 
 		// clear depth stencil view
 		c_PDRR.r_deviceContext->ClearDepthStencilView(r_backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -577,13 +595,6 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		// set g buffer as shader resource			
-		r_lightFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(r_gBufferNormalSRV);
-		r_lightFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(r_gBufferBaseColorSRV);
-		r_lightFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(r_gBufferSpecularRoughnessMetallicSRV);
-
-		pass->Apply(0, c_PDRR.r_deviceContext);
-
 		EnableLightBlend();
 		DisableDepthTest();
 		// loop for light drawing
@@ -592,12 +603,9 @@ namespace IceDogRendering
 		DisableLightBlend();
 
 		// unbind g buffer shader resource
-		r_lightFX->GetVariableByName("gBuffer_normal")->AsShaderResource()->SetResource(NULL);
-		r_lightFX->GetVariableByName("gBuffer_baseColor")->AsShaderResource()->SetResource(NULL);
-		r_lightFX->GetVariableByName("gBuffer_specularRoughnessMetallic")->AsShaderResource()->SetResource(NULL);
-		r_lightFX->GetVariableByName("directionalShadowMap")->AsShaderResource()->SetResource(NULL);
-
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
 	}
 
 	void DirectXDeferredPipe::RenderSingleShadowMap(std::shared_ptr<LightBase> light, std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
@@ -713,6 +721,16 @@ namespace IceDogRendering
 		r_shaderManager->GetShaderByAlias("SMMCGS")->AddViriable("dl_view", sizeof(float4x4), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("SMMCGS")->AddViriable("m_world", sizeof(float4x4), ContinuousMode_PerObject);
 		r_shaderManager->GetShaderByAlias("SMMCGS")->AddViriable("isolevel", sizeof(float), ContinuousMode_PerObject);
+
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("directionLight", sizeof(DirectionalLight), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("dl_proj", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("dl_view", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("m_viewInv", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("eyePos", sizeof(float3), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("shadow_sample_size", sizeof(float), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("zNearFar", sizeof(float2), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("lightOn", sizeof(float3), ContinuousMode_PerObject);
 	}
 
 	void DirectXDeferredPipe::PrePass()

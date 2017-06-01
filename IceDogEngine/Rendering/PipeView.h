@@ -11,8 +11,10 @@ namespace IceDogRendering
 		PipeView(float aspectRatio);
 		/* get the view matrix */
 		float4x4 GetViewMatrix() { return c_viewMatrix; }
+		float* GetViewMatrixPtr() { return c_viewMatrix.m; }
 		/* get the view inverse matrix */
 		float4x4 GetViewInverse() { return c_viewInverse; }
+		float* GetViewInversePtr() { return c_viewInverse.m; }
 		/* get the eye position in world space */
 		float3 GetEyePosition() { return c_eyePosition; }
 		/* get the near and the far plane */
@@ -25,6 +27,7 @@ namespace IceDogRendering
 		void SetUpDirection(float3);
 		/* get the projection matrix */
 		float4x4 GetProjectionMatrix() { return c_projMatrix; };
+		float* GetProjectionMatrixPtr() { return c_projMatrix.m; }
 		/* set the aspect ratio */
 		void SetAspectRatio(float ratio);
 		/* set the FOV angle in degree */
