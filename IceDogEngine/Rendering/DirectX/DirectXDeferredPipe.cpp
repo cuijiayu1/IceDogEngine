@@ -338,6 +338,9 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderEnvWithDirLight()
 	{
+		r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
+		r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
+		r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
 		// get tech
 		auto tech = r_effectFX->GetTechniqueByName("Deferred");
 		auto pass = tech->GetPassByName("LightingStage");
@@ -428,59 +431,82 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderGBuffer(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
 	{
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass_mesh = tech->GetPassByName("GBufferStage");
-		auto pass_voxel = tech->GetPassByName("VoxelStage");
+		
+		auto vertexShader = r_shaderManager->GetShaderByAlias("GBVS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("GBPS");
+		auto mcVertexShader = r_shaderManager->GetShaderByAlias("GBMCVS");
+		auto mcGeometryShader = r_shaderManager->GetShaderByAlias("GBMCGS");
 
+		// apply the shader
+		pixelShader->ApplyShader();
+		mcVertexShader->ApplyShader();
+		mcGeometryShader->ApplyShader();
+
+		// set up pixel shader constant buffer per frame
+		pixelShader->SetViriable("eyePos", &r_mainPipeView->GetEyePosition(), ContinuousMode_PerFrame);
+		pixelShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
+		
+		// set up geometry constant buffer per frame
+		mcGeometryShader->SetViriable("m_view", r_mainPipeView->GetViewMatrixPtr(), ContinuousMode_PerFrame);
+		mcGeometryShader->SetViriable("m_proj", r_mainPipeView->GetProjectionMatrixPtr(), ContinuousMode_PerFrame);
+		mcGeometryShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
+
+		// set up render target
 		ID3D11RenderTargetView* renderTargets[] = { r_gBufferNormalRTV,r_gBufferBaseColorRTV,r_gBufferSpecularRoughnessMetallicRTV };
-
 		c_PDRR.r_deviceContext->OMSetRenderTargets(3, renderTargets, r_backBufferDepthStencilView);
 
 		UINT stride_mesh = sizeof(IceDogRendering::Vertex);
 		UINT stride_voxel = sizeof(IceDogRendering::VoxelVertex);
 		UINT offset = 0;
+		
+		c_PDRR.r_deviceContext->GSSetShaderResources(0, 1, &r_mcEdgeSRV);
+		c_PDRR.r_deviceContext->GSSetShaderResources(1, 1, &r_mcTriangleSRV);
 
-		r_effectFX->GetVariableByName("mcEdgeTable")->AsShaderResource()->SetResource(r_mcEdgeSRV);
-		r_effectFX->GetVariableByName("mcTriTable")->AsShaderResource()->SetResource(r_mcTriangleSRV);
 		// render voxel
 		c_PDRR.r_deviceContext->IASetInputLayout(r_voxelInputLayout);
 		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		float isoLevel = 0.5;
 		for (auto renderData : renderDatas)
 		{
-			std::shared_ptr<VoxelData> rd = std::dynamic_pointer_cast<VoxelData>(renderData);
-			if (!rd) { continue; }
+			if (renderData->GetDataType() != DataType::Voxel) { continue; }
+			VoxelData* rd = reinterpret_cast<VoxelData*>(renderData.get());
 			if (rd->GetVertexBuffer() == nullptr) { continue; }
 			auto tempVertexBuffer = rd->GetVertexBuffer();
-			isoLevel = rd->GetIsoLevel();
-
 			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_voxel, &offset);
 
-			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
-			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
-			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
-			r_effectFX->GetVariableByName("isolevel")->SetRawValue(&isoLevel, 0, sizeof(float));
+			isoLevel = rd->GetIsoLevel();
+			mcGeometryShader->SetViriable("m_world", rd->GetWorldMatrixPtr(), ContinuousMode_PerObject);
+			mcGeometryShader->SetViriable("isolevel", &isoLevel, ContinuousMode_PerObject);
+			mcGeometryShader->UpdateApplyBuffer(ContinuousMode_PerObject);
 			// apply the material
 			if (rd->GetMaterialData())
 			{
-				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&rd->GetTextureEnableDesc(), 0, sizeof(IceDogRendering::float4));
-				r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetDiffuseSRV());
-				r_effectFX->GetVariableByName("normalMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetNormalSRV());
-				r_effectFX->GetVariableByName("parallaxMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetParallaxSRV());
-				r_effectFX->GetVariableByName("parallaxCfg")->SetRawValue(&rd->GetMaterialData()->GetParallaxCfg(), 0, sizeof(IceDogUtils::float4));
+				pixelShader->SetViriable("parallaxCfg", &rd->GetMaterialData()->GetParallaxCfg(), ContinuousMode_PerObject);
+				pixelShader->SetViriable("DifNorParEmi", &rd->GetTextureEnableDesc(), ContinuousMode_PerObject);
+				pixelShader->UpdateApplyBuffer(ContinuousMode_PerObject);
+
+				ID3D11ShaderResourceView* PND[3];
+				PND[0] = rd->GetMaterialData()->GetParallaxSRV();
+				PND[1] = rd->GetMaterialData()->GetNormalSRV();
+				PND[2] = rd->GetMaterialData()->GetDiffuseSRV();
+				c_PDRR.r_deviceContext->PSSetShaderResources(0, 3, PND);
 			}
 			else
 			{
-				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0, 0, 0, 0), 0, sizeof(IceDogRendering::float4));
+				pixelShader->SetViriable("parallaxCfg", &float4(0,0,0,0), ContinuousMode_PerObject);
+				pixelShader->SetViriable("DifNorParEmi", &float4(0, 0, 0, 0), ContinuousMode_PerObject);
+				pixelShader->UpdateApplyBuffer(ContinuousMode_PerObject);
 			}
-
-			pass_voxel->Apply(0, c_PDRR.r_deviceContext);
 			c_PDRR.r_deviceContext->Draw(rd->GetVertexCount(), 0);
 		}
-
+		mcGeometryShader->UnloadShader();
+		mcVertexShader->UnloadShader();
+		
 		// render mesh
+		vertexShader->ApplyShader();
+		vertexShader->SetViriable("m_view", r_mainPipeView->GetViewMatrixPtr(), ContinuousMode_PerFrame);
+		vertexShader->SetViriable("m_proj", r_mainPipeView->GetProjectionMatrixPtr(), ContinuousMode_PerFrame);
+		vertexShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
 		c_PDRR.r_deviceContext->IASetInputLayout(r_meshInputLayout);
 		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		for (auto renderData : renderDatas)
@@ -489,33 +515,38 @@ namespace IceDogRendering
 			MeshData* rd = (MeshData*)renderData.get();
 			if (rd->GetIndexBuffer() == nullptr || rd->GetVertexBuffer() == nullptr) { continue; }
 			auto tempVertexBuffer = rd->GetVertexBuffer();
-
 			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &tempVertexBuffer, &stride_mesh, &offset);
 			c_PDRR.r_deviceContext->IASetIndexBuffer(rd->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-			r_effectFX->GetVariableByName("m_world")->AsMatrix()->SetMatrix(rd->GetWorldMatrix().m);
-			r_effectFX->GetVariableByName("m_view")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewMatrix().m);
-			r_effectFX->GetVariableByName("m_proj")->AsMatrix()->SetMatrix(r_mainPipeView->GetProjectionMatrix().m);
-			r_effectFX->GetVariableByName("m_viewInv")->AsMatrix()->SetMatrix(r_mainPipeView->GetViewInverse().m);
-			r_effectFX->GetVariableByName("m_worldInverseTranspose")->AsMatrix()->SetMatrix(rd->GetWorldInverseTransposeMatrix().m);
+			vertexShader->SetViriable("m_world", rd->GetWorldMatrixPtr(), ContinuousMode_PerObject);
+			vertexShader->SetViriable("m_worldInverseTranspose", rd->GetWorldInverseTransposeMatrixPtr(), ContinuousMode_PerObject);
+			vertexShader->UpdateApplyBuffer(ContinuousMode_PerObject);
 			// apply the material
 			if (rd->GetMaterialData())
 			{
-				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&rd->GetTextureEnableDesc(), 0, sizeof(IceDogRendering::float4));
-				r_effectFX->GetVariableByName("diffuseMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetDiffuseSRV());
-				r_effectFX->GetVariableByName("normalMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetNormalSRV());
-				r_effectFX->GetVariableByName("parallaxMap")->AsShaderResource()->SetResource(rd->GetMaterialData()->GetParallaxSRV());
-				r_effectFX->GetVariableByName("parallaxCfg")->SetRawValue(&rd->GetMaterialData()->GetParallaxCfg(), 0, sizeof(IceDogUtils::float4));
+				pixelShader->SetViriable("parallaxCfg", &rd->GetMaterialData()->GetParallaxCfg(), ContinuousMode_PerObject);
+				pixelShader->SetViriable("DifNorParEmi", &rd->GetTextureEnableDesc(), ContinuousMode_PerObject);
+				pixelShader->UpdateApplyBuffer(ContinuousMode_PerObject);
+
+				ID3D11ShaderResourceView* PND[3];
+				PND[0] = rd->GetMaterialData()->GetParallaxSRV();
+				PND[1] = rd->GetMaterialData()->GetNormalSRV();
+				PND[2] = rd->GetMaterialData()->GetDiffuseSRV();
+				c_PDRR.r_deviceContext->PSSetShaderResources(0, 3, PND);
 			}
 			else
 			{
-				r_effectFX->GetVariableByName("DifNorParEmi")->SetRawValue(&float4(0,0,0,0), 0, sizeof(IceDogRendering::float4));
+				pixelShader->SetViriable("parallaxCfg", &float4(0, 0, 0, 0), ContinuousMode_PerObject);
+				pixelShader->SetViriable("DifNorParEmi", &float4(0, 0, 0, 0), ContinuousMode_PerObject);
+				pixelShader->UpdateApplyBuffer(ContinuousMode_PerObject);
 			}
-			
-			pass_mesh->Apply(0, c_PDRR.r_deviceContext);
 
 			c_PDRR.r_deviceContext->DrawIndexed(rd->GetTriangleCount() * 3, 0, 0);
 		}
+		vertexShader->UnloadShader();
+		pixelShader->UnloadShader();
+		mcVertexShader->UnloadShader();
+		mcGeometryShader->UnloadShader();
 	}
 
 	void DirectXDeferredPipe::RenderDirectLight(std::vector<std::shared_ptr<RenderDataBase>>& renderDatas)
@@ -687,9 +718,12 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderBRDFLut()
 	{
-		// get tech
-		auto tech = r_effectFX->GetTechniqueByName("Deferred");
-		auto pass = tech->GetPassByName("BRDFLutStage");
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("DGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("CBRDFLPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
 
 		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
 		UINT offset = 0;
@@ -700,14 +734,14 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
 		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		pass->Apply(0, c_PDRR.r_deviceContext);
-
 		DisableDepthTest();
 		// loop for light drawing
 		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
 		EnableDepthTest();
 
-		pass->Apply(0, c_PDRR.r_deviceContext);
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
 	}
 
 	void DirectXDeferredPipe::SetupConstantBuffer()
@@ -730,6 +764,20 @@ namespace IceDogRendering
 		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("shadow_sample_size", sizeof(float), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("zNearFar", sizeof(float2), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("DLPS")->AddViriable("lightOn", sizeof(float3), ContinuousMode_PerObject);
+
+		r_shaderManager->GetShaderByAlias("GBVS")->AddViriable("m_view", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("GBVS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("GBVS")->AddViriable("m_world", sizeof(float4x4), ContinuousMode_PerObject);
+		r_shaderManager->GetShaderByAlias("GBVS")->AddViriable("m_worldInverseTranspose", sizeof(float4x4), ContinuousMode_PerObject);
+
+		r_shaderManager->GetShaderByAlias("GBPS")->AddViriable("eyePos", sizeof(float3), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("GBPS")->AddViriable("parallaxCfg", sizeof(float4), ContinuousMode_PerObject);
+		r_shaderManager->GetShaderByAlias("GBPS")->AddViriable("DifNorParEmi", sizeof(float4), ContinuousMode_PerObject);
+
+		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("m_view", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
+		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("m_world", sizeof(float4x4), ContinuousMode_PerObject);
+		r_shaderManager->GetShaderByAlias("GBMCGS")->AddViriable("isolevel", sizeof(float), ContinuousMode_PerObject);
 	}
 
 	void DirectXDeferredPipe::PrePass()

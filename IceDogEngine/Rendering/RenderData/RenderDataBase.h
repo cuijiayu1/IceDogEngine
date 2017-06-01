@@ -36,8 +36,10 @@ namespace IceDogRendering
 		void SetWorldMatrix(const float4x4& worldMatrix);
 		/* get world matrix */
 		float4x4 GetWorldMatrix() { return c_worldMatrix; }
+		float* GetWorldMatrixPtr() { return c_worldMatrix.m; }
 		/* get the world inverse transpose matrix for lighting calculation */
 		float4x4 GetWorldInverseTransposeMatrix() { return c_worldInverseTransposeMatrix; }
+		float* GetWorldInverseTransposeMatrixPtr() { return c_worldInverseTransposeMatrix.m; }
 		/* set the material data */
 		void SetMaterial(MaterialData* matData) { c_materilaData = matData; }
 		/* get the texture enabled description for shader usage */
