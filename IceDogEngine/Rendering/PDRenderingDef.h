@@ -145,7 +145,7 @@ namespace IceDogRendering
 		{
 			direction = float4(0.0f, -1.0f, 0.01f, 0.0f);
 			diffuse = float3(1, 1, 1);
-			intensity = 2;
+			intensity = 10;
 		}
 
 		float4 direction;

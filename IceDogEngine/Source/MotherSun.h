@@ -11,6 +11,7 @@ public:
 	~MotherSun();
 
 	void SetDirection(IceDogUtils::float3);
+	void SetInst(float val);
 
 	IceDogGameplay::DirectionalLightComponent* st;
 };

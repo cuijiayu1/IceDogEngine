@@ -12,6 +12,9 @@
 
 # What`s new?
 
+## Tone Mapping Confuse Me
+![alt tag](Readme/tonemapping.png)
+
 ## The Effect Framework Had Been Totlly Removed!
 ### Replaced with a new shader framework, with higher release mode performance. There seems some problem, the performance on the debug mode is lower.
 ### Now the shader can be compiled offline freely and join at any time. A real material framework is on the way now!

@@ -130,9 +130,14 @@ float2 hammersley(uint i, uint N)
 	return float2(float(i) / float(N), radicalInverse_VdC(i));
 }
 
+float4 cubeMapInst(float4 color)
+{
+	return color;
+}
+
 float3 hackEnvMap(float Roughness, float3 R)
 {
-	return cubeMap.Sample(linearSample, R, Roughness * 17).xyz;
+	return cubeMapInst(cubeMap.Sample(linearSample, R, Roughness * 17)).xyz;
 }
 
 float3 ApproximateSpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V) {
@@ -213,13 +218,14 @@ LightPSOut main(LightGSOut vout)
 		wNormal = normalize(wNormal);
 		float3 v = normalize(eyePos - wPos.xyz);
 
-		float4 difenvE = (all(ndcDepth))*cubeMap.Sample(samAnisotropic, wNormal, 10); // the brdf: direction lighting diff term 
+		float4 difenvE = (all(ndcDepth))*cubeMapInst(cubeMap.Sample(samAnisotropic, wNormal, 10)); // the brdf: direction lighting diff term 
 
-		float3 Lenv = (1 - all(ndcDepth))*cubeMap.Sample(linearSample, -v).xyz;
+		float3 Lenv = (1 - all(ndcDepth))*cubeMapInst(cubeMap.Sample(linearSample, -v)).xyz;
 		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(SpecularColor, Roughness, wNormal, v);
 		float3 Lenv_diff = DiffuseColor * (all(ndcDepth))*difenvE;
 
-		float3 combine = lBuffer_direct.Sample(samAnisotropic, vout.uv) + Lenv + Lenv_spec + Lenv_diff;
+		float3 combine = lBuffer_direct.Sample(samAnisotropic, vout.uv) + Lenv_spec + Lenv_diff + Lenv;
+		
 		result.finalColor = float4(combine, 1);
 	}
 	return result;

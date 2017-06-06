@@ -18,3 +18,8 @@ void MotherSun::SetDirection(IceDogUtils::float3 dir)
 {
 	st->SetLightDirection(dir);
 }
+
+void MotherSun::SetInst(float val)
+{
+	st->SetIntensity(val);
+}

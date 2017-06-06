@@ -14,6 +14,8 @@ namespace IceDogGameplay
 		/* call to close this resource */
 		virtual void Close() override;
 
+		virtual void SetIntensity(const float intensity);
+
 	protected:
 		std::shared_ptr<IceDogRendering::LightBase> r_holdLight;
 	};
