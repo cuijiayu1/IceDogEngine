@@ -12,6 +12,9 @@
 
 # What`s new?
 
+## The Cubemap Prefiltering Is Done!
+### Some IBL bug has also be fixed. Now, I sure it`s physical based.
+
 ## Tone Mapping Confuse Me
 ![alt tag](Readme/tonemapping.png)
 
