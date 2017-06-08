@@ -195,6 +195,9 @@
     <ClCompile Include="Rendering\DirectX\DirectXShaderInstance.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Common\RgbeReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\EngineCore.h">
@@ -441,6 +444,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\DirectX\DirectXShaderInstance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Common\RgbeReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

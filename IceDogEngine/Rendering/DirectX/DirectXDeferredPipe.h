@@ -66,6 +66,9 @@ namespace IceDogRendering
 		/* BRDF LUT generate Pass */
 		void RenderBRDFLut();
 
+		/* prefilter cube map */
+		void RenderPrefilterCubemap(CubeMapSource* cubemap);
+
 		/* set up the constant buffer */
 		void SetupConstantBuffer();
 
@@ -80,6 +83,9 @@ namespace IceDogRendering
 
 		/* the function to build up states for rendering */
 		void BuildUpStates();
+
+		/* the function to build up sampler for rendering */
+		void BuildUpSamplers();
 
 		/* enable the depth test, to be noticed that depth test is enabled by default, not necessary called unless there is a disable call */
 		void EnableDepthTest();
@@ -112,6 +118,12 @@ namespace IceDogRendering
 		ID3D11InputLayout* r_lvertexShadowInputLayout;
 		ID3D11InputLayout* r_lvertexLightInputLayout;
 		// l pass
+
+		// samplers
+		ID3D11SamplerState* r_linearSampler;
+		ID3D11SamplerState* r_samAnisotropicSampler;
+		ID3D11SamplerState* r_shadowSampler;
+		ID3D11SamplerState* r_pointSampler;
 
 		D3D11_VIEWPORT r_viewPort;
 

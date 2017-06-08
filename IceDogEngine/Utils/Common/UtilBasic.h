@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include "DirectXTex.h"
 #include "Model.h"
+#include "RgbeReader.h"
 using namespace DirectX;
 #endif
 

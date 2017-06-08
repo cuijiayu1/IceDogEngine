@@ -1,4 +1,6 @@
 #include "LightDefination.hlsli"
+#include "Samplers.hlsli"
+#include "MathBasic.hlsli"
 
 cbuffer cbPerFrame : register(b0)
 {
@@ -17,8 +19,6 @@ cbuffer cbPerObject : register(b1)
 {
 	float3 lightOn;
 };
-
-static const float Pi = 3.14159265374;
 
 static const float2 poissonDisk[16] = {
 	float2(-0.94201624, -0.39906216),
@@ -56,18 +56,6 @@ struct LightGSOut
 	float2 uv : TEXCOORD;
 };
 
-SamplerState samAnisotropic
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 4;
-};
-
-SamplerState shadowSample {
-	Filter = MIN_MAG_MIP_POINT;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
 float NrmDevZToViewZ(float nz)
 {
 	float a = m_proj[2].z;
@@ -88,13 +76,6 @@ float NrmDevYToViewY(float ny, float vz)
 	float a = m_proj[1].y;
 	float vy = (ny*vz) / a;
 	return vy;
-}
-
-
-float Pow5(float x)
-{
-	float x2 = x*x;
-	return x2 * x2 * x;
 }
 
 // [Schlick 1994, "An Inexpensive BRDF Model for Physically-Based Rendering"]

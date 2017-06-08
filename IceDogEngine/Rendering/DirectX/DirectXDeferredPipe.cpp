@@ -144,6 +144,7 @@ namespace IceDogRendering
 		SetupConstantBuffer();
 
 		// build up the state for rendering
+		BuildUpSamplers();
 		BuildUpStates();
 		CreateMarchingCubeLookupTable();
 		PrePass();
@@ -207,6 +208,49 @@ namespace IceDogRendering
 		// create the depth test disable state
 		depthDesc.DepthEnable = FALSE;
 		c_PDRR.r_device->CreateDepthStencilState(&depthDesc, &r_depthTestDisableState);
+	}
+
+	void DirectXDeferredPipe::BuildUpSamplers()
+	{
+		D3D11_SAMPLER_DESC linearSamplerDESC;
+		ZeroMemory(&linearSamplerDESC, sizeof(D3D11_SAMPLER_DESC));
+		linearSamplerDESC.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		linearSamplerDESC.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		linearSamplerDESC.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		linearSamplerDESC.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		if (ISFAILED(c_PDRR.r_device->CreateSamplerState(&linearSamplerDESC, &r_linearSampler)))
+			assert(false);
+
+		D3D11_SAMPLER_DESC samAnisotropicSamplerDESC;
+		ZeroMemory(&samAnisotropicSamplerDESC, sizeof(D3D11_SAMPLER_DESC));
+		samAnisotropicSamplerDESC.Filter = D3D11_FILTER_ANISOTROPIC;
+		samAnisotropicSamplerDESC.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samAnisotropicSamplerDESC.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samAnisotropicSamplerDESC.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samAnisotropicSamplerDESC.MaxAnisotropy = 4;
+		if (ISFAILED(c_PDRR.r_device->CreateSamplerState(&samAnisotropicSamplerDESC, &r_samAnisotropicSampler)))
+			assert(false);
+
+		D3D11_SAMPLER_DESC shadowSamplerDESC;
+		ZeroMemory(&shadowSamplerDESC, sizeof(D3D11_SAMPLER_DESC));
+		shadowSamplerDESC.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		shadowSamplerDESC.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		shadowSamplerDESC.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		shadowSamplerDESC.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		if (ISFAILED(c_PDRR.r_device->CreateSamplerState(&shadowSamplerDESC, &r_shadowSampler)))
+			assert(false);
+
+		D3D11_SAMPLER_DESC pointSamplerDESC;
+		ZeroMemory(&pointSamplerDESC, sizeof(D3D11_SAMPLER_DESC));
+		pointSamplerDESC.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		pointSamplerDESC.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		pointSamplerDESC.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		pointSamplerDESC.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		if (ISFAILED(c_PDRR.r_device->CreateSamplerState(&pointSamplerDESC, &r_pointSampler)))
+			assert(false);
+
+		ID3D11SamplerState* samplers[4]{ r_linearSampler,r_samAnisotropicSampler,r_shadowSampler,r_pointSampler };
+		c_PDRR.r_deviceContext->PSSetSamplers(0, 4, samplers);
 	}
 
 	void DirectXDeferredPipe::EnableDepthTest()
@@ -342,7 +386,6 @@ namespace IceDogRendering
 		c_PDRR.r_deviceContext->PSSetShaderResources(0, 6, srvs);
 
 		DisableDepthTest();
-		// loop for light drawing
 		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
 		EnableDepthTest();
 
@@ -757,12 +800,134 @@ namespace IceDogRendering
 		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("m_viewInv", sizeof(float4x4), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("m_proj", sizeof(float4x4), ContinuousMode_PerFrame);
 		r_shaderManager->GetShaderByAlias("DIBLPS")->AddViriable("eyePos", sizeof(float3), ContinuousMode_PerFrame);
+
+		r_shaderManager->GetShaderByAlias("PCPS")->AddViriable("roughnessScaleFlag", sizeof(float3), ContinuousMode_PerFrame);
 	}
 
 	void DirectXDeferredPipe::PrePass()
 	{
 		CreateRenderTargetTexture2D(r_brdfLutBuffer, r_brdfLutRTV, r_brdfLutSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		RenderBRDFLut();
+		RenderPrefilterCubemap(&r_cubeMapSource);
+	}
+
+	void DirectXDeferredPipe::RenderPrefilterCubemap(CubeMapSource* cubemap)
+	{
+		const int cubemap_size = cubemap->GetCubemapSize();
+		// create a new cube map first
+		D3D11_TEXTURE2D_DESC cubemapDesc;
+		cubemapDesc.ArraySize = 6;
+		cubemapDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		cubemapDesc.CPUAccessFlags = 0;
+		cubemapDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		cubemapDesc.Height = cubemap_size;
+		cubemapDesc.Width = cubemap_size;
+		cubemapDesc.MipLevels = 11;
+		cubemapDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		cubemapDesc.SampleDesc.Count = 1;
+		cubemapDesc.SampleDesc.Quality = 0;
+		cubemapDesc.Usage = D3D11_USAGE_DEFAULT;
+
+		ID3D11ShaderResourceView* cubeSRV;
+		ID3D11RenderTargetView* cubeRTV;
+		ID3D11DepthStencilView* tempDSV;
+		ID3D11Texture2D* cubePtr;
+		ID3D11Texture2D* depthTempPtr;
+
+		if (ISFAILED(c_PDRR.r_device->CreateTexture2D(&cubemapDesc, 0, &cubePtr)))
+			assert(false);
+		if (ISFAILED(c_PDRR.r_device->CreateShaderResourceView(cubePtr, 0, &cubeSRV)))
+			assert(false);
+
+		// create the depth stencil view
+		D3D11_TEXTURE2D_DESC depthStencilDESC;
+		depthStencilDESC.Width = cubemap_size;
+		depthStencilDESC.Height = cubemap_size;
+		depthStencilDESC.MipLevels = 1;
+		depthStencilDESC.ArraySize = 6;
+		depthStencilDESC.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDESC.SampleDesc.Count = 1;
+		depthStencilDESC.SampleDesc.Quality = 0;
+		depthStencilDESC.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDESC.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDESC.CPUAccessFlags = 0;
+		depthStencilDESC.MiscFlags = 0;
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDESC;
+		rtvDESC.Format = cubemapDesc.Format;
+		rtvDESC.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+		rtvDESC.Texture2DArray.FirstArraySlice = 0;
+		rtvDESC.Texture2DArray.ArraySize = 6;
+		rtvDESC.Texture2DArray.MipSlice = 0;
+
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("PCGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("PCPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
+
+		// 0 Roughness = 0
+		// 1 Roughness = 0.1
+		// 2 Roughness = 0.2
+		// 3 Roughness = 0.3
+		// ...... Roughness = 1
+
+		// the loop pass
+		float roughness_inc = 0.1;
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		for (int i = 0; i < 1 + 1 / roughness_inc; ++i)
+		{
+			depthStencilDESC.Width = cubemap_size / pow(2, i);
+			depthStencilDESC.Height = cubemap_size / pow(2, i);
+			// create the depth stencil buffer
+			if (ISFAILED(c_PDRR.r_device->CreateTexture2D(&depthStencilDESC, 0, &depthTempPtr)))
+				assert(false);
+			// create the depth stencil render target view
+			if (ISFAILED(c_PDRR.r_device->CreateDepthStencilView(depthTempPtr, 0, &tempDSV)))
+				assert(false);
+
+			float3 roughnessScaleFlag;
+			roughnessScaleFlag.x = roughness_inc*i;
+			roughnessScaleFlag.y = pow(2, i);
+			roughnessScaleFlag.z = 0;
+			if (i == 0)
+				roughnessScaleFlag.z = 4;
+			// back diffuse map
+			//if (i == 10)
+			//	roughnessScaleFlag.z = -4;
+			pixelShader->SetViriable("roughnessScaleFlag", &roughnessScaleFlag, ContinuousMode_PerFrame);
+			pixelShader->UpdateApplyBuffer(ContinuousMode_PerFrame);
+			UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
+			UINT offset = 0;
+			rtvDESC.Texture2DArray.MipSlice = i;
+			if (ISFAILED(c_PDRR.r_device->CreateRenderTargetView(cubePtr, &rtvDESC, &cubeRTV)))
+				assert(false);
+			c_PDRR.r_deviceContext->OMSetRenderTargets(1, &cubeRTV, tempDSV);
+			c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+			c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, &r_cubeMapSource.GetCubeMapSRV().GetResourceView());
+			DisableDepthTest();
+			c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+			EnableDepthTest();
+			ReleaseCOM(cubeRTV);
+
+			ReleaseCOM(depthTempPtr);
+			ReleaseCOM(tempDSV);
+		}
+
+		ID3D11ShaderResourceView* emp[1]{0};
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, emp);
+
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
+
+		ReleaseCOM(cubePtr);
+		PIDShaderResourceView newsrv;
+		newsrv.SetResourceView(cubeSRV);
+		r_cubeMapSource.ResetCubeMapSRV(newsrv, cubemap_size);
 	}
 
 	void DirectXDeferredPipe::MergeOutput()
@@ -989,6 +1154,11 @@ namespace IceDogRendering
 		ReleaseCOM(r_lvertexShadowInputLayout);
 		ReleaseCOM(r_lvertexLightInputLayout);
 		// l pass
+
+		ReleaseCOM(r_linearSampler);
+		ReleaseCOM(r_samAnisotropicSampler);
+		ReleaseCOM(r_shadowSampler);
+		ReleaseCOM(r_pointSampler);
 
 		ReleaseCOM(r_singleVertexBuffer);
 		ReleaseCOM(r_singleIndexBuffer);

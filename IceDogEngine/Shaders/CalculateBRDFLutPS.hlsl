@@ -1,5 +1,5 @@
 
-static const float Pi = 3.14159265374;
+#include "MathBasic.hlsli"
 
 struct LightPSOut
 {
@@ -11,16 +11,6 @@ struct LightGSOut
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
 };
-
-float3 EnvBRDFApprox(float3 SpecularColor, float Roughness, float NoV)
-{
-	const half4 c0 = { -1, -0.0275, -0.572, 0.022 };
-	const half4 c1 = { 1, 0.0425, 1.04, -0.04 };
-	half4 r = Roughness * c0 + c1;
-	half a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;
-	half2 AB = half2(-1.04, 1.04) * a004 + r.zw;
-	return SpecularColor * AB.x + AB.y;
-}
 
 // shlick aproxx
 float GGX(float NdotV, float a)

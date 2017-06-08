@@ -14,6 +14,7 @@ namespace IceDogRendering
 #endif
 	}; 
 
+	// all of the following resource should not be auto release
 	class PIDShaderResourceView
 	{
 	public:

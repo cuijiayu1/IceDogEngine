@@ -1,11 +1,6 @@
+#include "Samplers.hlsli"
 
 Texture2D lightColorOut;
-
-SamplerState samAnisotropic
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 4;
-};
 
 struct LightPSOut
 {

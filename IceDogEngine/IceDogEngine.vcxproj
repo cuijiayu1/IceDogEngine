@@ -75,6 +75,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d11.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -94,6 +95,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -120,6 +122,7 @@
     <ClCompile Include="Engine\Gameplay\Components\LightComponent.cpp" />
     <ClCompile Include="Rendering\ShaderManager.cpp" />
     <ClCompile Include="Rendering\ShaderInstance.cpp" />
+    <ClCompile Include="Utils\Common\RgbeReader.cpp" />
     <ClCompile Include="Utils\Loader\FbxMeshLoader.cpp" />
     <ClCompile Include="Rendering\RenderingManager.cpp" />
     <ClCompile Include="Source\FakePhysicBall.cpp" />
@@ -182,6 +185,7 @@
     <ClInclude Include="Engine\Gameplay\Components\LightComponent.h" />
     <ClInclude Include="Rendering\ShaderManager.h" />
     <ClInclude Include="Rendering\ShaderInstance.h" />
+    <ClInclude Include="Utils\Common\RgbeReader.h" />
     <ClInclude Include="Utils\Common\Model.h" />
     <ClInclude Include="Utils\Loader\FbxMeshLoader.h" />
     <ClInclude Include="Source\FakePhysicBall.h" />

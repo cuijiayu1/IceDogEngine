@@ -23,12 +23,20 @@ namespace IceDogRendering
 		/* get resource view */
 		PIDShaderResourceView GetCubeMapSRV();
 
+		/* reset the shader resource view */
+		void ResetCubeMapSRV(PIDShaderResourceView pidSRV, int cubemapSize);
+
+		/* get the size of cube map */
+		int GetCubemapSize();
+
 	private:
 		// indicate whether the shader resource is valid or not
 		bool c_isDirty;
 
 		// the cube map shader resource view
 		PIDShaderResourceView r_cubemapSRV;
+
+		int c_cubemapSize;
 	};
 }
 

@@ -1,3 +1,5 @@
+#include "Samplers.hlsli"
+#include "MathBasic.hlsli"
 
 cbuffer cbPerFrame : register(b0)
 {
@@ -6,26 +8,12 @@ cbuffer cbPerFrame : register(b0)
 	float3 eyePos;
 };
 
-static const float Pi = 3.14159265374;
-
 TextureCube cubeMap;
 Texture2D brdfLut;
 Texture2D gBuffer_normal;
 Texture2D gBuffer_baseColor;
 Texture2D gBuffer_specularRoughnessMetallic;
 Texture2D lBuffer_direct;
-
-SamplerState linearSample {
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-SamplerState samAnisotropic
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 4;
-};
 
 struct LightPSOut
 {
@@ -37,12 +25,6 @@ struct LightGSOut
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
 };
-
-float Pow5(float x)
-{
-	float x2 = x*x;
-	return x2 * x2 * x;
-}
 
 float3 CalRf(float3 Rf0, float thetai)
 {
@@ -130,22 +112,117 @@ float2 hammersley(uint i, uint N)
 	return float2(float(i) / float(N), radicalInverse_VdC(i));
 }
 
+float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 N) {
+	float a = Roughness * Roughness;
+	float Phi = 2 * Pi * Xi.x;
+	float CosTheta = sqrt((1 - Xi.y) / (1 + (a*a - 1) * Xi.y)); 
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+	float3 H;
+	H.x = SinTheta * cos(Phi); 
+	H.y = SinTheta * sin(Phi); 
+	H.z = CosTheta;
+	float3 UpVector = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0); 
+	float3 TangentX = normalize(cross(UpVector, N)); 
+	float3 TangentY = cross(N, TangentX); // Tangent to world space 
+	return TangentX * H.x + TangentY * H.y + N * H.z;
+}
+
+float3 ImportanceSampleLambert(float2 xi)
+{
+	const float Pi = 3.1415926f;
+
+	float phi = 2 * Pi * xi.x;
+	float cos_theta = sqrt(1 - xi.y);
+	float sin_theta = sqrt(1 - cos_theta * cos_theta);
+	return float3(sin_theta * cos(phi), sin_theta * sin(phi), cos_theta);
+}
+
+float3 ImportanceSampleLambert(float2 xi, float3 normal)
+{
+	float3 h = ImportanceSampleLambert(xi);
+
+	float3 up_vec = abs(normal.z) < 0.999f ? float3(0, 0, 1) : float3(1, 0, 0);
+	float3 tangent = normalize(cross(up_vec, normal));
+	float3 binormal = cross(normal, tangent);
+	return tangent * h.x + binormal * h.y + normal * h.z;
+}
+
+float4 CosineSampleHemisphere(float2 E)
+{
+	float Phi = 2 * Pi * E.x;
+	float CosTheta = sqrt(E.y);
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+
+	float3 H;
+	H.x = SinTheta * cos(Phi);
+	H.y = SinTheta * sin(Phi);
+	H.z = CosTheta;
+
+	float PDF = CosTheta / Pi;
+
+	return float4(H, PDF);
+}
+
+
 float4 cubeMapInst(float4 color)
 {
 	return color;
 }
 
+float3 PrefilterEnvMap(float Roughness, float3 R) {
+	float3 N = R;
+	float3 V = R;
+	float3 PrefilteredColor = 0;
+	const uint NumSamples = 1024;
+	float TotalWeight = 0;
+	for (uint i = 0; i < NumSamples; i++) {
+		float2 Xi = hammersley(i, NumSamples);
+		float3 H = ImportanceSampleGGX(Xi, Roughness, N);
+		float3 L = 2 * dot(V, H) * H - V;
+		float NoL = saturate(dot(N, L));
+		if (NoL > 0) {
+			PrefilteredColor += cubeMapInst(cubeMap.SampleLevel(linearSample, L, 0)).rgb * NoL;
+			TotalWeight += NoL;
+		}
+	}
+	return PrefilteredColor / TotalWeight;
+}
+
+float3 DiffuseIBL(float3 c_diff, float3 N)
+{
+	float3 prefiltered_clr = 0;
+
+	const uint NUM_SAMPLES = 1024;
+	for (uint i = 0; i < NUM_SAMPLES; ++i)
+	{
+		float2 xi = hammersley(i, NUM_SAMPLES);
+		float3 L = ImportanceSampleLambert(xi, N);
+		//float3 L = CosineSampleHemisphere(xi);
+		float NoL = saturate(dot(N, L));
+		prefiltered_clr += cubeMapInst(cubeMap.SampleLevel(linearSample, L, 0)).rgb;
+	}
+
+	return c_diff * prefiltered_clr / NUM_SAMPLES;
+}
+
 float3 hackEnvMap(float Roughness, float3 R)
 {
-	return cubeMapInst(cubeMap.Sample(linearSample, R, Roughness * 17)).xyz;
+	//return PrefilterEnvMap(Roughness, R);
+	return cubeMapInst(cubeMap.Sample(linearSample, R, Roughness*10)).xyz;
 }
 
 float3 ApproximateSpecularIBL(float3 SpecularColor, float Roughness, float3 N, float3 V) {
 	float NoV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 	float3 PrefilteredColor = hackEnvMap(Roughness, R);
-	float2 EnvBRDF = brdfLut.Sample(samAnisotropic, float2(Roughness, NoV)).xy;
+	float2 EnvBRDF = brdfLut.Sample(pointSample, float2(Roughness, NoV)).xy;
 	return PrefilteredColor * (SpecularColor * EnvBRDF.x + saturate(50.0 * SpecularColor.g)*EnvBRDF.y);
+}
+
+float3 ApproximateDiffuseIBL(float3 DiffuseColor, float3 N) {
+	//return DiffuseIBL(DiffuseColor, N);
+	float4 difenvE = cubeMapInst(cubeMap.Sample(linearSample, N, 10)); // the brdf: direction lighting diff term 
+	return DiffuseColor*difenvE;
 }
 
 
@@ -218,11 +295,10 @@ LightPSOut main(LightGSOut vout)
 		wNormal = normalize(wNormal);
 		float3 v = normalize(eyePos - wPos.xyz);
 
-		float4 difenvE = (all(ndcDepth))*cubeMapInst(cubeMap.Sample(samAnisotropic, wNormal, 10)); // the brdf: direction lighting diff term 
 
-		float3 Lenv = (1 - all(ndcDepth))*cubeMapInst(cubeMap.Sample(linearSample, -v)).xyz;
+		float3 Lenv = (1 - all(ndcDepth))*cubeMapInst(cubeMap.Sample(linearSample, -v, 0)).xyz;
 		float3 Lenv_spec = (all(ndcDepth))*ApproximateSpecularIBL(SpecularColor, Roughness, wNormal, v);
-		float3 Lenv_diff = DiffuseColor * (all(ndcDepth))*difenvE;
+		float3 Lenv_diff = (all(ndcDepth))*ApproximateDiffuseIBL(DiffuseColor, wNormal);
 
 		float3 combine = lBuffer_direct.Sample(samAnisotropic, vout.uv) + Lenv_spec + Lenv_diff + Lenv;
 		
