@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <ctype.h>
+#include <iostream>
 
 /* offsets to red, green, and blue components in a data (float) pixel */
 #define RGBE_DATA_RED    0
@@ -23,14 +24,29 @@ IceDogUtils::RgbeImage IceDogUtils::RgbeReader::ReadRgbeFile(std::string url)
 	RgbeImage ret;
 	int image_width, image_height;
 	FILE* f;
-	fopen_s(&f, url.c_str(), "wb");
+	fopen_s(&f, url.c_str(), "rb");
 	RGBE_ReadHeader(f, &image_width, &image_height, NULL);
 	float* image = (float *)malloc(sizeof(float) * 3 * image_width*image_height);
 	RGBE_ReadPixels_RLE(f, image, image_width, image_height);
 	fclose(f);
+
+	float* dest_rgba= (float *)malloc(sizeof(float) * 4 * image_width*image_height);
+	float* temp_ptr = dest_rgba;
+	for (int i = 0; i < 3*image_width*image_height; ++i)
+	{
+		if (i % 3 == 0 && i != 0)
+		{
+			*temp_ptr = 1;
+			temp_ptr++;
+		}
+		*temp_ptr = image[i];
+		temp_ptr++;
+	}
+	delete[] image;
+
 	ret.c_width = image_width;
 	ret.c_height = image_height;
-	ret.r_data = image;
+	ret.r_data = dest_rgba;
 	return ret;
 }
 

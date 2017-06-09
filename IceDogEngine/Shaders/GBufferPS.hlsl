@@ -147,7 +147,7 @@ PSOut main(VSOut pin) : SV_Target
 	}
 	else
 	{
-		result.specularRoughnessMetallic = float4(0.5, 0.09, 0.8, 1);
+		result.specularRoughnessMetallic = float4(0.5, 0.3, 0.8, 1);
 	}
 
 	float depth = pin.depth.x / pin.depth.y;

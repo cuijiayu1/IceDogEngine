@@ -75,6 +75,9 @@ namespace IceDogRendering
 		/* Pre Pass, the pass go when init */
 		void PrePass();
 
+		/* Create cubemap from RGBE Image */
+		void CreateCubemapFromRGBE(std::string url, CubeMapSource*);
+
 		/* merge the buffer and output */
 		void MergeOutput();
 

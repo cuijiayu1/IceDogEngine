@@ -166,7 +166,7 @@ float4 CosineSampleHemisphere(float2 E)
 
 float4 cubeMapInst(float4 color)
 {
-	return color;
+	return color*10;
 }
 
 float3 PrefilterEnvMap(float Roughness, float3 R) {

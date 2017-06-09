@@ -134,7 +134,7 @@ float3 POS_Y(float2 uv)
 float3 NEG_Y(float2 uv)
 {
 	uv = uv - 0.5;
-	return normalize(float3(-uv.x, -0.5, uv.y));
+	return normalize(float3(uv.x, -0.5, -uv.y));
 }
 
 float3 POS_Z(float2 uv)

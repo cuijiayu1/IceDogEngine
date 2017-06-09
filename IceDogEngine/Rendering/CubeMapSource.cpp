@@ -43,7 +43,7 @@ void IceDogRendering::CubeMapSource::ResetCubeMapSRV(PIDShaderResourceView pidSR
 	c_cubemapSize = cubemapSize;
 	r_cubemapSRV.Release();
 	r_cubemapSRV = pidSRV;
-	c_isDirty = true;
+	c_isDirty = false;
 }
 
 int IceDogRendering::CubeMapSource::GetCubemapSize()

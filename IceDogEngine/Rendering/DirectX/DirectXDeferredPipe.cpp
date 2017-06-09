@@ -137,10 +137,6 @@ namespace IceDogRendering
 			s_errorlogOutStream << "Create Light index buffer failed" << std::flush;
 		}
 
-		// test code begin
-		r_cubeMapSource.LoadFromFile(L"Source/Textures/cube.dds", c_PDRR);
-		// test code end
-
 		SetupConstantBuffer();
 
 		// build up the state for rendering
@@ -736,6 +732,7 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::RenderBRDFLut()
 	{
+		CreateRenderTargetTexture2D(r_brdfLutBuffer, r_brdfLutRTV, r_brdfLutSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
 		auto geometryShader = r_shaderManager->GetShaderByAlias("DGS");
 		auto pixelShader = r_shaderManager->GetShaderByAlias("CBRDFLPS");
@@ -806,9 +803,138 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::PrePass()
 	{
-		CreateRenderTargetTexture2D(r_brdfLutBuffer, r_brdfLutRTV, r_brdfLutSRV, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		CreateCubemapFromRGBE("Source/Textures/epic.hdr", &r_cubeMapSource);
 		RenderBRDFLut();
 		RenderPrefilterCubemap(&r_cubeMapSource);
+	}
+
+	void DirectXDeferredPipe::CreateCubemapFromRGBE(std::string url, CubeMapSource* cm)
+	{
+		const int cubemapSize = 1024;
+
+		ID3D11Texture2D* hdrTex; // free
+		ID3D11ShaderResourceView* hdrSrv;
+		ID3D11Texture2D* targetCube;
+		ID3D11RenderTargetView* targetRtv;
+		ID3D11ShaderResourceView* targetSrv;
+		ID3D11Texture2D* depthStencilTex;
+		ID3D11DepthStencilView* texDsv;
+
+		// load the rgbe image
+		IceDogUtils::RgbeImage img = IceDogUtils::RgbeReader::ReadRgbeFile(url);
+		D3D11_TEXTURE2D_DESC dsd;
+		dsd.Width = img.c_width;
+		dsd.Height = img.c_height;
+		dsd.MipLevels = 1;
+		dsd.ArraySize = 1;
+		dsd.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		dsd.SampleDesc.Count = 1;
+		dsd.SampleDesc.Quality = 0;
+		dsd.Usage = D3D11_USAGE_DEFAULT;
+		dsd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		dsd.CPUAccessFlags = 0;
+		dsd.MiscFlags = 0;
+		D3D11_SUBRESOURCE_DATA sd;
+		sd.pSysMem = img.r_data;
+		sd.SysMemPitch = sizeof(float) * 4 * img.c_width;
+		// create the texture and view
+		c_PDRR.r_device->CreateTexture2D(&dsd, &sd, &hdrTex);
+		c_PDRR.r_device->CreateShaderResourceView(hdrTex, 0, &hdrSrv);
+		// release the image, now the gpu memory hold the data
+		img.Release();
+		// release the texture
+		ReleaseCOM(hdrTex);
+
+		// alloc cubemap resource
+		D3D11_TEXTURE2D_DESC cubemapDesc;
+		cubemapDesc.ArraySize = 6;
+		cubemapDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		cubemapDesc.CPUAccessFlags = 0;
+		cubemapDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		cubemapDesc.Height = cubemapSize;
+		cubemapDesc.Width = cubemapSize;
+		cubemapDesc.MipLevels = 1;
+		cubemapDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		cubemapDesc.SampleDesc.Count = 1;
+		cubemapDesc.SampleDesc.Quality = 0;
+		cubemapDesc.Usage = D3D11_USAGE_DEFAULT;
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDESC;
+		rtvDESC.Format = cubemapDesc.Format;
+		rtvDESC.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+		rtvDESC.Texture2DArray.FirstArraySlice = 0;
+		rtvDESC.Texture2DArray.ArraySize = 6;
+		rtvDESC.Texture2DArray.MipSlice = 0;
+		if (ISFAILED(c_PDRR.r_device->CreateTexture2D(&cubemapDesc, 0, &targetCube)))
+			assert(false);
+		if (ISFAILED(c_PDRR.r_device->CreateRenderTargetView(targetCube, &rtvDESC, &targetRtv)))
+			assert(false);
+		if (ISFAILED(c_PDRR.r_device->CreateShaderResourceView(targetCube, 0, &targetSrv)))
+			assert(false);
+
+		// alloc depth stencil resource
+		D3D11_TEXTURE2D_DESC depthStencilDESC;
+		depthStencilDESC.Width = cubemapSize;
+		depthStencilDESC.Height = cubemapSize;
+		depthStencilDESC.MipLevels = 1;
+		depthStencilDESC.ArraySize = 6;
+		depthStencilDESC.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDESC.SampleDesc.Count = 1;
+		depthStencilDESC.SampleDesc.Quality = 0;
+		depthStencilDESC.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDESC.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDESC.CPUAccessFlags = 0;
+		depthStencilDESC.MiscFlags = 0;
+		if (ISFAILED(c_PDRR.r_device->CreateTexture2D(&depthStencilDESC, 0, &depthStencilTex)))
+			assert(false);
+		// create the depth stencil render target view
+		if (ISFAILED(c_PDRR.r_device->CreateDepthStencilView(depthStencilTex, 0, &texDsv)))
+			assert(false);
+
+		//////////////////////////////////////////////////////////////////////////
+		// ready to render
+		//////////////////////////////////////////////////////////////////////////
+		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("R2CGS");
+		auto pixelShader = r_shaderManager->GetShaderByAlias("H2CPS");
+		vertexShader->ApplyShader();
+		geometryShader->ApplyShader();
+		pixelShader->ApplyShader();
+
+		UINT stride = sizeof(IceDogRendering::DeferredLightVertex);
+		UINT offset = 0;
+		// set input layout
+		c_PDRR.r_deviceContext->IASetInputLayout(r_deferredLightLayout);
+		c_PDRR.r_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, &targetRtv, texDsv);
+		c_PDRR.r_deviceContext->IASetVertexBuffers(0, 1, &r_singleVertexBuffer, &stride, &offset);
+		c_PDRR.r_deviceContext->IASetIndexBuffer(r_singleIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, &hdrSrv);
+
+		DisableDepthTest();
+		// loop for light drawing
+		c_PDRR.r_deviceContext->DrawIndexed(1, 0, 0);
+		EnableDepthTest();
+
+		ID3D11ShaderResourceView* emp[1]{ NULL };
+		c_PDRR.r_deviceContext->PSSetShaderResources(0, 1, emp);
+		ID3D11RenderTargetView* empRT[1]{ NULL };
+		c_PDRR.r_deviceContext->OMSetRenderTargets(1, empRT, NULL);
+
+		vertexShader->UnloadShader();
+		geometryShader->UnloadShader();
+		pixelShader->UnloadShader();
+
+		ReleaseCOM(hdrSrv);
+		ReleaseCOM(targetCube);
+		ReleaseCOM(targetRtv);
+		ReleaseCOM(depthStencilTex);
+		ReleaseCOM(texDsv);
+
+		PIDShaderResourceView PIDSRV;
+		PIDSRV.SetResourceView(targetSrv);
+		cm->ResetCubeMapSRV(PIDSRV, cubemapSize);
 	}
 
 	void DirectXDeferredPipe::RenderPrefilterCubemap(CubeMapSource* cubemap)
@@ -861,7 +987,7 @@ namespace IceDogRendering
 		rtvDESC.Texture2DArray.MipSlice = 0;
 
 		auto vertexShader = r_shaderManager->GetShaderByAlias("DVS");
-		auto geometryShader = r_shaderManager->GetShaderByAlias("PCGS");
+		auto geometryShader = r_shaderManager->GetShaderByAlias("R2CGS");
 		auto pixelShader = r_shaderManager->GetShaderByAlias("PCPS");
 		vertexShader->ApplyShader();
 		geometryShader->ApplyShader();
