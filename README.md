@@ -12,6 +12,10 @@
 
 # What`s new?
 
+## Fix Some Coordinate Transformation Bug In Hdr2CubemapPS.hlsl
+## Fix the nolinear transformation between cubemap coordinate and hdr sphere coordinate
+![alt tag](Readme/sinature.png)
+
 ## Add Ability to Read From RGBE File And Create A Cubemap From It
 ### HDR Rendering is now avilable! Add tone mapping!
 ### Add a HDR image
