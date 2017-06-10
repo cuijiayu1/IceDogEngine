@@ -14,6 +14,7 @@
 
 ## Add Ability to Read From RGBE File And Create A Cubemap From It
 ### HDR Rendering is now avilable! Add tone mapping!
+### Add a HDR image
 
 ## The Cubemap Prefiltering Is Done!
 ### Some IBL bug has also be fixed. Now, I sure it`s physical based.
