@@ -803,7 +803,7 @@ namespace IceDogRendering
 
 	void DirectXDeferredPipe::PrePass()
 	{
-		CreateCubemapFromRGBE("Source/Textures/epic_1.hdr", &r_cubeMapSource);
+		CreateCubemapFromRGBE("Source/Textures/epic.hdr", &r_cubeMapSource);
 		RenderBRDFLut();
 		RenderPrefilterCubemap(&r_cubeMapSource);
 	}

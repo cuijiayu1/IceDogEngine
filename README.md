@@ -8,7 +8,7 @@
 
 ## Developing
 
-![alt tag](Readme/current.png)
+![alt tag](Readme/current.jpg)
 
 # What`s new?
 
