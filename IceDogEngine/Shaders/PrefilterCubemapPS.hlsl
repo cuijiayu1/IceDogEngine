@@ -96,7 +96,7 @@ float4 PrefilterEnvMap(float Roughness, float3 R) {
 	float3 N = R;
 	float3 V = R;
 	float3 PrefilteredColor = 0;
-	const uint NumSamples = 1024;
+	const uint NumSamples = 4096;
 	float TotalWeight = 0;
 	for (uint i = 0; i < NumSamples; i++) {
 		float2 Xi = hammersley(i, NumSamples);

@@ -46,7 +46,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	Cha* cha = eg.ConstructActor<Cha>(new Cha());
 	MotherSun* sun = eg.ConstructActor<MotherSun>(new MotherSun());
-	sun->SetInst(7);
+	sun->SetInst(0);
 	sun->SetDirection(IceDogUtils::float3(1, -1, 1));
 
 	for (int i=-1; i<2; ++i)

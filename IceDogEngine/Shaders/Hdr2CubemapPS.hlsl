@@ -75,7 +75,7 @@ float4 main(PrefilterCubemapOut vt) : SV_Target
 	if (vt.RTindex == 4)
 		sphereNormal = POS_Z(vt.uv);
 
-	float v_dig = (1 - dot(up, sphereNormal)) / 2;
+	float v_dig = acos(dot(up, sphereNormal)) / Pi;
 	float u_dig = 0;
 
 	sphereNormal.y = 0;
